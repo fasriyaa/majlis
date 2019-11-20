@@ -12,20 +12,14 @@
 */
 
 Route::get('/', function () {
-    return view('gantt.gantt');
+    return redirect('/dashboard/home');
 });
 
-Route::get('/gantt', function () {
-    return view('gantt.gantt');
-});
 
-Route::get('/gantt/m', function () {
-    return view('gantt.gantt_month');
-});
-
-Route::get('/gantt/y', function () {
-    return view('gantt.gantt_year');
-});
+Route::get('/gantt', function () {return view('gantt.gantt');});
+Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
+Route::get('/gantt/m', function () {return view('gantt.gantt_month');});
+Route::get('/gantt/y', function () {return view('gantt.gantt_year');});
 
 Auth::routes();
 

@@ -4,7 +4,7 @@
     <a href="index3.html" class="brand-link">
     <img src="/img/logo.png" alt="Laravel Starter" class="brand-image img-circle elevation-3"
    style="opacity: .8">
-<span class="brand-text font-weight-light">BesoPro.v3(beta)</span>
+<span class="brand-text font-weight-light">NSAP Tracker v1</span>
 </a>
 
     <!-- Sidebar -->
@@ -38,21 +38,67 @@
                     <p>Dashboard v1</p>
                   </a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="{{ route('v2') }}" class="nav-link {!! classActiveSegment(2, 'v2') !!}">
                     <i class="fas fa-circle"></i>
                     <p>Dashboard v2</p>
                   </a>
-                        </li>
-                        <li class="nav-item">
+                        </li> -->
+                        <!-- <li class="nav-item">
                             <a href="{{ route('v3') }}" class="nav-link {!! classActiveSegment(2, 'v3') !!}">
                     <i class="fas fa-circle"></i>
                     <p>Dashboard v3</p>
                   </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
                 <!-- End |Dashboard Menue -->
+
+                <!-- Start | Gantt Chart -->
+                <li class="nav-header">GANTT</li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-envelope-open"></i>
+                          <p>
+                            Charts
+                            <i class="fa fa-angle-left right"></i>
+                          </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/gantt" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Daily</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gantt/w" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Weekly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gantt/m" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Monthly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gantt/q" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Quarterly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gantt/y" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Yearly</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- End | Gantt Chart -->
 
 
                 <!-- Start | Module Management -->
@@ -68,13 +114,13 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="pages/mailbox/mailbox.html" class="nav-link">
+                            <a href="/main_modules" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>List</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/mailbox/compose.html" class="nav-link">
+                            <a href="/main_modules/create" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>New Main Module</p>
                             </a>
@@ -130,13 +176,13 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="pages/mailbox/mailbox.html" class="nav-link">
+                            <a href="/roles" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Roles</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/mailbox/compose.html" class="nav-link">
+                            <a href="/permissions" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Grant Permissions</p>
                             </a>
