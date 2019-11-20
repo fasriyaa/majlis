@@ -19,10 +19,12 @@
 <div id="gantt_here" style='width:100%; height:100%;'></div>
 <script type="text/javascript">
     gantt.config.date_format = "%Y-%m-%d %H:%i:%s";
+    gantt.config.scales = [
+      {unit: 'year', step: 1, format: '%Y'}
+    ];
+    gantt.config.row_height = 20;
     gantt.config.order_branch = true;
     gantt.config.order_branch_free = true;
-    gantt.config.show_tasks_outside_timescale = true;
-    
     gantt.init("gantt_here");
     gantt.load("/api/data");
     var dp = new gantt.dataProcessor("/api");
