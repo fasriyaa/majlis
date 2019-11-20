@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('gantt.gantt');
 });
 
 Route::get('/gantt', function () {

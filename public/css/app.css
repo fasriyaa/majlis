@@ -57,6 +57,8 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+
+
 @-ms-viewport {
   width: device-width;
 }
@@ -74,6 +76,15 @@ body {
   color: #212529;
   text-align: left;
   background-color: #ffffff;
+}
+
+.main-img {
+    background: url('../img/photo4.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
 }
 
 [tabindex="-1"]:focus {
@@ -15181,7 +15192,7 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
 .daterangepicker.openscenter:before {
   position: absolute;
   top: -7px;
-  left: 0;  
+  left: 0;
   right: 0;
   width: 0;
   margin-left: auto;
@@ -15197,8 +15208,8 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
 .daterangepicker.openscenter:after {
   position: absolute;
   top: -6px;
-  left: 0;  
-  right: 0;  
+  left: 0;
+  right: 0;
   width: 0;
   margin-left: auto;
   margin-right: auto;
@@ -15329,7 +15340,7 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
 }
 
 .daterangepicker_end_input {
-  float: left; 
+  float: left;
   padding-left: 11px
 }
 
@@ -30690,4 +30701,3 @@ readers do not read off random characters that represent icons */
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
-
