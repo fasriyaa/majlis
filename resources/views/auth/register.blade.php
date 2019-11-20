@@ -4,7 +4,7 @@
 <body class="hold-transition register-page">
   <div class="register-box">
     <div class="register-logo">
-      Laravel Starter
+      NSAP & FSAP | Ministry of Finance
     </div>
 
     <div class="card">
