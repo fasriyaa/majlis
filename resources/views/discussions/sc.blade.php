@@ -53,24 +53,18 @@
                   <tbody>
                     <tr>
                       <td>1.</td>
-                      <td>Project Discription</td>
+                      <td>Introduction by Minister of Finance</td>
                       <td>PMU</td>
                     </tr>
 
                     <tr>
                       <td>2.</td>
-                      <td>Project Timeline</td>
+                      <td>Brief Presentation of PFM Project</td>
                       <td>PMU</td>
                     </tr>
 
                     <tr>
                       <td>3.</td>
-                      <td>Project Progress</td>
-                      <td>PMU</td>
-                    </tr>
-
-                    <tr>
-                      <td>4.</td>
                       <td>Accrual Accounting TOR</td>
                       <td>Financial Controller</td>
                     </tr>

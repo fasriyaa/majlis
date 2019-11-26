@@ -112,7 +112,7 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="/gantt" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Live</p>
                             </a>
