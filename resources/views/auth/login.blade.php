@@ -9,7 +9,7 @@
 
 <div class="login-box">
     <div class="login-logo">
-        NSAP & FSAP | Ministry of Finance
+        PFM | Ministry of Finance
     </div>
     <div class="card">
         <div class="card-body login-card-body">

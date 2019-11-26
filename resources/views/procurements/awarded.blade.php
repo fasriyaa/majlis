@@ -7,13 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Roles</h1>
+          <h1 class="m-0 text-dark">Awarded Contracts</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Roles</li>
+            <li class="breadcrumb-item active">Procurements</li>
+            <li class="breadcrumb-item active">Awarded</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -33,65 +34,65 @@
       <div class="row">
 
         <div class="col-12">
-          <div class="card card">
+          <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">List</h3>
 
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                    <div class="card-tools">
-                      <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                        <div class="input-group-append">
-                          <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-
-
-            </div>
-            <!-- /.card-header -->
-            <br><br>
-            <!-- roles displya card expandible -->
-
-            @foreach($roles as $role)
-            <div class="col-md-6">
-              <div class="card card-info collapsed-card card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">{{$role->name}}</h3>
-
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                    </button>
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                   </div>
-                  <!-- /.card-tools -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  @foreach($role->permissions as $permission)
-                      > {{$permission->name}}<br>
-                  @endforeach
-                </div>
-                <!-- /.card-body -->
               </div>
             </div>
-            @endforeach
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+
+                <tr>
+                  <th>ID</th>
+                  <th>Procument Name</th>
+                  <th>Awarded Party</th>
+                  <th>Contract Price</th>
+                  <th>Variation</th>
+                  <th>Revised Price</th>
+                  <th>Actual</th>
+                  <th>Action</th>
+                </tr>
+
+
+                <tr>
+                  <td>1</td>
+                  <td>Independent Varification Agent</td>
+                  <td>PWC</td>
+                  <td>USD: 108,000</td>
+                  <td>USD: 0 </td>
+                  <td>USD: 108,000</td>
+                  <td>USD: 0</td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
 
 
 
-            <!-- /. roles display card -->
 
+
+              </table>
+            </div>
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-
-
-                <a href="{{ route('roles.create') }}" class="btn btn-info float-right">New Role</a>
-
-
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
             </div>
             <!-- /. Card footer -->
           </div>

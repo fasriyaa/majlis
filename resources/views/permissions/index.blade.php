@@ -33,7 +33,7 @@
       <div class="row">
 
         <div class="col-12">
-          <div class="card card-info">
+          <div class="card card">
             <div class="card-header">
               <h3 class="card-title">List</h3>
 
@@ -88,7 +88,7 @@
 
 
                 <a href="{{ route('permissions.create') }}" class="btn btn-info float-right">New Permission</a>
-        
+
 
             </div>
             <!-- /. Card footer -->

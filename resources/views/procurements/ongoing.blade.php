@@ -7,13 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Users</h1>
+          <h1 class="m-0 text-dark">Ongoing Procurements</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Users</li>
+            <li class="breadcrumb-item active">Procurements</li>
+            <li class="breadcrumb-item active">Ongoing</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -53,27 +54,119 @@
 
                 <tr>
                   <th>ID</th>
-                  <th>User Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
+                  <th>Component</th>
+                  <th>Procument Name</th>
+                  <th>Division</th>
+                  <th>Progress</th>
                   <th>Action</th>
                 </tr>
 
-              @foreach($users as $user)
+
                 <tr>
-                  <td>{{$user->id}}</td>
-                  <td>{{$user->name}}</td>
-                  <td>{{$user->email}}</td>
+                  <td>1</td>
+                  <td>Component 1 | SOE</td>
+                  <td>Harmonization of SOE Procurement</td>
+                  <td>PCB</td>
                   <td>
-                    To be filled
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 95%"></div>
+                    </div>
                   </td>
                   <td field-key='action'>
-                      <a href="{{ route('main_modules.show',[$user->id]) }}" class="btn btn-sm btn-info">Show</a>
-                      <a href="{{ route('main_modules.edit',[$user->id]) }}" class="btn btn-sm btn-warning">Assign Role</a>
-                      <a href="{{ route('main_modules.edit',[$user->id]) }}" class="btn btn-sm btn-danger">Reject</a>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
                   </td>
                 </tr>
-              @endforeach
+
+                <tr>
+                  <td>2</td>
+                  <td>Component 2 | SAP</td>
+                  <td>SAP Service Contract</td>
+                  <td>PFDS</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>3</td>
+                  <td>Component 1 | SOE</td>
+                  <td>SOE Reform Consultant</td>
+                  <td>PCB</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>4</td>
+                  <td>Component 1 | Debt</td>
+                  <td>Contingent Liabiltiy Consultant</td>
+                  <td>DMD</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 20%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>5</td>
+                  <td>Component 3 | Audit</td>
+                  <td>IFRS Consultant</td>
+                  <td>AG Office</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>6</td>
+                  <td>Component 3 | Audit</td>
+                  <td>Citizen Participatory Audit</td>
+                  <td>AG Office</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>7</td>
+                  <td>Component 1 | FAD</td>
+                  <td>PEFA Self Assesment</td>
+                  <td>FAD</td>
+                  <td>
+                    <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
+                    </div>
+                  </td>
+                  <td field-key='action'>
+                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                  </td>
+                </tr>
+
 
 
               </table>

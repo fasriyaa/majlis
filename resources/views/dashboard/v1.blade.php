@@ -48,7 +48,7 @@
           <!-- small box -->
           <div class="small-box bg-success">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+              <h3>10<sup style="font-size: 20px">%</sup></h3>
 
               <p>Overall Progress</p>
             </div>
@@ -68,7 +68,7 @@
               <p>Activities</p>
             </div>
             <div class="icon">
-              <i class="fas fa-balance-scale"></i>
+              <i class="fas fa-clipboard-list"></i>
             </div>
             <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
@@ -146,7 +146,7 @@
                 <!-- Message. Default to the left -->
                 <div class="direct-chat-msg">
                   <div class="direct-chat-info clearfix">
-                    <span class="direct-chat-name float-left">AM</span>
+                    <span class="direct-chat-name float-left">User</span>
                     <span class="direct-chat-timestamp float-right">19 Nov 2:00 pm</span>
                   </div>
                   <!-- /.direct-chat-info -->
@@ -178,7 +178,7 @@
                 <!-- Message. Default to the left -->
                 <div class="direct-chat-msg">
                   <div class="direct-chat-info clearfix">
-                    <span class="direct-chat-name float-left">AM</span>
+                    <span class="direct-chat-name float-left">User</span>
                     <span class="direct-chat-timestamp float-right">19 Nov 5:37 pm</span>
                   </div>
                   <!-- /.direct-chat-info -->

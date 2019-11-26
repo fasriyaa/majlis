@@ -21,12 +21,25 @@ Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
 Route::get('/gantt/m', function () {return view('gantt.gantt_month');});
 Route::get('/gantt/y', function () {return view('gantt.gantt_year');});
 
+Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
+Route::get('/procurement/ongoing', function () {return view('procurements.ongoing');});
+Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
+Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
+Route::get('/discussions/sclist', function () {return view('discussions.sclist');});
+Route::get('/discussions/sc/1', function () {return view('discussions.sc');});
+Route::get('/discussions/tclist', function () {return view('discussions.tclist');});
+Route::get('/discussions/tc/1', function () {return view('discussions.tc');});
+Route::get('/resultframework/pdo', function () {return view('resultframework.pdo');});
+Route::get('/resultframework/intermediate', function () {return view('resultframework.intermediate');});
+Route::get('/resultframework/dli', function () {return view('resultframework.dli');});
+
+
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Auth::routes();
 
 
-Route::group(['middleware' => ['role:Admin']], function () {
+
       Route::get('/dashboard/home', 'DashboardController@versionone')->name('home');
       Route::get('/dashboard/v2', 'DashboardController@versiontwo')->name('v2');
       Route::get('/dashboard/v3', 'DashboardController@versionthree')->name('v3');
@@ -41,4 +54,3 @@ Route::group(['middleware' => ['role:Admin']], function () {
           Route::resource('permissions', '\App\Http\Controllers\Permissions\PermissionsController');
           Route::get('assing_permission/{role}/{permission}','\App\Http\Controllers\Permissions\PermissionsController@assign_permission')->name('assing_permission');
           Route::get('assing_role/{user}/{role}','\App\Http\Controllers\Permissions\PermissionsController@assign_role')->name('assing_role');
-});

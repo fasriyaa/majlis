@@ -7,13 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Roles</h1>
+          <h1 class="m-0 text-dark">Historical Progress Reports</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Roles</li>
+            <li class="breadcrumb-item active">Progress</li>
+            <li class="breadcrumb-item active">Historical</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -54,14 +55,12 @@
 
             </div>
             <!-- /.card-header -->
-            <br><br>
-            <!-- roles displya card expandible -->
+            <br>
 
-            @foreach($roles as $role)
             <div class="col-md-6">
               <div class="card card-info collapsed-card card-outline">
                 <div class="card-header">
-                  <h3 class="card-title">{{$role->name}}</h3>
+                  <h3 class="card-title">Year : 2019</h3>
 
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i>
@@ -71,25 +70,45 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                  @foreach($role->permissions as $permission)
-                      > {{$permission->name}}<br>
-                  @endforeach
+                <a href = "/files/2019_q3.pdf">> Q3 Progress Report | 15 November 2019 </a><br>
+                <a href = "/files/2019_q2.pdf">> Q2 Progress Report | 15 August 2019</a> <br>
+                <a href = "/files/2019_q1.pdf">> Q1 Progress Report | 15 May 2019</a><br>
+
                 </div>
                 <!-- /.card-body -->
               </div>
             </div>
-            @endforeach
 
+            <div class="col-md-6">
+              <div class="card card-info collapsed-card card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Year : 2018</h3>
 
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                <a href = "/files/2018_q4.pdf">> Q4 Progress Report | 15 February 2019 </a><br>
+                <a href = "/files/2018_q3.pdf">> Q3 Progress Report | 15 November 2018 </a><br>
+                <a href = "/files/2018_q2.pdf">> Q2 Progress Report | 15 August 2018</a> <br>
+                <a href = "/files/2018_q1.pdf">> Q1 Progress Report | 15 May 2018</a><br>
 
-            <!-- /. roles display card -->
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+
 
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
 
 
-                <a href="{{ route('roles.create') }}" class="btn btn-info float-right">New Role</a>
+                <a href="{{ route('progress.create') }}" class="btn btn-info float-right">Upload New Report</a>
 
 
             </div>
