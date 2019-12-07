@@ -36,6 +36,27 @@ Route::group(['middleware' => ['role:SCMember|Admin']], function () {
     Route::get('/resultframework/dli', function () {return view('resultframework.dli');});
 });
 
+Route::group(['middleware' => ['permission:PMU']], function () {
+    Route::get('/components', '\App\Http\Controllers\PMU\PmuController@components') -> name('pmu.components');
+    Route::get('/subcomponent/{id}', '\App\Http\Controllers\PMU\PmuController@subcomponent') -> name('pmu.subcomponent');
+    Route::get('/activity/{id}', '\App\Http\Controllers\PMU\PmuController@activity') -> name('pmu.activity');
+    Route::get('/subactivity/{id}', '\App\Http\Controllers\PMU\PmuController@subactivity') -> name('pmu.subactivity');
+    Route::get('/task/{id}', '\App\Http\Controllers\PMU\PmuController@task') -> name('pmu.task');
+    Route::get('/subtask/{id}', '\App\Http\Controllers\PMU\PmuController@subtask') -> name('pmu.subtask');
+
+    Route::get('/subcomponents', '\App\Http\Controllers\PMU\PmuController@subcomponents') -> name('pmu.subcomponents');
+    Route::get('/activities', '\App\Http\Controllers\PMU\PmuController@activities') -> name('pmu.activities');
+    Route::get('/subactivities', '\App\Http\Controllers\PMU\PmuController@subactivities') -> name('pmu.subactivities');
+    Route::get('/tasks', '\App\Http\Controllers\PMU\PmuController@tasks') -> name('pmu.tasks');
+
+    Route::get('/timeline', function () {return view('pmu.timeline');});
+    Route::get('/assign_staff/{subtask_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_staff') -> name('pmu.assign_staff');
+});
+
+Route::group(['middleware' => ['role:Editor|Admin']], function () {
+    Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
+    Route::get('/my_tasks', '\App\Http\Controllers\PMU\PmuController@my_tasks') -> name('pmu.my_tasks');
+});
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 

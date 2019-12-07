@@ -54,8 +54,81 @@
                 </li>
                 <!-- End |Dashboard Menue -->
 
-                <!-- Start | Gantt Chart -->
+                <!-- Start | Implementation -->
                 <li class="nav-header"></li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                          <p>
+                            IMPLEMENTATIONS
+                            <i class="fa fa-angle-left right"></i>
+                          </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>
+                                    PMU
+                                    <i class="fa fa-angle-left right"></i>
+                                  </p>
+                            </a>
+
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="/components" class="nav-link">
+                                        <i class="fa fa-caret-right nav-icon"></i>
+                                          <p>Components</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/subcomponents" class="nav-link">
+                                        <i class="fa fa-caret-right nav-icon"></i>
+                                          <p>Sub Components</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/activities" class="nav-link">
+                                        <i class="fa fa-caret-right nav-icon"></i>
+                                          <p>Activities</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/subactivities" class="nav-link">
+                                        <i class="fa fa-caret-right nav-icon"></i>
+                                          <p>Sub Activities</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/tasks" class="nav-link">
+                                        <i class="fa fa-caret-right nav-icon"></i>
+                                          <p>Task</p>
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </li>
+
+
+
+                        <li class="nav-item">
+                            <a href="/gantt/w" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>PIU</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/my_tasks" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>My Tasks</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- End | Implementation -->
+
+                <!-- Start | Gantt Chart -->
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-clock"></i>

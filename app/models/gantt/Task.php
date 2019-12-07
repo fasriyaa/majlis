@@ -11,4 +11,11 @@ class Task extends Model
   public function getOpenAttribute(){
       return true;
   }
+
+  public function user()
+  {
+      return $this->belongsTo('App\User', 'staff', 'id');
+  }
+
+
 }

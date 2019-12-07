@@ -33,14 +33,14 @@
           <!-- small box -->
           <div class="small-box bg-info">
             <div class="inner">
-              <h3>150</h3>
+              <h3>{{$milestone}}</h3>
 
               <p>Milestones</p>
             </div>
             <div class="icon">
               <i class="fas fa-hands"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="/subactivities" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -63,14 +63,14 @@
           <!-- small box -->
           <div class="small-box bg-warning">
             <div class="inner">
-              <h3>450</h3>
+              <h3>{{$activities}}</h3>
 
               <p>Activities</p>
             </div>
             <div class="icon">
               <i class="fas fa-clipboard-list"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="/tasks" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
