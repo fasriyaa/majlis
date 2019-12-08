@@ -56,6 +56,7 @@ Route::group(['middleware' => ['permission:PMU']], function () {
 Route::group(['middleware' => ['role:Editor|Admin']], function () {
     Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
     Route::get('/my_tasks', '\App\Http\Controllers\PMU\PmuController@my_tasks') -> name('pmu.my_tasks');
+    Route::get('/task_timeline/{id}', '\App\Http\Controllers\PMU\PmuController@task_timeline') -> name('pmu.task_timeline');
 });
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');

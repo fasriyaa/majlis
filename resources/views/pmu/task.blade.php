@@ -66,7 +66,7 @@
                 </tr>
 
           @foreach($tasks as $task)
-                <tr>
+                <tr id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">
                   <td>{{$task->id}}</td>
                   <td>{{$task->text}}</td>
                   <td></td>

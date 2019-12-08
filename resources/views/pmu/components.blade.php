@@ -65,7 +65,7 @@
                 </tr>
 
           @foreach($components as $component)
-                <tr>
+                <tr id = "{{$component->id}}" onclick = "location.href='/subcomponent/'+this.id;">
                   <td>{{$component->id}}</td>
                   <td>{{$component->text}}</td>
                   <td></td>

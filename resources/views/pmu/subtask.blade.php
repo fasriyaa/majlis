@@ -66,7 +66,7 @@
                 </tr>
 
           @foreach($subtasks as $subtask)
-                <tr>
+                <tr id = "{{$subtask->id}}" onclick = "location.href='/task_timeline/'+this.id;">
                   <?php
                     if($subtask->progress == 1)
                     {

@@ -236,5 +236,24 @@ class PmuController extends Controller
 
     }
 
+    public function task_timeline($id)
+    {
+
+      //getting the Task Details
+      $task_name = Task::select('text','id')
+            ->where('id', '=', $id)
+            ->first();
+
+      // Get timeline for the tasks
+      $timelines = Timeline::select('text','created_at','user as user_id')
+          ->where('task', '=', $id)
+          ->with('user:id,name')
+          ->orderby('created_at','DESC')
+          ->get();
+
+
+      return view('pmu.taskTimeline', compact('task_name','timelines'));
+    }
+
 
 }

@@ -67,7 +67,7 @@
                 </tr>
 
           @foreach($activities as $activity)
-                <tr>
+                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
                   <td>{{$activity->id}}</td>
                   <td>{{$activity->text}}</td>
                   <td></td>
