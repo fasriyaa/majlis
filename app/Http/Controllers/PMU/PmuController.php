@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\models\gantt\Task;
 use App\models\gantt\Link;
 use App\models\timeline\Timeline;
+use App\models\taskApproval\TaskApproval;
 use App\User;
 
 use Auth;
@@ -245,9 +246,16 @@ class PmuController extends Controller
     public function task_timeline($id)
     {
 
+      $user_id = Auth::id();
+
+      //getting users
+      $users = User::select('id', 'name')
+          ->get();
+
       //getting the Task Details
-      $task_name = Task::select('text','id')
+      $task_name = Task::select('text','id','progress','staff')
             ->where('id', '=', $id)
+            ->with('user:id,name')
             ->first();
 
       // Get timeline for the tasks
@@ -257,8 +265,106 @@ class PmuController extends Controller
           ->orderby('created_at','DESC')
           ->get();
 
+      //Getting Pending Approvals
+      $approvals = TaskApproval::select('id','staff_id','user_id')
+            ->where('task_id','=',$id)
+            ->where('approval_status','=',0)
+            ->where('status','=',1)
+            ->with('user:id,name')
+            ->get();
 
-      return view('pmu.taskTimeline', compact('task_name','timelines'));
+      $approves = TaskApproval::select('id','staff_id','comment','created_at')
+            ->where('task_id','=',$id)
+            ->where('approval_status','=',1)
+            ->where('status','=',1)
+            ->with('user:id,name')
+            ->get();
+
+
+
+
+      $approval_count = count($approvals);
+      $approve_count = count($approves);
+
+
+      return view('pmu.taskTimeline', compact('task_name','timelines','users','approvals','user_id','approval_count','approves','approve_count'));
+    }
+
+    public function assign_approval_staff($task_id,$staff_id)
+    {
+        $user_id = Auth::id();
+
+        //getting the staff
+        $staff = User::select('name')
+          ->where('id','=',$staff_id)
+          ->first();
+
+        $approval = TaskApproval::create(['task_id' => $task_id, 'staff_id' => $staff_id, 'user_id'=>$user_id]);
+
+        $text = "Set Requird Approval of: ". $staff->name;
+        $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id]);
+
+        return response()->json($approval);
+    }
+
+    public function cancel_approval($id)
+    {
+
+      $user_id = Auth::id();
+
+
+      //Validation & Permissions
+      $approval = TaskApproval::select('task_id','staff_id','user_id')
+          ->where('id','=',$id)
+          ->with('user:id,name')
+          ->first();
+
+
+      if($approval['staff_id'] == $user_id or $approval['user_id']==$user_id)
+        {
+
+          //Delete the entry
+          $del_rec = TaskApproval::where('id','=',$id)
+              ->delete();
+
+
+          //Recording to timelines
+          $text = "Required Approval removed for user: ".$approval['user']['name'];
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id]);
+
+              return response()->json($del_rec);
+
+        }else{
+          return 0;
+        }
+
+    }
+
+    public function approve($id,$comment)
+    {
+
+      $user_id = Auth::id();
+
+      //Validation & Permissions
+      $approval = TaskApproval::select('task_id','staff_id','user_id')
+          ->where('id','=',$id)
+          ->with('user:id,name')
+          ->first();
+
+
+          if($approval['staff_id'] == $user_id)
+            {
+              //update the status to approved
+              $approve = TaskApproval::Where('id', $id)->Update(['approval_status' => 1, 'comment'=>$comment]);
+
+              //updating the timeline
+              //Recording to timelines
+              $text = "Approved: ";
+              $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id]);
+              return response()->json($approve);
+            }else{
+                return 0;
+            }
     }
 
 

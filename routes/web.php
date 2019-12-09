@@ -57,6 +57,9 @@ Route::group(['middleware' => ['role:Editor|Admin']], function () {
     Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
     Route::get('/my_tasks', '\App\Http\Controllers\PMU\PmuController@my_tasks') -> name('pmu.my_tasks');
     Route::get('/task_timeline/{id}', '\App\Http\Controllers\PMU\PmuController@task_timeline') -> name('pmu.task_timeline');
+    Route::get('/assign_approval_staff/{task_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_approval_staff') -> name('pmu.assign_approval_staff');
+    Route::get('/cancel_approval/{id}', '\App\Http\Controllers\PMU\PmuController@cancel_approval') -> name('pmu.cancel_approval');
+    Route::get('/approve/{id}/{comment}', '\App\Http\Controllers\PMU\PmuController@approve') -> name('pmu.approve');
 });
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
