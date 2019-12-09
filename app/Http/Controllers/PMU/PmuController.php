@@ -182,7 +182,13 @@ class PmuController extends Controller
       $update_assign_staff = Task::Where('id', $subtask_id)->Update(['staff' => $staff_id]);
 
       // Updating Timeline
-      $text = "Assigned to ". Auth::user()->name;
+      //getting the staff
+      $staff = User::select('name')
+        ->where('id','=',$staff_id)
+        ->first();
+
+      $text = "Assigned to ". $staff->name;
+
       $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id]);
       return response()->json($new_timeline);
     }
