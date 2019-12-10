@@ -38,7 +38,7 @@
         <div class="col-12">
           <div class="card card-info">
             <div class="card-header">
-              <h3 class="card-title">Pending List</a></h3>
+              <h3 class="card-title">My Pending List</a></h3>
 
               <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
@@ -78,33 +78,62 @@
                     }
                   ?>
                   @foreach($tasks as $task)
-                    @if($task->id == $subtask->parent)
-                      <?php $parent = $task->text; ?>
-                    @endif
-                  @endforeach
-                  <td><font color = {{$color}}>{{$subtask->id}}</font></td>
-                  <td>
-                      <input id="{{$subtask->id}}" class="form-check-input" onclick="update_progress(this);" type="checkbox" {{$check}}>
-                  </td>
-                  <td>
-                    <font color = {{$color}}>
-                      {{$subtask->text}} | {{$parent}}
-                    </font>
-                  </td>
-                  <td><font color = {{$color}}>{{$subtask->user['name']}}</font></td>
-                  <td><font color = {{$color}}>{{date("d-M-Y", strtotime($subtask->start_date))}}</font></td>
-                  <td><font color = {{$color}}>{{date("d-M-Y", strtotime("+".$subtask->duration." days", strtotime($subtask->start_date)))}}</font></td>
-                  <td><font color = {{$color}}>{{$subtask->progress*100}}%</font></td>
-                  <td field-key='action'>
-                    <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-eye"></a>
-                    <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$subtask->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
-                    <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-edit"></a>
-                  </td>
+                        @if($task->id == $subtask->parent)
+                          <?php $parent = $task->text; ?>
+                        @endif
+                      @endforeach
+                      <td><font color = {{$color}}>{{$subtask->id}}</font></td>
+                      <td>
+                          <input id="{{$subtask->id}}" class="form-check-input" onclick="update_progress(this);" type="checkbox" {{$check}}>
+                      </td>
+                      <td>
+                        <font color = {{$color}}>
+                          {{$subtask->text}} | {{$parent}}
+                        </font>
+                      </td>
+                      <td><font color = {{$color}}>{{$subtask->user['name']}}</font></td>
+                      <td><font color = {{$color}}>{{date("d-M-Y", strtotime($subtask->start_date))}}</font></td>
+                      <td><font color = {{$color}}>{{date("d-M-Y", strtotime("+".$subtask->duration." days", strtotime($subtask->start_date)))}}</font></td>
+                      <td><font color = {{$color}}>{{$subtask->progress*100}}%</font></td>
+                      <td field-key='action'>
+                        <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-eye"></a>
+                        <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$subtask->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
+                        <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-edit"></a>
+                      </td>
+                    </tr>
+                @endforeach
+                @foreach($pending_approvals as $pending_approval)
+                  <tr>
+                      <td>{{$pending_approval->task_id}}</td>
+                      <td><input id="{{$pending_approval->task_id}}" class="form-check-input" onclick="update_progress(this);" type="checkbox"></td>
+                      <td>Pending Approval for: {{$pending_approval->task['text']}}</td>
+                      <td>{{$user_name['name']}}</td>
+                      <td>{{date("d-M-Y", strtotime($pending_approval->task['start_date']))}}</td>
+                      <td>{{date("d-M-Y", strtotime("+".$pending_approval->task['duration']." days", strtotime($pending_approval->task['start_date'])))}}</td>
+                      <td>{{$pending_approval->task['progress']*100}}%</td>
+                      <td field-key='action'>
+                        <a href="{{ route('pmu.subtask',[$pending_approval->task_id]) }}" class="fa fa-eye"></a>
+                        <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$pending_approval->task_id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
+                        <a href="{{ route('pmu.subtask',[$pending_approval->task_id]) }}" class="fa fa-edit"></a>
+                      </td>
+                  </tr>
+                @endforeach
+                @foreach($pending_docs as $pending_doc)
+                <tr>
+                    <td>{{$pending_doc->id}}</td>
+                    <td><input id="{{$pending_doc->id}}" class="form-check-input" onclick="update_progress(this);" type="checkbox"></td>
+                    <td>Pending Document for: {{$pending_doc->text}}</td>
+                    <td>{{$user_name['name']}}</td>
+                    <td>{{date("d-M-Y", strtotime($pending_doc->start_date))}}</td>
+                    <td>{{date("d-M-Y", strtotime("+".$pending_doc->duration." days", strtotime($pending_doc->start_date)))}}</td>
+                    <td>{{$pending_doc->progress*100}}%</td>
+                    <td field-key='action'>
+                      <a href="{{ route('pmu.subtask',[$pending_doc->id]) }}" class="fa fa-eye"></a>
+                      <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$pending_doc->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
+                      <a href="{{ route('pmu.subtask',[$pending_doc->id]) }}" class="fa fa-edit"></a>
+                    </td>
                 </tr>
-          @endforeach
-
-
-
+                @endforeach
               </table>
             </div>
             <!-- /.card-body -->
@@ -125,6 +154,76 @@
 
       </div>
       <!-- /.row (main row) -->
+
+      <!-- Second Row -->
+      <div class = "row">
+        <div class="col-12">
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title">Assinged by me</a></h3>
+
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+
+                <tr align = "left">
+                  <th>ID</th>
+                  <th></th>
+                  <th>Task</th>
+                  <th>Assigned To </th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Progress</th>
+                  <th>Action</th>
+                </tr>
+
+                @foreach($assigned_tasks as $assigned_task)
+                <tr>
+                    <td>{{$assigned_task->id}}</td>
+                    <td><input id="{{$assigned_task->id}}" class="form-check-input" onclick="update_progress(this);" type="checkbox"></td>
+                    <td>{{$assigned_task->text}}</td>
+                    <td>{{$assigned_task->user['name']}}</td>
+                    <td>{{date("d-M-Y", strtotime($assigned_task->start_date))}}</td>
+                    <td>{{date("d-M-Y", strtotime("+".$assigned_task->duration." days", strtotime($assigned_task->start_date)))}}</td>
+                    <td>{{$assigned_task->progress*100}}%</td>
+                    <td field-key='action'>
+                      <a href="{{ route('pmu.subtask',[$assigned_task->id]) }}" class="fa fa-eye"></a>
+                      <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$assigned_task->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
+                      <a href="{{ route('pmu.subtask',[$assigned_task->id]) }}" class="fa fa-edit"></a>
+                    </td>
+                </tr>
+                @endforeach
+              </table>
+            </div>
+            <!-- /.card-body -->
+            <!-- Card Footer -->
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
+            </div>
+            <!-- /. Card footer -->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <!-- /. Second Row -->
+
+
     </div>
     <!-- /.container-fluid -->
   </section>

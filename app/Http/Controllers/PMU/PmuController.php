@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Pmu;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\UploadedFile;
+use App\Http\Controllers\Traits\FileUploadTrait;
 
 
 use App\models\gantt\Task;
 use App\models\gantt\Link;
 use App\models\timeline\Timeline;
 use App\models\taskApproval\TaskApproval;
+use App\models\docs\RequireDoc;
 use App\User;
 
 use Auth;
@@ -17,6 +20,8 @@ use Illuminate\Http\Request;
 
 class PmuController extends Controller
 {
+  use FileUploadTrait;
+
     public function components()
     {
         $components = Task::select('id','text','progress')
@@ -190,7 +195,7 @@ class PmuController extends Controller
 
       $text = "Assigned to ". $staff->name;
 
-      $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id]);
+      $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id, 'type'=>1]);
       return response()->json($new_timeline);
     }
 
@@ -221,6 +226,9 @@ class PmuController extends Controller
       $users = User::select('id', 'name')
           ->get();
 
+      $user_name = User::select('name')
+            ->where('id','=',$user_id)
+            ->first();
 
 
       $subtasks = Task::select('id', 'text', 'progress', 'start_date', 'duration', 'staff', 'parent')
@@ -238,8 +246,38 @@ class PmuController extends Controller
           ->whereIn('id', $parent_id)
           ->get();
 
-          // return $tasks;
-      return view('pmu.mytasks', compact('subtasks', 'users', 'tasks'));
+      //getting pending approvals for the staff
+      $pending_approvals = TaskApproval::select('task_id')
+          ->where('staff_id','=',$user_id)
+          ->where('approval_status','=',0)
+          ->where('status','=',1)
+          ->with('task:id,text,start_date,duration,progress')
+          ->get();
+
+
+      $pending_docs_id = RequireDoc::where('status','=',1)
+          ->pluck('task_id');
+
+      $pending_docs = Task::select('id','start_date','text','progress','duration')
+          ->whereIn('id',$pending_docs_id)
+          ->where('staff', '=', $user_id)
+          ->get();
+
+
+      //getting list task assigned by the user
+      $assigned_task_list = Timeline::where('user','=',$user_id)
+          ->where('type','=',1)
+          ->groupBy('task')
+          ->pluck('task');
+
+      $assigned_tasks = Task::select('id','start_date','text','progress','duration','staff')
+          ->whereIn('id',$assigned_task_list)
+          ->where('staff','!=',$user_id)
+          ->with('user:id,name')
+          ->get();
+
+      // return $assigned_tasks;
+      return view('pmu.mytasks', compact('subtasks', 'users', 'tasks','pending_approvals','user_name','pending_docs','assigned_tasks'));
 
     }
 
@@ -280,14 +318,23 @@ class PmuController extends Controller
             ->with('user:id,name')
             ->get();
 
+      $req_docs = RequireDoc::select('id','status')
+            ->where('task_id','=',$id)
+            ->where('status','=',1)
+            ->get();
 
-
+      $documents = RequireDoc::select('doc_name','updated_at')
+            ->where('task_id','=',$id)
+            ->where('status','=',2)
+            ->get();
 
       $approval_count = count($approvals);
       $approve_count = count($approves);
+      $documents_count = count($documents);
+      $req_docs_count = count($req_docs);
 
 
-      return view('pmu.taskTimeline', compact('task_name','timelines','users','approvals','user_id','approval_count','approves','approve_count'));
+      return view('pmu.taskTimeline', compact('task_name','timelines','users','approvals','user_id','approval_count','approves','approve_count','req_docs','documents','documents_count','req_docs_count'));
     }
 
     public function assign_approval_staff($task_id,$staff_id)
@@ -366,6 +413,89 @@ class PmuController extends Controller
                 return 0;
             }
     }
+
+    public function require_doc($id)
+    {
+      $user_id = Auth::id();
+
+      $req_doc = RequireDoc::select('id')
+          ->where('task_id','=',$id)
+          ->first();
+
+          if($req_doc)
+          {
+              return response()->json(0);
+          }else {
+
+              $new_req_doc = RequireDoc::create(['task_id'=>$id]);
+
+              //Recording to timelines
+              $text = "Set Document Required";
+              $new_timeline = Timeline::create(['text' => $text, 'task' => $id, 'user' => $user_id]);
+
+
+              return response()->json(1);
+          }
+
+    }
+
+    public function cancel_doc($id)
+    {
+
+      $user_id = Auth::id();
+
+
+      //Validation & Permissions
+      $req_doc = RequireDoc::select('task_id','status')
+          ->where('id','=',$id)
+          ->with('task:id,staff')
+          ->first();
+
+      if($req_doc['status']==1 && $req_doc['task']['staff']==$user_id)
+        {
+
+          // Delete the entry
+              $del_rec = RequireDoc::where('id','=',$id)
+                  ->delete();
+
+
+          //Recording to timelines
+          $text = "Document Required Canclled";
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $req_doc['task']['id'], 'user' => $user_id]);
+
+          return response()->json(1);
+
+        }else {
+          return response()->json(0);
+        }
+    }
+
+    public function upload_doc(Request $request)
+    {
+          $user_id = Auth::id();
+          $file_name = $request->file('file')->getClientOriginalName();
+          $request = $this->saveFiles($request);
+
+          //Updating the Required Doc
+          $req_doc = RequireDoc::select('id')
+              ->where('task_id','=', $request->subtask6_id)
+              ->where('status','=',1)
+              ->first();
+
+          if($req_doc)
+          {
+            $up_doc = RequireDoc::Where('id', $req_doc['id'])->Update(['doc_name' => $request->input('file'), 'status' => 2]);
+          }else {
+            $up_doc = RequireDoc::create(['task_id'=>$request->subtask6_id, 'doc_name'=>$request->input('file'),'status'=>2]);
+          }
+
+          //updating the timeline
+          $text = "Uploaded Document ". $file_name;
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $request->subtask6_id, 'user' => $user_id]);
+
+          return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
+    }
+
 
 
 }

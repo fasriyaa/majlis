@@ -101,11 +101,11 @@
             <!-- /. Approved info table -->
 
             <!-- Pending Action Table -->
-            @if($approval_count>0)
+            @if($approval_count>0 or $req_docs_count>0)
               <div class = "col-sm-12">
                 <div class="card card">
                   <div class="card-header">
-                    <h3 class="card-title">Pending Actions</a></h3>
+                    <h3 class="card-title"><font color = "red">Pending Actions</font></a></h3>
                   </div>
                   <!-- /. card header -->
 
@@ -125,6 +125,18 @@
                               </td>
                               </tr>
                           @endforeach
+
+                          @foreach($req_docs as $req_doc)
+                            <tr>
+                                <td>Document Required</td>
+                                <td>{{$task_name['user']['name']}}</td>
+                                <td>
+                                  @if($task_name['user']['id']==$user_id)
+                                    <a href="#" class="btn btn-sm btn-warning fa fa-times" data-toggle="modal" data-target="#cancel_doc_modal" data-id = "{{$req_doc->id}}" onclick = "$('#subtask5_id').val($(this).data('id'));"></a>
+                                  @endif
+                                </td>
+                            </tr>
+                          @endforeach
                         </table>
                   </div>
                 </div>
@@ -132,7 +144,7 @@
             @endif
             <!-- /. Pending Action Table -->
 
-            <!-- first Table -->
+            <!-- first Table Task Actions -->
             <div class = "col-sm-12">
               <div class="card card">
                 <div class="card-header">
@@ -156,7 +168,7 @@
                     </tr>
                     <tr align = "left">
                       <td></td>
-                      <td>Upload Document <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$task_name['id']}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
+                      <td>Upload Document <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_doc_modal" data-id = "{{$task_name['id']}}" onclick = "$('#subtask6_id').val($(this).data('id'));"></a>
                       </td>
                     </tr>
                     <tr align = "left">
@@ -164,39 +176,249 @@
                       <td> Require Approval <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_approval_modal" data-id = "{{$task_name['id']}}" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
                       </td>
                     </tr>
+                    <tr align = "left">
+                      <td></td>
+                      <td> Require Document <a href="" class="fa fa-hand-point-right" id = "{{$task_name['id']}}" onclick = "require_doc(this);"></a>
+                      </td>
+                    </tr>
                   </table>
                 </div>
               </div>
             </div>
             <!-- /. left First Table -->
-            <!-- Left Second Table -->
+            <!-- Left Documents Table -->
+            @if($documents_count>0)
+                <div class = "col-sm-12">
+                  <div class="card card">
+                    <div class="card-header">
+                      <h3 class="card-title">Documents</a></h3>
+                    </div>
+                    <!-- /. card header -->
+
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover">
+                        <tr>
+                          <th>Document Name</th>
+                          <th>Date</th>
+                          <th></th>
+                        </tr>
+                        @foreach($documents as $document)
+                            <tr>
+                              <td><a href = "{{ url('/files', $document->doc_name) }}">{{$document->doc_name}}</a></td>
+                              <td>{{$document->updated_at}}</td>
+                              <td></td>
+                            </tr>
+                        @endforeach
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            @endif
+            <!-- /. Left Documents Table -->
+            <!-- Left Comments Table -->
             <div class = "col-sm-12">
-              <div class="card card">
+              <!-- DIRECT CHAT -->
+              <div class="card direct-chat direct-chat-primary">
                 <div class="card-header">
-                  <h3 class="card-title">Documents</a></h3>
+                  <h3 class="card-title">Recent Comments</h3>
+
+                  <div class="card-tools">
+                    <span data-toggle="tooltip" title="3 New Messages" class="badge badge-primary">3</span>
+                    <button type="button" class="btn btn-tool" data-widget="collapse">
+                      <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
+                      <i class="fa fa-comments"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i>
+                    </button>
+                  </div>
                 </div>
-                <!-- /. card header -->
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <!-- Conversations are loaded here -->
+                  <div class="direct-chat-messages">
+                    <!-- Message. Default to the left -->
+                    <div class="direct-chat-msg">
+                      <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name float-left">User</span>
+                        <span class="direct-chat-timestamp float-right">19 Nov 2:00 pm</span>
+                      </div>
+                      <!-- /.direct-chat-info -->
+                      <img class="direct-chat-img" src="/img/avatar5.png" alt="message user image">
+                      <!-- /.direct-chat-img -->
+                      <div class="direct-chat-text">
+                        Please update all the task!
+                      </div>
+                      <!-- /.direct-chat-text -->
+                    </div>
+                    <!-- /.direct-chat-msg -->
 
-                <div class="card-body table-responsive p-0">
-                  <table class="table table-hover">
-                    <tr>
-                      <th>Document Name</th>
-                      <th>Date</th>
-                      <th>Uploaded by</th>
-                    </tr>
-                    <tr>
-                      <td>Sample Document.docx</td>
-                      <td>8 Dec 2019</td>
-                      <td>Abdulla Hassan</td>
-                    </tr>
+                    <!-- Message to the right -->
+                    <div class="direct-chat-msg right">
+                      <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name float-right">Me</span>
+                        <span class="direct-chat-timestamp float-left">19 Nov 2:05 pm</span>
+                      </div>
+                      <!-- /.direct-chat-info -->
+                      <img class="direct-chat-img" src="/img/avatar04.png" alt="message user image">
+                      <!-- /.direct-chat-img -->
+                      <div class="direct-chat-text">
+                        Ok will do in a week!
+                      </div>
+                      <!-- /.direct-chat-text -->
+                    </div>
+                    <!-- /.direct-chat-msg -->
 
+                    <!-- Message. Default to the left -->
+                    <div class="direct-chat-msg">
+                      <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name float-left">User</span>
+                        <span class="direct-chat-timestamp float-right">19 Nov 5:37 pm</span>
+                      </div>
+                      <!-- /.direct-chat-info -->
+                      <img class="direct-chat-img" src="/img/avatar5.png" alt="message user image">
+                      <!-- /.direct-chat-img -->
+                      <div class="direct-chat-text">
+                        One week? haadha ginaey!
+                      </div>
+                      <!-- /.direct-chat-text -->
+                    </div>
+                    <!-- /.direct-chat-msg -->
 
+                    <!-- Message to the right -->
+                    <div class="direct-chat-msg right">
+                      <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name float-right">Me</span>
+                        <span class="direct-chat-timestamp float-left">19 Nov 6:10 pm</span>
+                      </div>
+                      <!-- /.direct-chat-info -->
+                      <img class="direct-chat-img" src="/img/avatar04.png" alt="message user image">
+                      <!-- /.direct-chat-img -->
+                      <div class="direct-chat-text">
+                        Ok 5 Days!
+                      </div>
+                      <!-- /.direct-chat-text -->
+                    </div>
+                    <!-- /.direct-chat-msg -->
 
-                  </table>
+                  </div>
+                  <!--/.direct-chat-messages-->
+
+                  <!-- Contacts are loaded here -->
+                  <div class="direct-chat-contacts">
+                    <ul class="contacts-list">
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user1-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              Count Dracula
+                              <small class="contacts-list-date float-right">2/28/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">How have you been? I was...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user7-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              Sarah Doe
+                              <small class="contacts-list-date float-right">2/23/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">I will be waiting for...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user3-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              Nadia Jolie
+                              <small class="contacts-list-date float-right">2/20/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">Ill call you back at...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user5-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              Nora S. Vans
+                              <small class="contacts-list-date float-right">2/10/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">Where is your new...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user6-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              John K.
+                              <small class="contacts-list-date float-right">1/27/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">Can I take a look at...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                      <li>
+                        <a href="#">
+                          <img class="contacts-list-img" src="/img/user8-128x128.jpg">
+
+                          <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                              Kenneth M.
+                              <small class="contacts-list-date float-right">1/4/2015</small>
+                            </span>
+                            <span class="contacts-list-msg">Never mind I found...</span>
+                          </div>
+                          <!-- /.contacts-list-info -->
+                        </a>
+                      </li>
+                      <!-- End Contact Item -->
+                    </ul>
+                    <!-- /.contacts-list -->
+                  </div>
+                  <!-- /.direct-chat-pane -->
                 </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <form action="#" method="post">
+                    <div class="input-group">
+                      <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+                      <span class="input-group-append">
+                        <button type="button" class="btn btn-primary">Send</button>
+                      </span>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.card-footer-->
               </div>
+              <!--/.direct-chat -->
             </div>
-            <!-- /. Left Second Table -->
+            <!-- /. Left Comments Table -->
           </div>
           <!-- /. Right Col -->
 
@@ -353,8 +575,81 @@
 </div>
 <!-- /. Approve modal -->
 
+<!-- Cancel Doc Modal -->
+<div class="modal fade" id="cancel_doc_modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Cancel Document Required</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST',  'files' => false,]) !!}
+        <div class="form-group">
+          <input type="hidden" name = "subtask5_id" id = "subtask5_id">
+          <label for="name">Are You Sure you want to cancel Document Required?</label>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "cancel_doc" type="submit" class="btn btn-info" data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Cancel Doc Modal -->
+
+<!-- Upload file Modal -->
+<!-- Assign Staff Modal -->
+<div class="modal fade" id="upload_doc_modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Upload Document</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['pmu.upload_doc'], 'files' => true,]) !!}
+        @csrf
+        <div class="form-group">
+          <input type="hidden" name = "subtask6_id" id = "subtask6_id">
+          <div class="custom-file">
+            <input type="file" name = "file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "upload_doc" type="submit" class="btn btn-info">Upload</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Assign Staff Modal -->
+<!-- /. upload file modal -->
+
 @section('javascript')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="/dist/plugins/customfiles/custom-files.min.js"></script>
 
 <script type="text/javascript">
 
@@ -474,6 +769,55 @@ $("#approve").click(function() {
 });
 
 
+//Setting the required doc
+function require_doc(object)
+{
+    var task_id = object.id;
+
+    if(task_id){
+          $.ajax({
+             type:"get",
+             url:"{{url('/require_doc')}}/"+task_id,
+             success:function(res)
+             {
+                  if(res)
+                  {
+                    location.reload();
+                  }
+             }
+
+          });
+    }
+}
+
+//Cancel Doc Required
+$("#cancel_doc").click(function() {
+  var doc_id = $('#subtask5_id').val();
+  if(doc_id){
+        $.ajax({
+           type:"get",
+           url:"{{url('/cancel_doc')}}/"+doc_id,
+           success:function(res)
+           {
+                if(res==0)
+                {
+                    alert("User don't have permission");
+                }else {
+                    location.reload();
+                }
+           }
+
+        });
+
+  }
+
+});
+
+//view of selected upload file
+$(document).ready(function () {
+  bsCustomFileInput.init();
+});
+
 </script>
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
@@ -513,4 +857,5 @@ $("#approve").click(function() {
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+
 @stop

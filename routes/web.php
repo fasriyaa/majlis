@@ -60,9 +60,15 @@ Route::group(['middleware' => ['role:Editor|Admin']], function () {
     Route::get('/assign_approval_staff/{task_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_approval_staff') -> name('pmu.assign_approval_staff');
     Route::get('/cancel_approval/{id}', '\App\Http\Controllers\PMU\PmuController@cancel_approval') -> name('pmu.cancel_approval');
     Route::get('/approve/{id}/{comment}', '\App\Http\Controllers\PMU\PmuController@approve') -> name('pmu.approve');
+    Route::get('/require_doc/{id}', '\App\Http\Controllers\PMU\PmuController@require_doc') -> name('pmu.require_doc');
+    Route::get('/cancel_doc/{id}', '\App\Http\Controllers\PMU\PmuController@cancel_doc') -> name('pmu.cancel_doc');
+    Route::post('/upload_doc', '\App\Http\Controllers\PMU\PmuController@upload_doc') -> name('pmu.upload_doc');
+
+
 });
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
 
 Auth::routes();
 
