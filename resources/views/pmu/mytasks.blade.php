@@ -96,7 +96,7 @@
                       <td><font color = {{$color}}>{{date("d-M-Y", strtotime("+".$subtask->duration." days", strtotime($subtask->start_date)))}}</font></td>
                       <td><font color = {{$color}}>{{$subtask->progress*100}}%</font></td>
                       <td field-key='action'>
-                        <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-eye"></a>
+                        <a href="{{ route('pmu.task_timeline',[$subtask->id]) }}" class="fa fa-eye"></a>
                         <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$subtask->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
                         <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-edit"></a>
                       </td>
@@ -112,7 +112,7 @@
                       <td>{{date("d-M-Y", strtotime("+".$pending_approval->task['duration']." days", strtotime($pending_approval->task['start_date'])))}}</td>
                       <td>{{$pending_approval->task['progress']*100}}%</td>
                       <td field-key='action'>
-                        <a href="{{ route('pmu.subtask',[$pending_approval->task_id]) }}" class="fa fa-eye"></a>
+                        <a href="{{ route('pmu.task_timeline',[$pending_approval->task_id]) }}" class="fa fa-eye"></a>
                         <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$pending_approval->task_id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
                         <a href="{{ route('pmu.subtask',[$pending_approval->task_id]) }}" class="fa fa-edit"></a>
                       </td>
@@ -128,7 +128,7 @@
                     <td>{{date("d-M-Y", strtotime("+".$pending_doc->duration." days", strtotime($pending_doc->start_date)))}}</td>
                     <td>{{$pending_doc->progress*100}}%</td>
                     <td field-key='action'>
-                      <a href="{{ route('pmu.subtask',[$pending_doc->id]) }}" class="fa fa-eye"></a>
+                      <a href="{{ route('pmu.task_timeline',[$pending_doc->id]) }}" class="fa fa-eye"></a>
                       <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$pending_doc->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
                       <a href="{{ route('pmu.subtask',[$pending_doc->id]) }}" class="fa fa-edit"></a>
                     </td>
