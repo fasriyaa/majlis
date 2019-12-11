@@ -197,7 +197,7 @@
                     <td>{{date("d-M-Y", strtotime("+".$assigned_task->duration." days", strtotime($assigned_task->start_date)))}}</td>
                     <td>{{$assigned_task->progress*100}}%</td>
                     <td field-key='action'>
-                      <a href="{{ route('pmu.subtask',[$assigned_task->id]) }}" class="fa fa-eye"></a>
+                      <a href="{{ route('pmu.task_timeline',[$assigned_task->id]) }}" class="fa fa-eye"></a>
                       <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$assigned_task->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
                       <a href="{{ route('pmu.subtask',[$assigned_task->id]) }}" class="fa fa-edit"></a>
                     </td>
