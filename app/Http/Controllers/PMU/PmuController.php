@@ -496,6 +496,16 @@ class PmuController extends Controller
           return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
     }
 
+    public function toTaskTimeline($id)
+    {
+      //getting parent ID
+      $parent = Task::where('id','=',$id)
+            ->first('parent');
+
+      return redirect()->route('pmu.subtask', [$parent['parent']]);
+      return $parent;
+    }
+
 
 
 }

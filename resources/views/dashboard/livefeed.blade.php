@@ -129,7 +129,7 @@
                     </div>
                 </div>
                 <div class = "row">
-                  <p>{{$feed->text}} #Task: <a href = "/task_timeline/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
+                  <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
                 </div>
 
 

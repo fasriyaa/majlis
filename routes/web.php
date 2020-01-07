@@ -51,6 +51,7 @@ Route::group(['middleware' => ['permission:PMU']], function () {
 
     Route::get('/timeline', function () {return view('pmu.timeline');});
     Route::get('/assign_staff/{subtask_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_staff') -> name('pmu.assign_staff');
+    Route::get('/to_task_timelie/{id}', '\App\Http\Controllers\PMU\PmuController@toTaskTimeline') -> name('pmu.toTaskTimeline');
 });
 
 Route::group(['middleware' => ['role:Editor|Admin']], function () {
