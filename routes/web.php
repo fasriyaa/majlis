@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('/dashboard/home');
+    return redirect('/dashboard/livefeed');
 });
 
 Route::group(['middleware' => ['role:SCMember|Admin']], function () {
