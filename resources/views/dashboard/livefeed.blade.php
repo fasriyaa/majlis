@@ -1,5 +1,70 @@
 @extends('layouts.master')
 @section('content')
+<?php
+// Time Difference funciont
+
+function time_difference($updated_at)
+  {
+    $str = strtotime($updated_at);
+    $today = strtotime(date('Y-m-d H:i:s'));
+
+    // It returns the time difference in Seconds...
+    $time_differnce = $today-$str;
+
+    // To Calculate the time difference in Years...
+    $years = 60*60*24*365;
+
+    // To Calculate the time difference in Months...
+    $months = 60*60*24*30;
+
+    // To Calculate the time difference in Days...
+    $days = 60*60*24;
+
+    // To Calculate the time difference in Hours...
+    $hours = 60*60;
+
+    // To Calculate the time difference in Minutes...
+    $minutes = 60;
+
+    if(intval($time_differnce/$years) > 1)
+    {
+        return  intval($time_differnce/$years)." years ago";
+    }else if(intval($time_differnce/$years) > 0)
+    {
+        return  intval($time_differnce/$years)." year ago";
+    }else if(intval($time_differnce/$months) > 1)
+    {
+        return  intval($time_differnce/$months)." months ago";
+    }else if(intval(($time_differnce/$months)) > 0)
+    {
+        return  intval(($time_differnce/$months))." month ago";
+    }else if(intval(($time_differnce/$days)) > 1)
+    {
+        return  intval(($time_differnce/$days))." days ago";
+    }else if (intval(($time_differnce/$days)) > 0)
+    {
+        return  intval(($time_differnce/$days))." day ago";
+    }else if (intval(($time_differnce/$hours)) > 1)
+    {
+        return  intval(($time_differnce/$hours))." hours ago";
+    }else if (intval(($time_differnce/$hours)) > 0)
+    {
+        return  intval(($time_differnce/$hours))." hour ago";
+    }else if (intval(($time_differnce/$minutes)) > 1)
+    {
+        return  intval(($time_differnce/$minutes))." minutes ago";
+    }else if (intval(($time_differnce/$minutes)) > 0)
+    {
+        return  intval(($time_differnce/$minutes))." minute ago";
+    }else if (intval(($time_differnce)) > 1)
+    {
+        return  intval(($time_differnce))." seconds ago";
+    }else
+    {
+        return  "few seconds ago";
+    }
+  }
+ ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -64,64 +129,9 @@
                     <div class = "col-sm-2">
                       <?php
                         //Getting Feed time
-                              $str = strtotime($feed->updated_at);
-                              $today = strtotime(date('Y-m-d H:i:s'));
 
-                              // It returns the time difference in Seconds...
-                              $time_differnce = $today-$str;
+                        $feed_time = time_difference($feed->updated_at);
 
-                              // To Calculate the time difference in Years...
-                              $years = 60*60*24*365;
-
-                              // To Calculate the time difference in Months...
-                              $months = 60*60*24*30;
-
-                              // To Calculate the time difference in Days...
-                              $days = 60*60*24;
-
-                              // To Calculate the time difference in Hours...
-                              $hours = 60*60;
-
-                              // To Calculate the time difference in Minutes...
-                              $minutes = 60;
-
-                              if(intval($time_differnce/$years) > 1)
-                              {
-                                  $feed_time =  intval($time_differnce/$years)." years ago";
-                              }else if(intval($time_differnce/$years) > 0)
-                              {
-                                  $feed_time =  intval($time_differnce/$years)." year ago";
-                              }else if(intval($time_differnce/$months) > 1)
-                              {
-                                  $feed_time =  intval($time_differnce/$months)." months ago";
-                              }else if(intval(($time_differnce/$months)) > 0)
-                              {
-                                  $feed_time =  intval(($time_differnce/$months))." month ago";
-                              }else if(intval(($time_differnce/$days)) > 1)
-                              {
-                                  $feed_time =  intval(($time_differnce/$days))." days ago";
-                              }else if (intval(($time_differnce/$days)) > 0)
-                              {
-                                  $feed_time =  intval(($time_differnce/$days))." day ago";
-                              }else if (intval(($time_differnce/$hours)) > 1)
-                              {
-                                  $feed_time =  intval(($time_differnce/$hours))." hours ago";
-                              }else if (intval(($time_differnce/$hours)) > 0)
-                              {
-                                  $feed_time =  intval(($time_differnce/$hours))." hour ago";
-                              }else if (intval(($time_differnce/$minutes)) > 1)
-                              {
-                                  $feed_time =  intval(($time_differnce/$minutes))." minutes ago";
-                              }else if (intval(($time_differnce/$minutes)) > 0)
-                              {
-                                  $feed_time =  intval(($time_differnce/$minutes))." minute ago";
-                              }else if (intval(($time_differnce)) > 1)
-                              {
-                                  $feed_time =  intval(($time_differnce))." seconds ago";
-                              }else
-                              {
-                                  $feed_time =  "few seconds ago";
-                              }
                         // End Feed time
 
                       ?>
@@ -172,89 +182,82 @@
             <!-- /.card-header -->
             <div class="card-body">
               <ul class="todo-list">
-                <li>
-                  <!-- drag handle -->
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <!-- checkbox -->
-                  <input type="checkbox" value="" name="">
-                  <!-- todo text -->
-                  <span class="text">Discuss the enhancements</span>
-                  <!-- Emphasis label -->
-                  <small class="badge badge-danger"><i class="fa fa-clock-o"></i> 2 mins</small>
-                  <!-- General tools such as edit or delete-->
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
-                <li>
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">Enhance UI</span>
-                  <small class="badge badge-info"><i class="fa fa-clock-o"></i> 1 hours</small>
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
-                <li>
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">Host the portal</span>
-                  <small class="badge badge-warning"><i class="fa fa-clock-o"></i> 3 Hours</small>
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
-                <li>
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">Develop Reports</span>
-                  <small class="badge badge-success"><i class="fa fa-clock-o"></i> 12 hours</small>
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
-                <li>
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">Register all users</span>
-                  <small class="badge badge-primary"><i class="fa fa-clock-o"></i> 1 day</small>
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
-                <li>
-                  <span class="handle">
-                    <i class="fa fa-ellipsis-v"></i>
-                    <i class="fa fa-ellipsis-v"></i>
-                  </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">Upload all the activities</span>
-                  <small class="badge badge-secondary"><i class="fa fa-clock-o"></i> 1 day</small>
-                  <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
-                  </div>
-                </li>
+
+                <!-- generating pending list -->
+                @foreach($subtasks as $subtask)
+
+                    @foreach($tasks as $task)
+                      @if($task->id == $subtask->parent)
+                        <?php $parent = $task->text; ?>
+                      @endif
+                    @endforeach
+                      <li>
+                        <!-- drag handle -->
+                        <span class="handle">
+                          <i class="fa fa-ellipsis-v"></i>
+                          <i class="fa fa-ellipsis-v"></i>
+                        </span>
+                        <!-- checkbox -->
+                        <input type="checkbox" value="" name="" id="{{$subtask->id}}" onclick="update_progress(this);">
+                        <!-- todo text -->
+                        <span class="text">{{$subtask->text}} | {{$parent}}</span>
+                        <!-- Emphasis label -->
+
+                        <!-- General tools such as edit or delete-->
+                        <div class="tools">
+                          <i class="fa fa-edit"></i>
+                          <i class="fa fa-trash-o"></i>
+                        </div>
+                      </li>
+                @endforeach
+
+                @foreach($pending_approvals as $pending_approval)
+                    <li>
+                      <!-- drag handle -->
+                      <span class="handle">
+                        <i class="fa fa-ellipsis-v"></i>
+                        <i class="fa fa-ellipsis-v"></i>
+                      </span>
+                      <!-- checkbox -->
+                      <input type="checkbox" value="" name="" id="{{$pending_approval->task_id}}" onclick="update_progress(this);">
+                      <!-- todo text -->
+                      <span class="text">Pending Approval for: {{$pending_approval->task['text']}}</span>
+                      <!-- Emphasis label -->
+
+                      <!-- General tools such as edit or delete-->
+                      <div class="tools">
+                        <i class="fa fa-edit"></i>
+                        <i class="fa fa-trash-o"></i>
+                      </div>
+                    </li>
+                @endforeach
+
+                @foreach($pending_docs as $pending_doc)
+                    <li>
+                      <!-- drag handle -->
+                      <span class="handle">
+                        <i class="fa fa-ellipsis-v"></i>
+                        <i class="fa fa-ellipsis-v"></i>
+                      </span>
+                      <!-- checkbox -->
+                      <input type="checkbox" value="" name="" id="{{{$pending_doc->id}}}}" onclick="update_progress(this);">
+                      <!-- todo text -->
+                      <span class="text">Pending Document for: {{$pending_doc->text}}</span>
+                      <!-- Emphasis label -->
+
+                      <!-- General tools such as edit or delete-->
+                      <div class="tools">
+                        <i class="fa fa-edit"></i>
+                        <i class="fa fa-trash-o"></i>
+                      </div>
+                    </li>
+                @endforeach
+                <!-- /.pending list -->
+
+
+
+
+
               </ul>
             </div>
             <!-- /.card-body -->
@@ -278,6 +281,41 @@
 @endsection
 
 @section('javascript')
+
+<script type="text/javascript">
+
+function update_progress(object)
+{
+  if(object.checked)
+    {
+      var progress = 1;
+    }else {
+        var progress = 0;
+    }
+    var subtask_id = object.id;
+
+    if(subtask_id){
+          $.ajax({
+             type:"get",
+             url:"{{url('/update_progress')}}/"+subtask_id+"/"+progress,
+             success:function(res)
+             {
+                  if(res)
+                  {
+                    location.reload();
+                  }
+             }
+
+          });
+    }
+}
+
+
+
+</script>
+
+
+
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
