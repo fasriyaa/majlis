@@ -33,17 +33,17 @@
               </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('home') }}" class="nav-link {!! classActiveSegment(2, 'home') !!}">
-                    <i class="fas fa-circle"></i>
-                    <p>Dashboard v1</p>
-                  </a>
+                          <a href="{{ route('home') }}" class="nav-link {!! classActiveSegment(2, 'home') !!}">
+                            <i class="fas fa-circle"></i>
+                            <p>Dashboard v1</p>
+                          </a>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a href="{{ route('v2') }}" class="nav-link {!! classActiveSegment(2, 'v2') !!}">
-                    <i class="fas fa-circle"></i>
-                    <p>Dashboard v2</p>
-                  </a>
-                        </li> -->
+                        <li class="nav-item">
+                            <a href="{{route('livefeed')}}" class="nav-link {!! classActiveSegment(2, 'v2') !!}">
+                              <i class="fas fa-circle"></i>
+                              <p>Live Feed</p>
+                            </a>
+                        </li>
                         <!-- <li class="nav-item">
                             <a href="{{ route('v3') }}" class="nav-link {!! classActiveSegment(2, 'v3') !!}">
                     <i class="fas fa-circle"></i>

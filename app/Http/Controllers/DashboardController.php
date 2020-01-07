@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\models\gantt\Task;
+use App\models\timeline\Timeline;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -44,6 +45,7 @@ class DashboardController extends Controller
 
         return view('dashboard.v1', compact('milestone', 'activities'));
     }
+
     public function versiontwo()
     {
         return view('dashboard.v2');
@@ -51,5 +53,21 @@ class DashboardController extends Controller
     public function versionthree()
     {
         return view('dashboard.v3');
+    }
+
+    public function livefeed()
+    {
+
+        //Getting feed from timeline
+
+        $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id')
+            ->with('user:id,name')
+            ->with('task:id,text')
+            ->orderby('updated_at','DESC')
+            ->limit(20)
+            ->get();
+
+        // return $feeds;
+        return view('dashboard.livefeed',compact('feeds'));
     }
 }

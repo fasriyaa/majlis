@@ -75,6 +75,7 @@ Auth::routes();
 
 Route::group(['middleware' => ['role:SCMember|Admin']], function () {
       Route::get('/dashboard/home', 'DashboardController@versionone')->name('home');
+      Route::get('/dashboard/livefeed', 'DashboardController@livefeed')->name('livefeed');
       Route::get('/dashboard/v2', 'DashboardController@versiontwo')->name('v2');
       Route::get('/dashboard/v3', 'DashboardController@versionthree')->name('v3');
 });

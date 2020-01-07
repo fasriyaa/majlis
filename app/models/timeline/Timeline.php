@@ -12,4 +12,9 @@ class Timeline extends Model
     {
       return $this->belongsTo('App\User', 'user_id');
     }
+
+    public function task()
+    {
+      return $this->belongsTo('App\models\gantt\Task', 'task_id');
+    }
 }
