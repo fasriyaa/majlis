@@ -214,7 +214,105 @@ class PmuController extends Controller
         }
       $text = "Progress Update to ". $progress_text;
       $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id]);
-      return response()->json($new_timeline);
+
+
+      //updating progress of level Task
+        $task = Task::where('id',$subtask_id)
+                  ->pluck('parent');
+
+        $data = Task::select('progress','duration')
+                  ->where('parent',$task)
+                  ->get('duration');
+
+        $sigma_dp = 0;
+        $sigma_d = 0;
+        foreach ($data as $dp) {
+          $sigma_dp = $sigma_dp + ($dp['duration']*$dp['progress']);
+          $sigma_d = $sigma_d + ($dp['duration']);
+        }
+
+        $update_progress = Task::Where('id', $task)
+                ->Update(['progress' => round($sigma_dp/$sigma_d,2)]);
+      //end updating progress of parent task
+
+      //updating progress of level Sub-Activity
+        $sub_activity = Task::where('id',$task)
+                  ->pluck('parent');
+
+        $data = Task::select('progress','duration')
+                  ->where('parent',$sub_activity)
+                  ->get('duration');
+
+        $sigma_dp = 0;
+        $sigma_d = 0;
+        foreach ($data as $dp) {
+          $sigma_dp = $sigma_dp + ($dp['duration']*$dp['progress']);
+          $sigma_d = $sigma_d + ($dp['duration']);
+        }
+
+        $update_progress = Task::Where('id', $sub_activity)
+                ->Update(['progress' => round($sigma_dp/$sigma_d,2)]);
+      //end updating progress of sub activity
+
+      //updating progress of level Activity
+        $activity = Task::where('id',$sub_activity)
+                  ->pluck('parent');
+
+        $data = Task::select('progress','duration')
+                  ->where('parent',$activity)
+                  ->get('duration');
+
+        $sigma_dp = 0;
+        $sigma_d = 0;
+        foreach ($data as $dp) {
+          $sigma_dp = $sigma_dp + ($dp['duration']*$dp['progress']);
+          $sigma_d = $sigma_d + ($dp['duration']);
+        }
+
+        $update_progress = Task::Where('id', $activity)
+                ->Update(['progress' => round($sigma_dp/$sigma_d,2)]);
+      //end updating progress of activity
+
+      //updating progress of level sub component
+        $sub_component = Task::where('id',$activity)
+                  ->pluck('parent');
+
+        $data = Task::select('progress','duration')
+                  ->where('parent',$sub_component)
+                  ->get('duration');
+
+        $sigma_dp = 0;
+        $sigma_d = 0;
+        foreach ($data as $dp) {
+          $sigma_dp = $sigma_dp + ($dp['duration']*$dp['progress']);
+          $sigma_d = $sigma_d + ($dp['duration']);
+        }
+
+        $update_progress = Task::Where('id', $sub_component)
+                ->Update(['progress' => round($sigma_dp/$sigma_d,2)]);
+      //end updating progress of subcomponent
+
+      //updating progress of level Components
+        $component = Task::where('id',$sub_component)
+                  ->pluck('parent');
+
+        $data = Task::select('progress','duration')
+                  ->where('parent',$component)
+                  ->get('duration');
+
+        $sigma_dp = 0;
+        $sigma_d = 0;
+        foreach ($data as $dp) {
+          $sigma_dp = $sigma_dp + ($dp['duration']*$dp['progress']);
+          $sigma_d = $sigma_d + ($dp['duration']);
+        }
+
+        $update_progress = Task::Where('id', $component)
+                ->Update(['progress' => round($sigma_dp/$sigma_d,2)]);
+      //end updating progress of components
+
+
+      // return response()->json($new_timeline);
 
     }
 
