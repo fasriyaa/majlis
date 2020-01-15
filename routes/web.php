@@ -52,6 +52,12 @@ Route::group(['middleware' => ['permission:PMU']], function () {
     Route::get('/timeline', function () {return view('pmu.timeline');});
     Route::get('/assign_staff/{subtask_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_staff') -> name('pmu.assign_staff');
     Route::get('/to_task_timelie/{id}', '\App\Http\Controllers\PMU\PmuController@toTaskTimeline') -> name('pmu.toTaskTimeline');
+
+    Route::get('/add_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@add_subtask') -> name('gantt.addSubtask');
+    Route::post('/subitem', '\App\Http\Controllers\Gantt\TaskController@subitem_store') -> name('subitem.store');
+    Route::get('/reorder_task/{id}', '\App\Http\Controllers\Gantt\TaskController@reorder_task') -> name('gantt.reorder');
+    Route::post('/sortorder/{id}/{index}', '\App\Http\Controllers\Gantt\TaskController@sortorder') -> name('gantt.sortorder');
+
 });
 
 Route::group(['middleware' => ['role:Editor|Admin']], function () {

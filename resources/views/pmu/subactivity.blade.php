@@ -68,7 +68,12 @@
 
           @foreach($subactivities as $subactivity)
                 <tr id = "{{$subactivity->id}}" onclick = "location.href='/task/'+this.id;">
-                  <td>{{$subactivity->id}}</td>
+                  <td>
+                    <span class="handle">
+                      <i class="fa fa-ellipsis-v"></i>
+                      <i class="fa fa-ellipsis-v"></i>
+                    </span>
+                  </td>
                   <td>{{$subactivity->text}}</td>
                   <td></td>
                   <td></td>
@@ -89,13 +94,18 @@
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+              <div class = "row">
+                  <div class = "col-sm-11">
+                        <a href = "/add_subtask/{{$activity['id']}}"><button type="button" class="btn btn-info float-right"><i class="fa fa-plus"></i> Add</button></a>
+                      </div>
+                      <div class = "col-sm-1">
+                        <a href = "/reorder_task/{{$activity['id']}}"><button type="button" class="btn btn-info float-right">Reorder</button></a>
+                      </div>
+                      <!-- <div class = "col-sm-1">
+                        <a href = "/reorder_task/{{$activity['id']}}"><button type="button" class="btn btn-info float-right">&nbsp Gantt &nbsp</button></a>
+                      </div> -->
+              </div>
+
             </div>
             <!-- /. Card footer -->
           </div>

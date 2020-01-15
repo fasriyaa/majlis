@@ -91,12 +91,13 @@ class PmuController extends Controller
 
     public function subactivity($id)
     {
-      $activity = Task::select('text')
+      $activity = Task::select('id','text')
           ->where('id', '=', $id)
           ->first();
 
       $subactivities = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
+          ->orderby('sortorder','ASC')
           ->get();
 
       return view('pmu.subactivity', compact('activity', 'subactivities'));
@@ -129,6 +130,7 @@ class PmuController extends Controller
 
       $tasks = Task::select('id', 'text', 'progress', 'start_date', 'duration')
           ->where('parent', '=', $id)
+          ->orderby('sortorder','ASC')
           ->get();
 
       return view('pmu.task', compact('subactivity', 'tasks'));
@@ -163,7 +165,7 @@ class PmuController extends Controller
       $users = User::select('id', 'name')
           ->get();
 
-      $task = Task::select('text','parent')
+      $task = Task::select('id','text','parent')
           ->where('id', '=', $id)
           ->first();
 
@@ -312,7 +314,7 @@ class PmuController extends Controller
       //end updating progress of components
 
 
-      // return response()->json($new_timeline);
+      return response()->json($new_timeline);
 
     }
 

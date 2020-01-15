@@ -5,6 +5,9 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\models\gantt\Task;
+use Redirect;
+
+// use Session;
 
 class TaskController extends Controller
 {
@@ -78,4 +81,83 @@ class TaskController extends Controller
             "action"=> "deleted"
         ]);
     }
+
+
+    public function add_subtask($id)
+    {
+      // set url session
+      $task_url = url()->previous();
+      $task_url = session(['task_url' => $task_url]);
+
+
+      //get task detials
+      $task = Task::select('id','text')
+          ->where('id',$id)
+          ->first();
+
+      // return $url;
+      return view('gantt.create_subtask', compact('task'));
+    }
+
+    public function subitem_store(Request $request)
+    {
+      $task = new Task();
+
+      $task->text = $request->name;
+      $task->start_date = date("Y-m-d", strtotime($request->start_date));
+      $task->duration = $request->duration;
+      $task->progress = $request->has("progress") ? $request->progress : 0;
+      $task->parent = $request->parent;
+      $task->sortorder = Task::max("sortorder") + 1;
+
+      $task->save();
+
+      $task_url = session('task_url');
+      return Redirect::to($task_url);
+      // return $task->start_date;
+    }
+
+    public function reorder_task($id)
+    {
+      // set url session
+      $task_url = url()->previous();
+      $task_url = session(['task_url' => $task_url]);
+
+
+      //get task detials
+      $task = Task::select('id','text')
+          ->where('id',$id)
+          ->first();
+
+      $sub_items = Task::select('id','text','sortorder')
+          ->where('parent',$id)
+          ->orderby('sortorder','ASC')
+          ->get();
+
+      // return $sub_items;
+      return view('gantt.reorder_task', compact('task','sub_items'));
+    }
+
+    public function sortorder(Request $request, $id, $index)
+    {
+      //get sub items in existing orderby
+      $parent = Task::where('id',$id)
+            ->pluck('parent');
+
+      $sub_items = Task::select('id')
+              ->where('parent',$parent)
+              ->orderby('sortorder')
+              ->get()->toArray();
+
+      // $index = $index+1;
+      $target_id = $sub_items[$index]['id'];
+      $this->updateOrder($id,$target_id);
+
+      return response()->json([
+          "action"=> "updated"
+      ]);
+
+    }
+
+
 }

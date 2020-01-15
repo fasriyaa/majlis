@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/data', 'Gantt\GanttController@get');
 Route::resource('task', 'Gantt\TaskController');
 Route::resource('link', 'Gantt\LinkController');
+
+Route::get('/data_selected', 'Gantt\GanttController@get_selected');
