@@ -14,8 +14,10 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">.....</li>
-            <li class="breadcrumb-item active">Sub Activities</li>
+            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
+            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Component</a></li>
+            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">Activity</a></li>
+            <li class="breadcrumb-item active"><a href = "{{ URL::previous() }}">Sub Activities</a></li>
             <li class="breadcrumb-item active">Tasks</li>
           </ol>
         </div>

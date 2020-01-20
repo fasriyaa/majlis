@@ -317,6 +317,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/pmu_daily_list" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>PMU Daily</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Others</p>

@@ -5,7 +5,9 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\models\gantt\Task;
+use App\models\timeline\Timeline;
 use Redirect;
+use Auth;
 
 // use Session;
 
@@ -23,6 +25,7 @@ class TaskController extends Controller
         $task->sortorder = Task::max("sortorder") + 1;
 
         $task->save();
+
 
         return response()->json([
             "action"=> "inserted",
@@ -112,9 +115,14 @@ class TaskController extends Controller
 
       $task->save();
 
+      //create timeline record
+      $text = "New Task Created";
+      $type = 3; // for creating new task
+      $this->new_timeline($text, $task->id, $type);
+
       $task_url = session('task_url');
       return Redirect::to($task_url);
-      // return $task->start_date;
+      // return $task->id;
     }
 
     public function reorder_task($id)
@@ -156,6 +164,13 @@ class TaskController extends Controller
       return response()->json([
           "action"=> "updated"
       ]);
+
+    }
+
+    private function new_timeline($text, $task, $type)
+    {
+      $user_id = Auth::id();
+      $new_timeline = Timeline::create(['text' => $text, 'task' => $task, 'user' => $user_id, 'type' => $type]);
 
     }
 

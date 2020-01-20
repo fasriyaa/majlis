@@ -49,26 +49,32 @@ class PmuController extends Controller
 
     public function subcomponent($id)
     {
-      $component = Task::select('text')
+      $component = Task::select('text','parent')
           ->where('id', "=", $id)
           ->first();
 
       $subcomponents = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
           ->get();
+
+      // return $component;
+
       return view('pmu.subcomponent', compact('subcomponents', 'component'));
     }
 
     public function activity($id)
     {
-      $subcomponent = Task::select('text')
+      $subcomponent = Task::select('id','text','parent')
           ->where('id', '=', $id)
           ->first();
 
+
       $activities = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
+          ->orderby('sortorder','ASC')
           ->get();
 
+      // return $subcomponent;
       return view('pmu.activity', compact('subcomponent', 'activities'));
     }
 
@@ -91,7 +97,7 @@ class PmuController extends Controller
 
     public function subactivity($id)
     {
-      $activity = Task::select('id','text')
+      $activity = Task::select('id','text','parent')
           ->where('id', '=', $id)
           ->first();
 
@@ -100,7 +106,14 @@ class PmuController extends Controller
           ->orderby('sortorder','ASC')
           ->get();
 
-      return view('pmu.subactivity', compact('activity', 'subactivities'));
+      //getting subcomponent
+      $subcomponent = Task::select('parent')
+            ->where('id',$activity['parent'])
+            ->first();
+
+      // return $activity;
+
+      return view('pmu.subactivity', compact('activity', 'subactivities','subcomponent'));
     }
 
     public function subactivities()
@@ -124,7 +137,7 @@ class PmuController extends Controller
 
     public function task($id)
     {
-      $subactivity = Task::select('text','id')
+      $subactivity = Task::select('text','id','parent')
           ->where('id', '=', $id)
           ->first();
 
@@ -133,7 +146,17 @@ class PmuController extends Controller
           ->orderby('sortorder','ASC')
           ->get();
 
-      return view('pmu.task', compact('subactivity', 'tasks'));
+      $activity = Task::select('parent')
+              ->where('id',$subactivity['parent'])
+              ->first();
+
+      $subcomponent = Task::select('parent')
+                ->where('id',$activity['parent'])
+                ->first();
+
+      // return $subcomponent;
+
+      return view('pmu.task', compact('subactivity', 'tasks','activity','subcomponent'));
     }
 
     public function tasks()
@@ -169,7 +192,7 @@ class PmuController extends Controller
           ->where('id', '=', $id)
           ->first();
 
-      $subactivity = Task::select('text')
+      $subactivity = Task::select('parent','text')
           ->where('id', '=', $task['parent'])
           ->first();
 
@@ -179,8 +202,18 @@ class PmuController extends Controller
           ->orderby('sortorder', 'ASC')
           ->get();
 
+      $activity = Task::select('parent')
+          ->where('id',$subactivity['parent'])
+          ->first();
 
-      return view('pmu.subtask', compact('task', 'subactivity', 'subtasks', 'users'));
+      $subcomponent = Task::select('parent')
+          ->where('id',$activity['parent'])
+          ->first();
+
+      // return $subcomponent;
+
+
+      return view('pmu.subtask', compact('task', 'subactivity', 'subtasks', 'users','activity','subcomponent'));
     }
 
     public function assign_staff($subtask_id, $staff_id)
@@ -591,6 +624,8 @@ class PmuController extends Controller
 
           //updating the timeline
           $text = "Uploaded Document ". $file_name;
+
+          // $new_record = new_timeline($text, $request->subtask6_id,0);
           $new_timeline = Timeline::create(['text' => $text, 'task' => $request->subtask6_id, 'user' => $user_id]);
 
           return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
@@ -605,6 +640,8 @@ class PmuController extends Controller
       return redirect()->route('pmu.subtask', [$parent['parent']]);
       return $parent;
     }
+
+    
 
 
 

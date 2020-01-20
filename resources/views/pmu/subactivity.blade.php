@@ -14,8 +14,9 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">.....</li>
-            <li class="breadcrumb-item active">Activities</li>
+            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
+            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Components</a></li>
+            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">Activities</a></li>
             <li class="breadcrumb-item active">Sub Activities</li>
           </ol>
         </div>

@@ -45,6 +45,7 @@ class MainModulesController extends Controller
     {
         $main_modules = MainModules::create($request->all() + ['status' => 1]);
         return view('modules.index');
+
     }
 
     /**

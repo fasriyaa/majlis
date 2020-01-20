@@ -7,16 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Activities of:</h1>
-          <p>{{$subcomponent['text']}}</p>
+          <h1 class="m-0 text-dark">PMU Daily Meetings</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
-            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Components</a></li>
-            <li class="breadcrumb-item active">Activities</li>
+            <li class="breadcrumb-item active">Discussions</li>
+            <li class="breadcrumb-item active">PMU Daily Meetings</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -35,7 +33,7 @@
       <!-- Main row -->
       <div class="row">
 
-        <div class="col-12">
+        <div class="col-7">
           <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">List</h3>
@@ -56,31 +54,32 @@
 
                 <tr>
                   <th>ID</th>
-                  <th>Activities</th>
-                  <th>Budget</th>
-                  <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
-                  <th>Un allocaed</th>
-                  <th>Overall Progress</th>
+                  <th>Date</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
 
-          @foreach($activities as $activity)
-                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
-                  <td>{{$activity->id}}</td>
-                  <td>{{$activity->text}}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{{$activity->progress*100}}%</td>
+                @foreach($pmu_lists as $pmu_list)
+                <tr id = "{{$pmu_list->id}}" onclick = "location.href='/pmu_daily_meeting/'+this.id;">
+                  <td>{{$pmu_list->id}}</td>
+                  <td>Meeting on: {{date("d M Y H:m", strtotime($pmu_list->created_at))}}</td>
+                    <?php
+                      if($pmu_list->status == 1)
+                      {
+                        $status = "Open";
+                        $color = "green";
+                      }else {
+                        $status = "Closed";
+                        $color = "red";
+                      }
+                    ?>
+                  <td><font color = "{{$color}}">{{$status}}</font></td>
                   <td field-key='action'>
-                    <a href="{{ route('pmu.subactivity',[$activity->id]) }}" class="fa fa-eye"></a>
+                    <a href="#" class="fa fa-eye"></a>
                   </td>
                 </tr>
-          @endforeach
+                @endforeach
+
 
 
 
@@ -101,6 +100,28 @@
           </div>
           <!-- /.card -->
         </div>
+        <!-- /. Left col -->
+
+        <!-- Right Col -->
+        <div class = "col-sm-5">
+          <div class = "col-sm-12">
+            <div class="card card">
+              <div class="card-header">
+                <h3 class="card-title">Actions</a></h3>
+              </div>
+              <!-- /. card header -->
+
+              <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                      <tr>
+                        <td><a href = "" data-toggle="modal" data-target="#new_meeting">Create New Meeting </a></td>
+                      </tr>
+                    </table>
+              </div>
+            </div>
+          </dvi>
+        </div>
+        <!-- /. Right col -->
 
       </div>
       <!-- /.row (main row) -->
@@ -112,7 +133,47 @@
 <!-- /.content-wrapper -->
 @endsection
 
+<!-- Create New meeting Modal -->
+<div class="modal fade" id="new_meeting">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Create New Meeting</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['pmu_daily_list.store'], 'files' => false,]) !!}
+        <input type="hidden" name = "type" id = "type" value = "3">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <?php $date = date('d M Y'); ?>
+          <p> Are you sure you want to create a meeting for : {{$date}} ?</p>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Create new meeting Modal -->
+
 @section('javascript')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+
+
+
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->

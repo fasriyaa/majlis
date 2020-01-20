@@ -58,6 +58,12 @@ Route::group(['middleware' => ['permission:PMU']], function () {
     Route::get('/reorder_task/{id}', '\App\Http\Controllers\Gantt\TaskController@reorder_task') -> name('gantt.reorder');
     Route::post('/sortorder/{id}/{index}', '\App\Http\Controllers\Gantt\TaskController@sortorder') -> name('gantt.sortorder');
 
+    Route::resource('pmu_daily_list', '\App\Http\Controllers\Discussions\DiscussionsController');
+    Route::get('/pmu_daily_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@pmu_daily_meeting') -> name('pmu.daily.meeting');
+    Route::post('/review', '\App\Http\Controllers\Discussions\DiscussionsController@review') -> name('pmu.review');
+    Route::post('/add_participants', '\App\Http\Controllers\Discussions\DiscussionsController@add_participants') -> name('add.participants');
+    Route::post('/close_discussion', '\App\Http\Controllers\Discussions\DiscussionsController@close_discussion') -> name('close.discussion');
+
 });
 
 Route::group(['middleware' => ['role:Editor|Admin']], function () {
