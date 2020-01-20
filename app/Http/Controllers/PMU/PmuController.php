@@ -424,7 +424,7 @@ class PmuController extends Controller
           ->get();
 
       //getting the Task Details
-      $task_name = Task::select('text','id','progress','staff')
+      $task_name = Task::select('text','id','progress','staff','parent')
             ->where('id', '=', $id)
             ->with('user:id,name')
             ->first();
@@ -460,6 +460,7 @@ class PmuController extends Controller
             ->where('task_id','=',$id)
             ->where('status','=',2)
             ->get();
+
 
       $approval_count = count($approvals);
       $approve_count = count($approves);
@@ -641,7 +642,7 @@ class PmuController extends Controller
       return $parent;
     }
 
-    
+
 
 
 

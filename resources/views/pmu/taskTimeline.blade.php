@@ -15,7 +15,7 @@
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">.....</li>
-            <li class="breadcrumb-item active">Sub Activities</li>
+            <li class="breadcrumb-item active"><a href = "/subtask/{{$task_name['parent']}}">Sub Activities</a></li>
             <li class="breadcrumb-item active">Details</li>
           </ol>
         </div>
@@ -217,7 +217,7 @@
             <!-- /. Left Documents Table -->
             <!-- Left Comments Table -->
             <div class = "col-sm-12">
-              
+
             </div>
             <!-- /. Left Comments Table -->
           </div>
