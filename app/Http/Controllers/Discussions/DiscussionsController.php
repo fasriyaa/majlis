@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\models\gantt\Task;
 use App\models\discussions\TaskDiscussions;
 use App\models\discussions\DiscussionParticipants;
+use App\models\discussions\Snooz;
 use App\models\docs\RequireDoc;
 use App\User;
 
@@ -58,7 +59,7 @@ class DiscussionsController extends Controller
 
         if($request->input('type') == 3)
         {
-            $data = $this->discussion_task($discussion->id);
+            $data = $this->discussion_task($discussion->id,3);
         }
         return redirect()->route('pmu_daily_list.index');
         // return $data;
@@ -109,7 +110,7 @@ class DiscussionsController extends Controller
         //
     }
 
-    private function discussion_task($id)
+    private function discussion_task($id, $discussion_cat_id)
     {
       //getting all the subtasks
       // Getting Main component ID
@@ -139,17 +140,29 @@ class DiscussionsController extends Controller
             ->orderby('sortorder','ASC')
             ->first();
 
-        if($subtasks['id'] != null)
-            {
-              $task_dis = new TaskDiscussions();
-              $task_dis->discussion_id = $id;
-              $task_dis->task_id = $subtasks['id'];
+          $snooz = Snooz::select('end_date')
+              ->where('task_id', $subtasks['id'])
+              ->where('discussion_cat_id', $discussion_cat_id)
+              ->orderby('end_date','DESC')
+              ->first();
 
-              $task_dis->save();
-            }
+
+            if($subtasks['id'] != null)
+              if(date('Y-m-d')>$snooz['end_date'])
+              {
+                {
+                  $task_dis = new TaskDiscussions();
+                  $task_dis->discussion_id = $id;
+                  $task_dis->task_id = $subtasks['id'];
+
+                  $task_dis->save();
+                }
+              }
+
       }
 
 
+      // return $snooz;
       return 3; // for pmu daily meetings
 
 
@@ -178,10 +191,28 @@ class DiscussionsController extends Controller
           ->with('task:id,text,staff')
           ->first();
 
+      if(isset($next_item->task_id))
+      {
+            $next_item_prev = TaskDiscussions::select('comment','next_step')
+                ->where('task_id',$next_item->task_id)
+                ->where('status',2)
+                ->orderby('updated_at','DESC')
+                ->first();
+      }else {
+        $next_item_prev = null;
+      }
+
+
       //getting assinged staff
-      $assinged_staff = User::select('name')
-          ->where('id',$next_item->task['staff'])
-          ->first();
+      if(isset($next_item->task_id))
+      {
+            $assinged_staff = User::select('name')
+                ->where('id',$next_item->task['staff'])
+                ->first();
+      }else{
+        $assinged_staff = null;
+      }
+
 
       // Getting users
       $users = User::select('id', 'name')
@@ -198,8 +229,10 @@ class DiscussionsController extends Controller
           ->wherein('task_id',$subtasks_id )
           ->get();
 
+
+
         // return $assinged_staff;
-      return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff'));
+      return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
     }
 
     public function review(Request $request)
@@ -211,6 +244,21 @@ class DiscussionsController extends Controller
       $review->status = 2;
       $review->save();
 
+      // Record in snooz if defined
+      if($request->has("snooz"))
+      {
+        $new_snooz = new Snooz();
+
+        $new_snooz->task_id = $request->input('task_id');
+        $new_snooz->discussion_id = $request->input('discussion_id');
+        $new_snooz->discussion_cat_id = $request->input('discussion_cat_id');
+        $new_snooz->start_date = date('Y-m-d');
+        $new_snooz->end_date = Date('Y-m-d', strtotime("+".$request->input('snooz')." days"));
+
+        $new_snooz->save();
+      }
+
+      // return $new_snooz;
 
       return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
 
@@ -221,9 +269,9 @@ class DiscussionsController extends Controller
 
         $user = DiscussionParticipants::where('discussion_id',$request->input('discussion_id'))
             ->where('user_id',$request->input('user_id'))
-            ->first()->exists();
+            ->first();
 
-        if($user==true)
+        if(isset($user->id))
         {
 
         }else {

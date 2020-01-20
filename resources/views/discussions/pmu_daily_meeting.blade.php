@@ -36,7 +36,7 @@
         <div class="col-7">
           <div class="card card-info">
             <div class="card-header">
-              <h3 class="card-title">Cruid List</h3>
+              <h3 class="card-title">Pending Reivews</h3>
 
               <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
@@ -64,9 +64,10 @@
                         <?php $count = $count+1; ?>
                         <tr id = "1" onclick = "#">
                           <td>{{$count}}</td>
-                          <td>{{$subtask->task['text']}}</td>
+                          <td id = "{{$subtask->task['id']}}" onclick = "location.href='/task_timeline/'+this.id;">{{$subtask->task['text']}}</td>
                           <td field-key='action'>
-                            <a href="#" class="fa fa-eye"></a>
+                            <a href="/task_timeline/{{$subtask->task['id']}}" class="fa fa-eye"></a>
+                            <a href="" id = "selected_review" class="fa fa-file-alt"></a>
                           </td>
                         </tr>
                     @endif
@@ -80,13 +81,7 @@
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+
             </div>
             <!-- /. Card footer -->
           </div>
@@ -140,13 +135,7 @@
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
-                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+
             </div>
             <!-- /. Card footer -->
           </div>
@@ -216,9 +205,11 @@
             <div class="card-body table-responsive p-0">
                   <table class="table table-hover">
                     @foreach($docs as $doc)
-                    <tr>
-                      <td><a href = "{{ url('/files', $doc->doc_name) }}">{{$doc->doc_name}}</a></td>
-                    </tr>
+                        @if($doc->doc_name != null)
+                        <tr>
+                          <td><a href = "{{ url('/files', $doc->doc_name) }}">{{$doc->doc_name}}</a></td>
+                        </tr>
+                        @endif
                     @endforeach
                   </table>
             </div>
@@ -271,16 +262,31 @@
       <div class="modal-body">
         {!! Form::open(['method' => 'POST', 'route' => ['pmu.review'], 'files' => false,]) !!}
         <input type="hidden" name = "id" id = "id" value = "{{$next_item->item_id ?? ''}}">
+        <input type="hidden" name = "task_id" id = "task_id" value = "{{$next_item->task_id ?? ''}}">
+        <input type="hidden" name = "discussion_cat_id" id = "discussion_cat_id" value = "3">
         <input type="hidden" name = "discussion_id" id = "discussion_id" value = "{{$discussion_status['id']}}">
         <input type="hidden" name = "_token" value="{{ csrf_token() }}">
         <div class="form-group">
           <p>Task: {{$next_item->task['text'] ?? ''}}</p>
           <p>Assigned To: {{$assinged_staff->name ?? ''}}</p>
           <label for="status">Current Status</label>
-          <textarea id = "status" name = "status" class="form-control" rows="3" value = ""></textarea>
+          <?php
+            if($next_item_prev == null)
+            {
+              $comment = "";
+              $next_step = "";
+            }else {
+              $comment = $next_item_prev->comment;
+              $next_step = $next_item_prev->next_step;
+            }
+          ?>
+          <textarea id = "status" name = "status" class="form-control" rows="3" value = "">{{$comment}}</textarea>
           <br>
           <label for="next_step">Next Step</label>
-          <textarea id = "next_step" name = "next_step" class="form-control" rows="3"></textarea>
+          <textarea id = "next_step" name = "next_step" class="form-control" rows="3">{{$next_step}}</textarea>
+          <br>
+          <label for="snooz">Snooz (Days)</label>
+          <input type = "text" name = "snooz" class = "form-control"></input>
         </div>
       </div>
       <!-- /. Address Modal body -->
@@ -295,6 +301,61 @@
   </div>
 </div>
 <!-- /. Review line items modal -->
+
+<!-- Review selected line items modal -->
+<div class="modal fade" id="selected_review">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Review</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['pmu.review'], 'files' => false,]) !!}
+        <input type="text" name = "id" id = "id" value = "{{$next_item->item_id ?? ''}}">
+        <input type="text" name = "task_id" id = "task_id" value = "{{$next_item->task_id ?? ''}}">
+        <input type="text" name = "discussion_cat_id" id = "discussion_cat_id" value = "3">
+        <input type="text" name = "discussion_id" id = "discussion_id" value = "{{$discussion_status['id']}}">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <p>Task: {{$next_item->task['text'] ?? ''}}</p>
+          <p>Assigned To: {{$assinged_staff->name ?? ''}}</p>
+          <label for="status">Current Status</label>
+          <?php
+            if($next_item_prev == null)
+            {
+              $comment = "";
+              $next_step = "";
+            }else {
+              $comment = $next_item_prev->comment;
+              $next_step = $next_item_prev->next_step;
+            }
+          ?>
+          <textarea id = "status" name = "status" class="form-control" rows="3" value = "">{{$comment}}</textarea>
+          <br>
+          <label for="next_step">Next Step</label>
+          <textarea id = "next_step" name = "next_step" class="form-control" rows="3">{{$next_step}}</textarea>
+          <br>
+          <label for="snooz">Snooz (Days)</label>
+          <input type = "text" name = "snooz" class = "form-control"></input>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Review selected line items modal -->
 
 <!-- Add participants modal -->
 <div class="modal fade" id="add_participants">
@@ -374,9 +435,13 @@
 @endsection
 
 @section('javascript')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <script type="text/javascript">
-
+$("#selected_review").click(function() {
+  // var staff_id = $('#assign_staff').val();
+  // alert("hleo");
+});
 
 </script>
 

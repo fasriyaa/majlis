@@ -15,7 +15,7 @@ Route::get('/', function () {
     return redirect('/dashboard/livefeed');
 });
 
-Route::group(['middleware' => ['role:SCMember|Admin']], function () {
+Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
     Route::get('/gantt', function () {return view('gantt.gantt');});
     Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
     Route::get('/gantt/m', function () {return view('gantt.gantt_month');});
@@ -36,7 +36,7 @@ Route::group(['middleware' => ['role:SCMember|Admin']], function () {
     Route::get('/resultframework/dli', function () {return view('resultframework.dli');});
 });
 
-Route::group(['middleware' => ['permission:PMU']], function () {
+Route::group(['middleware' => ['permission:PMU'], 'middleware' => 'auth'], function () {
     Route::get('/components', '\App\Http\Controllers\PMU\PmuController@components') -> name('pmu.components');
     Route::get('/subcomponent/{id}', '\App\Http\Controllers\PMU\PmuController@subcomponent') -> name('pmu.subcomponent');
     Route::get('/activity/{id}', '\App\Http\Controllers\PMU\PmuController@activity') -> name('pmu.activity');
@@ -63,10 +63,11 @@ Route::group(['middleware' => ['permission:PMU']], function () {
     Route::post('/review', '\App\Http\Controllers\Discussions\DiscussionsController@review') -> name('pmu.review');
     Route::post('/add_participants', '\App\Http\Controllers\Discussions\DiscussionsController@add_participants') -> name('add.participants');
     Route::post('/close_discussion', '\App\Http\Controllers\Discussions\DiscussionsController@close_discussion') -> name('close.discussion');
+    
 
 });
 
-Route::group(['middleware' => ['role:Editor|Admin']], function () {
+Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], function () {
     Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
     Route::get('/my_tasks', '\App\Http\Controllers\PMU\PmuController@my_tasks') -> name('pmu.my_tasks');
     Route::get('/task_timeline/{id}', '\App\Http\Controllers\PMU\PmuController@task_timeline') -> name('pmu.task_timeline');
@@ -86,7 +87,7 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Auth::routes();
 
 
-Route::group(['middleware' => ['role:SCMember|Admin']], function () {
+Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
       Route::get('/dashboard/home', 'DashboardController@versionone')->name('home');
       Route::get('/dashboard/livefeed', 'DashboardController@livefeed')->name('livefeed');
       Route::get('/dashboard/v2', 'DashboardController@versiontwo')->name('v2');
@@ -96,7 +97,7 @@ Route::group(['middleware' => ['role:SCMember|Admin']], function () {
 
 
 
-Route::group(['middleware' => ['role:Admin']], function () {
+Route::group(['middleware' => ['role:Admin'], 'middleware' => 'auth'], function () {
           Route::get('/users', 'HomeController@users')->name('users');
           Route::resource('main_modules', '\App\Http\Controllers\Modules\MainModulesController');
           Route::resource('roles', '\App\Http\Controllers\Permissions\RolesController');
