@@ -423,7 +423,7 @@ class DiscussionsController extends Controller
             ->where('id',$piu_id['piu_id'])
             ->first();
 
-        $text = "Held a Review Meeting of: ". $piu_name['short_name'];
+        $text = "Held a Review Meeting with ". $piu_name['short_name'];
       }
 
       $new_timeline = Timeline::create(['text' => $text, 'task' => $var2, 'user' => $user_id, 'type' => $var1, 'url' => $url]);
