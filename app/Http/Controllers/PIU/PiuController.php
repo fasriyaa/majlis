@@ -104,7 +104,7 @@ class PiuController extends Controller
         ->first();
 
       $text = "Assigned to ". $piu->short_name;
-      $url = "/task/" . $task_id;
+      $url = "/subtask/" . $task_id;
 
       $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id, 'type'=>5, 'url' => $url]);
       return response()->json($new_timeline);
