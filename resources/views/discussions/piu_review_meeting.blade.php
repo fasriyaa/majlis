@@ -7,15 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Review Meeting</h1>
-          <h6 class="m-0 text-dark">{{$discussion_status->piu['short_name']}} Coponents | {{$discussion_status->updated_at}}</h6>
+          <h1 class="m-0 text-dark">PIU Review Meetings</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">Discussions</li>
-            <li class="breadcrumb-item active">Review Meetings</li>
+            <li class="breadcrumb-item active">PIU Review Meeting</li>
           </ol>
         </div>
         <!-- /.col -->

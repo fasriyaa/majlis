@@ -12,4 +12,6 @@ class TaskDiscussions extends Model
     {
       return $this->belongsTo('App\models\gantt\Task', 'task_id');
     }
+
+
 }

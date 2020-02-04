@@ -17,5 +17,10 @@ class Task extends Model
       return $this->belongsTo('App\User', 'staff', 'id');
   }
 
+  public function piu()
+  {
+      return $this->belongsTo('App\models\piu\piu', 'piu_id', 'id');
+  }
+
 
 }

@@ -113,7 +113,7 @@
 
 
                         <li class="nav-item">
-                            <a href="/gantt/w" class="nav-link">
+                            <a href="/piu" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>PIU</p>
                             </a>
@@ -320,6 +320,12 @@
                             <a href="/pmu_daily_list" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>PMU Daily</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/piu_review_list" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>PIU Reivew</p>
                             </a>
                         </li>
                         <li class="nav-item">

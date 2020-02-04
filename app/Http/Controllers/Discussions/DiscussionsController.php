@@ -11,7 +11,11 @@ use App\models\discussions\TaskDiscussions;
 use App\models\discussions\DiscussionParticipants;
 use App\models\discussions\Snooz;
 use App\models\docs\RequireDoc;
+use App\models\piu\piu;
+use App\models\timeline\Timeline;
 use App\User;
+use URL;
+use Auth;
 
 
 class DiscussionsController extends Controller
@@ -59,7 +63,7 @@ class DiscussionsController extends Controller
 
         if($request->input('type') == 3)
         {
-            $data = $this->discussion_task($discussion->id,3);
+            $data = $this->discussion_task($discussion->id,3,0);
         }
         return redirect()->route('pmu_daily_list.index');
         // return $data;
@@ -110,7 +114,7 @@ class DiscussionsController extends Controller
         //
     }
 
-    private function discussion_task($id, $discussion_cat_id)
+    private function discussion_task($id, $discussion_cat_id, $piu_id)
     {
       //getting all the subtasks
       // Getting Main component ID
@@ -126,8 +130,16 @@ class DiscussionsController extends Controller
       $subact_id = Task::whereIn('parent', $act_id)
           ->pluck('id');
 
-      $tasks_id = Task::whereIn('parent', $subact_id)
-          ->pluck('id');
+      if($piu_id == 0){
+        $tasks_id = Task::whereIn('parent', $subact_id)
+            ->pluck('id');
+      }
+      else {
+        $tasks_id = Task::whereIn('parent', $subact_id)
+            ->where('piu_id', $piu_id)
+            ->pluck('id');
+      }
+
 
 
       //storing the relevent ids to array
@@ -170,6 +182,167 @@ class DiscussionsController extends Controller
     }
 
     public function pmu_daily_meeting($id)
+    {
+
+      //Getting Discussion Status
+      $discussion_status = Discussions::select('id','status','piu_id','updated_at')
+            ->where('id',$id)
+            ->with('piu:id,short_name')
+            ->first();
+
+      $subtasks = TaskDiscussions::select('task_id','comment','next_step','status')
+          ->where('discussion_id',$id)
+          ->with('task:id,text')
+          ->get();
+
+      $subtasks_id = TaskDiscussions::where('discussion_id',$id)
+          ->pluck('task_id');
+
+      $next_item = TaskDiscussions::select('id as item_id','task_id','comment','next_step','status')
+          ->where('discussion_id',$id)
+          ->where('status',1)
+          ->with('task:id,text,staff')
+          ->first();
+
+      if(isset($next_item->task_id))
+      {
+            $next_item_prev = TaskDiscussions::select('comment','next_step')
+                ->where('task_id',$next_item->task_id)
+                ->where('status',2)
+                ->orderby('updated_at','DESC')
+                ->first();
+      }else {
+        $next_item_prev = null;
+      }
+
+
+      //getting assinged staff
+      if(isset($next_item->task_id))
+      {
+            $assinged_staff = User::select('name')
+                ->where('id',$next_item->task['staff'])
+                ->first();
+      }else{
+        $assinged_staff = null;
+      }
+
+
+      // Getting users
+      $users = User::select('id', 'name')
+          ->get();
+
+      $participants = DiscussionParticipants::select('user_id')
+          ->where('discussion_id',$id)
+          ->with('user:id,name')
+          ->get();
+
+
+
+      $docs = RequireDoc::select('doc_name')
+          ->wherein('task_id',$subtasks_id )
+          ->get();
+
+
+
+        // return $discussion_status;
+      return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
+    }
+
+    public function review(Request $request)
+    {
+      $review = TaskDiscussions::find($request->input('id'));
+
+      $review->comment = $request->input('status');
+      $review->next_step = $request->input('next_step');
+      $review->status = 2;
+      $review->save();
+
+      // Record in snooz if defined
+      if($request->has("snooz"))
+      {
+        $new_snooz = new Snooz();
+
+        $new_snooz->task_id = $request->input('task_id');
+        $new_snooz->discussion_id = $request->input('discussion_id');
+        $new_snooz->discussion_cat_id = $request->input('discussion_cat_id');
+        $new_snooz->start_date = date('Y-m-d');
+        $new_snooz->end_date = Date('Y-m-d', strtotime("+".$request->input('snooz')." days"));
+
+        $new_snooz->save();
+      }
+
+
+      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+
+    }
+
+    public function add_participants(Request $request)
+    {
+
+        $user = DiscussionParticipants::where('discussion_id',$request->input('discussion_id'))
+            ->where('user_id',$request->input('user_id'))
+            ->first();
+
+        if(isset($user->id))
+        {
+
+        }else {
+          $record = new DiscussionParticipants();
+
+          $record->discussion_id = $request->input('discussion_id');
+          $record->user_id = $request->input('user_id');
+          $record->save();
+        }
+
+        return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+    }
+
+    public function close_discussion(Request $request)
+    {
+      $record = Discussions::find($request->input('discussion_id'));
+
+      $record->status = 2;
+      $record->save();
+
+      //time line entry
+      $url = "/pmu_daily_meeting/" . $request->input('discussion_id');
+      $this->new_timeline(4, $request->input('discussion_id'), $url);
+
+
+      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+    }
+
+    public function piu_review_list()
+    {
+      $piu_lists = Discussions::select('id','piu_id','created_at','status')
+          ->where('type',4)
+          ->with('piu:id,short_name')
+          ->orderby('id','DESC')
+          ->get();
+
+      $pius = piu::all();
+
+          // return $piu_lists;
+      return view('discussions.piu_review_list',compact('piu_lists','pius'));
+    }
+
+    public function piu_review_list_store(Request $request)
+    {
+      $discussion = new Discussions();
+
+      $discussion->type = $request->input('type');
+      $discussion->piu_id = $request->input('piu_id');
+      $discussion->status = 1; //1 for open
+
+      $discussion->save();
+
+
+      $data = $this->discussion_task($discussion->id,4,$request->input('piu_id'));
+
+      return redirect()->route('piu.review_list');
+    }
+
+    public function piu_review_meeting($id)
     {
 
       //Getting Discussion Status
@@ -232,69 +405,30 @@ class DiscussionsController extends Controller
 
 
         // return $assinged_staff;
-      return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
+      return view('discussions.piu_review_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
     }
 
-    public function review(Request $request)
+    private function new_timeline($var1, $var2, $url)
     {
-      $review = TaskDiscussions::find($request->input('id'));
+      $user_id = Auth::id();
 
-      $review->comment = $request->input('status');
-      $review->next_step = $request->input('next_step');
-      $review->status = 2;
-      $review->save();
-
-      // Record in snooz if defined
-      if($request->has("snooz"))
+      //var1 is type, 4 for PIU review meetings
+      if($var1 == 4)
       {
-        $new_snooz = new Snooz();
-
-        $new_snooz->task_id = $request->input('task_id');
-        $new_snooz->discussion_id = $request->input('discussion_id');
-        $new_snooz->discussion_cat_id = $request->input('discussion_cat_id');
-        $new_snooz->start_date = date('Y-m-d');
-        $new_snooz->end_date = Date('Y-m-d', strtotime("+".$request->input('snooz')." days"));
-
-        $new_snooz->save();
-      }
-
-      // return $new_snooz;
-
-      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
-
-    }
-
-    public function add_participants(Request $request)
-    {
-
-        $user = DiscussionParticipants::where('discussion_id',$request->input('discussion_id'))
-            ->where('user_id',$request->input('user_id'))
+        $piu_id = Discussions::select('piu_id')
+            ->where('id',$var2)
             ->first();
 
-        if(isset($user->id))
-        {
+        $piu_name = piu::select('short_name')
+            ->where('id',$piu_id['piu_id'])
+            ->first();
 
-        }else {
-          $record = new DiscussionParticipants();
+        $text = "Held a Review Meeting of: ". $piu_name['short_name'];
+      }
 
-          $record->discussion_id = $request->input('discussion_id');
-          $record->user_id = $request->input('user_id');
-          $record->save();
-        }
-
-        return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+      $new_timeline = Timeline::create(['text' => $text, 'task' => $var2, 'user' => $user_id, 'type' => $var1, 'url' => $url]);
+      return response()->json($new_timeline);
     }
-
-    public function close_discussion(Request $request)
-    {
-      $record = Discussions::find($request->input('discussion_id'));
-
-      $record->status = 2;
-      $record->save();
-
-      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
-    }
-
 
 
 

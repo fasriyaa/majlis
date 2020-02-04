@@ -139,11 +139,22 @@ function time_difference($updated_at)
                     </div>
                 </div>
                 <div class = "row">
-                  @if($feed->type == 3)
-                    <p>{{$feed->text}} #Task: {{$feed->task['text']}}</p>
-                  @else
+                  @if($feed->type == 1)
                     <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
                   @endif
+                  @if($feed->type == 2)
+                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
+                  @endif
+                  @if($feed->type == 3)
+                    <p>{{$feed->text}} #Task: {{$feed->task['text']}}</p>
+                  @endif
+                  @if($feed->type == 4)
+                    <p>{{$feed->text}} : <a href = "{{$feed->url}}">link</a> </p>
+                  @endif
+                  @if($feed->type == 5)
+                    <p>{{$feed->text}} #Task: <a href = "{{$feed->url}}">{{$feed->task['text']}}</a></p>
+                  @endif
+
                 </div>
 
 

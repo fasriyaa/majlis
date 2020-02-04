@@ -7,16 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Tasks of:</h1>
-          <p>ALL</p>
+          <h1 class="m-0 text-dark">PIU Review Meetings</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">.....</li>
-            <li class="breadcrumb-item active">Sub Activities</li>
-            <li class="breadcrumb-item active">Tasks</li>
+            <li class="breadcrumb-item active">Discussions</li>
+            <li class="breadcrumb-item active">PIU Review Meetings</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -35,7 +33,7 @@
       <!-- Main row -->
       <div class="row">
 
-        <div class="col-12">
+        <div class="col-7">
           <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">List</h3>
@@ -56,32 +54,34 @@
 
                 <tr align = "left">
                   <th>ID</th>
-                  <th>Task</th>
+                  <th>Date</th>
                   <th>PIU</th>
-                  <th>Budget</th>
-                  <th>Start Date</th>
-                  <th>Original End Date</th>
-                  <th>End Date</th>
-                  <th>Progress</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
 
-          @foreach($tasks as $task)
-                <tr>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->id}}</td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->text}}</td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->piu['short_name']}}</td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->start_date}}</td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>
-                  <td>{{$task->progress*100}}%</td>
+                @foreach($piu_lists as $piu_list)
+                <tr id = "{{$piu_list->id}}" onclick = "location.href='/pmu_daily_meeting/'+this.id;">
+                  <td>{{$piu_list->id}}</td>
+                  <td>Meeting on: {{date("d M Y H:M", strtotime($piu_list->created_at))}}</td>
+                  <td>{{$piu_list->piu['short_name']}}</td>
+                    <?php
+                      if($piu_list->status == 1)
+                      {
+                        $status = "Open";
+                        $color = "green";
+                      }else {
+                        $status = "Closed";
+                        $color = "red";
+                      }
+                    ?>
+                  <td><font color = "{{$color}}">{{$status}}</font></td>
                   <td field-key='action'>
-                    <a href="{{ route('pmu.subtask',[$task->id]) }}" class="fa fa-eye"></a>
-                    <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_piu_modal" data-id = "{{$task->id}}" onclick = "$('#task_id').val($(this).data('id'));"></a>
+                    <a href="#" class="fa fa-eye"></a>
                   </td>
                 </tr>
-          @endforeach
+                @endforeach
+
 
 
 
@@ -102,6 +102,28 @@
           </div>
           <!-- /.card -->
         </div>
+        <!-- /. Left col -->
+
+        <!-- Right Col -->
+        <div class = "col-sm-5">
+          <div class = "col-sm-12">
+            <div class="card card">
+              <div class="card-header">
+                <h3 class="card-title">Actions</a></h3>
+              </div>
+              <!-- /. card header -->
+
+              <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                      <tr>
+                        <td><a href = "" data-toggle="modal" data-target="#new_meeting">Create New Meeting </a></td>
+                      </tr>
+                    </table>
+              </div>
+            </div>
+          </dvi>
+        </div>
+        <!-- /. Right col -->
 
       </div>
       <!-- /.row (main row) -->
@@ -113,24 +135,25 @@
 <!-- /.content-wrapper -->
 @endsection
 
-<!-- Assign piu Modal -->
-<div class="modal fade" id="assign_piu_modal">
+<!-- Create New meeting Modal -->
+<div class="modal fade" id="new_meeting">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Assign PIU</h4>
+        <h4 class="modal-title">Create New Meeting</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST',  'files' => false,]) !!}
+        {!! Form::open(['method' => 'POST', 'route' => ['piu_review_list.store'], 'files' => false,]) !!}
+        <input type="hidden" name = "type" id = "type" value = "4">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
         <div class="form-group">
-          <input type="hidden" name = "task_id" id = "task_id">
           <label for="name">Select PIU*</label>
-          <select id = "assign_piu" name="assign_piu" class="custom-select">
+          <select id = "piu_id" name="piu_id" class="custom-select">
             @foreach($pius as $piu)
               <option value="{{$piu->id}}" >{{$piu->short_name}}</option>
             @endforeach
@@ -141,44 +164,19 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button id = "store_piu" type="submit" class="btn btn-info" data-dismiss="modal">Save</button>
+        <button type="submit" class="btn btn-info">Save</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-
       </div>
-        {!! Form::close() !!}
+      {!! Form::close() !!}
     </div>
   </div>
 </div>
-<!-- /. Assign piu Modal -->
+<!-- /. Create new meeting Modal -->
 
 @section('javascript')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-<script type="text/javascript">
-// Start assigned staff Store
-$("#store_piu").click(function() {
-  var piu_id = $('#assign_piu').val();
-  var task_id = $('#task_id').val();
-  if(task_id){
-        $.ajax({
-           type:"get",
-           url:"{{url('/assign_piu')}}/"+task_id+"/"+piu_id,
-           success:function(res)
-           {
-                if(res)
-                {
-                  location.reload();
-                }
-           }
 
-        });
-  }
-
-  // alert(task_id);
-
-});
-
-</script>
 
 
 

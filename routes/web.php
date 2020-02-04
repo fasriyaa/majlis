@@ -63,9 +63,19 @@ Route::group(['middleware' => ['permission:PMU'], 'middleware' => 'auth'], funct
     Route::post('/review', '\App\Http\Controllers\Discussions\DiscussionsController@review') -> name('pmu.review');
     Route::post('/add_participants', '\App\Http\Controllers\Discussions\DiscussionsController@add_participants') -> name('add.participants');
     Route::post('/close_discussion', '\App\Http\Controllers\Discussions\DiscussionsController@close_discussion') -> name('close.discussion');
-    
+
 
 });
+
+
+Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], function () {
+    Route::resource('piu', '\App\Http\Controllers\PIU\PiuController');
+    Route::get('/assign_piu/{task_id}/{piu_id}', '\App\Http\Controllers\PIU\PiuController@assign_piu') -> name('piu.assign_piu');
+    Route::get('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list')->name('piu.review_list');
+    Route::post('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list_store')->name('piu_review_list.store');
+    Route::get('/piu_review_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_meeting') -> name('pmu.review.meeting');
+});
+
 
 Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], function () {
     Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
@@ -82,6 +92,7 @@ Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], fu
 });
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Route::get('/phpinfo', function () {return view('phpinfo');});
 
 
 Auth::routes();

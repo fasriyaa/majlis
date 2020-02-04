@@ -65,7 +65,7 @@ class DashboardController extends Controller
 
         //Getting feed from timeline
 
-        $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id','type')
+        $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id','type','url')
             ->with('user:id,name')
             ->with('task:id,text')
             ->orderby('updated_at','DESC')

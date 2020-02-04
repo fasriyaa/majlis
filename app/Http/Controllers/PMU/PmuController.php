@@ -12,6 +12,7 @@ use App\models\gantt\Link;
 use App\models\timeline\Timeline;
 use App\models\taskApproval\TaskApproval;
 use App\models\docs\RequireDoc;
+use App\models\piu\piu;
 use App\User;
 
 use Auth;
@@ -174,11 +175,17 @@ class PmuController extends Controller
       $subact_id = Task::whereIn('parent', $act_id)
           ->pluck('id');
 
-      $tasks = Task::select('id', 'text', 'progress')
+      $tasks = Task::select('id', 'text', 'progress','piu_id')
           ->whereIn('parent', $subact_id)
+          ->with('piu:id,short_name')
           ->get();
 
-      return view('pmu.tasks', compact('tasks'));
+      // return $tasks;
+
+      //getting piu list
+      $pius = piu::all();
+
+      return view('pmu.tasks', compact('tasks','pius'));
     }
 
     public function subtask($id)
