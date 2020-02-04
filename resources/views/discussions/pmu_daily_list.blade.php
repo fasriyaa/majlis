@@ -62,7 +62,7 @@
                 @foreach($pmu_lists as $pmu_list)
                 <tr id = "{{$pmu_list->id}}" onclick = "location.href='/pmu_daily_meeting/'+this.id;">
                   <td>{{$pmu_list->id}}</td>
-                  <td>Meeting on: {{date("d M Y H:m", strtotime($pmu_list->created_at))}}</td>
+                  <td>Meeting on: {{date("d M Y H:i", strtotime($pmu_list->created_at))}}</td>
                     <?php
                       if($pmu_list->status == 1)
                       {
