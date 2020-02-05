@@ -33,7 +33,7 @@
       <!-- Main row -->
       <div class="row">
 
-        <div class="col-7">
+        <section class="col-lg-7">
           <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">List</h3>
@@ -99,7 +99,7 @@
             <!-- /. Card footer -->
           </div>
           <!-- /.card -->
-        </div>
+        </section>
         <!-- /. Left col -->
 
         <!-- Right Col -->
