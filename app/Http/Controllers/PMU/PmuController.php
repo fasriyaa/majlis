@@ -255,7 +255,7 @@ class PmuController extends Controller
           $progress_text = "Pending";
         }
       $text = "Progress Update to ". $progress_text;
-      $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id]);
+      $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id, 'type'=>2]);
 
 
       //updating progress of level Task
