@@ -160,6 +160,9 @@ function time_difference($updated_at)
                   @if($feed->type == 7)
                     <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
                   @endif
+                  @if($feed->type == null)
+                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
+                  @endif
 
                 </div>
 
