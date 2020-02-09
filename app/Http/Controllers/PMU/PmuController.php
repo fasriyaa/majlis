@@ -490,7 +490,7 @@ class PmuController extends Controller
         $approval = TaskApproval::create(['task_id' => $task_id, 'staff_id' => $staff_id, 'user_id'=>$user_id]);
 
         $text = "Set Requird Approval of: ". $staff->name;
-        $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id]);
+        $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id, 'type' => 7]);
 
         return response()->json($approval);
     }
@@ -518,7 +518,7 @@ class PmuController extends Controller
 
           //Recording to timelines
           $text = "Required Approval removed for user: ".$approval['user']['name'];
-          $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id]);
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id, 'type' => 7]);
 
               return response()->json($del_rec);
 
@@ -548,7 +548,7 @@ class PmuController extends Controller
               //updating the timeline
               //Recording to timelines
               $text = "Approved: ";
-              $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id]);
+              $new_timeline = Timeline::create(['text' => $text, 'task' => $approval['task_id'], 'user' => $user_id, 'type' => 7]);
               return response()->json($approve);
             }else{
                 return 0;
@@ -572,7 +572,7 @@ class PmuController extends Controller
 
               //Recording to timelines
               $text = "Set Document Required";
-              $new_timeline = Timeline::create(['text' => $text, 'task' => $id, 'user' => $user_id]);
+              $new_timeline = Timeline::create(['text' => $text, 'task' => $id, 'user' => $user_id, 'type'=>6]);
 
 
               return response()->json(1);
@@ -602,7 +602,7 @@ class PmuController extends Controller
 
           //Recording to timelines
           $text = "Document Required Canclled";
-          $new_timeline = Timeline::create(['text' => $text, 'task' => $req_doc['task']['id'], 'user' => $user_id]);
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $req_doc['task']['id'], 'user' => $user_id, 'type'=>6]);
 
           return response()->json(1);
 
@@ -632,9 +632,10 @@ class PmuController extends Controller
 
           //updating the timeline
           $text = "Uploaded Document ". $file_name;
+          $url = "/files" . $file_name;
 
           // $new_record = new_timeline($text, $request->subtask6_id,0);
-          $new_timeline = Timeline::create(['text' => $text, 'task' => $request->subtask6_id, 'user' => $user_id]);
+          $new_timeline = Timeline::create(['text' => $text, 'task' => $request->subtask6_id, 'user' => $user_id, 'url' => $url, 'type' => 6]);
 
           return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
     }

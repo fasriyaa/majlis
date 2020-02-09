@@ -54,6 +54,7 @@ Route::group(['middleware' => ['permission:PMU'], 'middleware' => 'auth'], funct
     Route::get('/to_task_timelie/{id}', '\App\Http\Controllers\PMU\PmuController@toTaskTimeline') -> name('pmu.toTaskTimeline');
 
     Route::get('/add_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@add_subtask') -> name('gantt.addSubtask');
+    Route::get('/edit_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@edit_subtask') -> name('gantt.editSubtask');
     Route::post('/subitem', '\App\Http\Controllers\Gantt\TaskController@subitem_store') -> name('subitem.store');
     Route::get('/reorder_task/{id}', '\App\Http\Controllers\Gantt\TaskController@reorder_task') -> name('gantt.reorder');
     Route::post('/sortorder/{id}/{index}', '\App\Http\Controllers\Gantt\TaskController@sortorder') -> name('gantt.sortorder');

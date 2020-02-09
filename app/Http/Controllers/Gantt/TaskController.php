@@ -102,6 +102,22 @@ class TaskController extends Controller
       return view('gantt.create_subtask', compact('task'));
     }
 
+    public function edit_subtask($id)
+    {
+      // set url session
+      $task_url = url()->previous();
+      $task_url = session(['task_url' => $task_url]);
+
+
+      //get task detials
+      $task = Task::select('id','text','start_date','duration')
+          ->where('id',$id)
+          ->first();
+
+      // return $task;
+      return view('gantt.edit_subtask', compact('task'));
+    }
+
     public function subitem_store(Request $request)
     {
       $task = new Task();

@@ -92,7 +92,7 @@
                   <td field-key='action'>
                     <a href="{{ route('pmu.task_timeline',[$subtask->id]) }}" class="fa fa-eye"></a>
                     <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#assign_staff_modal" data-id = "{{$subtask->id}}" onclick = "$('#subtask_id').val($(this).data('id'));"></a>
-                    <a href="{{ route('pmu.subtask',[$subtask->id]) }}" class="fa fa-edit"></a>
+                    <a href="{{ route('gantt.editSubtask',[$subtask->id]) }}" class="fa fa-edit"></a>
                   </td>
                 </tr>
           @endforeach
