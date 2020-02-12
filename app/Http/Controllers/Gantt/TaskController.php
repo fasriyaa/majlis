@@ -141,6 +141,27 @@ class TaskController extends Controller
       // return $task->id;
     }
 
+    public function subitem_edit(Request $request)
+    {
+
+      $task = Task::find($request->input('parent'));
+
+      $task->text = $request->name;
+      $task->start_date = date("Y-m-d", strtotime($request->start_date));
+      $task->duration = $request->duration;
+
+      $task->save();
+
+      //create timeline record
+      $text = "Task Edited";
+      $type = 3; // for creating new task
+      $this->new_timeline($text, $task->id, $type);
+
+      $task_url = session('task_url');
+      return Redirect::to($task_url);
+
+    }
+
     public function reorder_task($id)
     {
       // set url session

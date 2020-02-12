@@ -84,6 +84,7 @@
                   <td>{{$subactivity->progress*100}}%</td>
                   <td field-key='action'>
                     <a href="{{ route('pmu.task',[$subactivity->id]) }}" class="fa fa-eye"></a>
+                    <a href="{{ route('gantt.editSubtask',[$subactivity->id]) }}" class="fa fa-edit"></a>
                   </td>
                 </tr>
           @endforeach

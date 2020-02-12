@@ -7,18 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Tasks of:</h1>
-          <p>{{$subactivity['text']}}</p>
+          <h1 class="m-0 text-dark">Live Progress</h1>
+          <p>ALL</p>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
-            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Component</a></li>
-            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">Activity</a></li>
-            <li class="breadcrumb-item active"><a href = "{{ URL::previous() }}">Sub Activities</a></li>
-            <li class="breadcrumb-item active">Tasks</li>
+            <li class="breadcrumb-item active">Live Progress</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -58,27 +54,28 @@
 
                 <tr>
                   <th>ID</th>
-                  <th>Task</th>
+                  <th>Activities</th>
                   <th>Budget</th>
-                  <th>Start Date</th>
-                  <th>Original End Date</th>
-                  <th>End Date</th>
-                  <th>Progress</th>
+                  <th>Allocated</th>
+                  <th>Utilized</th>
+                  <th>Balance</th>
+                  <th>Un allocaed</th>
+                  <th>Overall Progress</th>
                   <th>Action</th>
                 </tr>
 
-          @foreach($tasks as $task)
-                <tr id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">
-                  <td>{{$task->id}}</td>
-                  <td>{{$task->text}}</td>
-                  <td></td>
-                  <td>{{$task->start_date}}</td>
+          @foreach($activities as $activity)
+                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
+                  <td>{{$activity->id}}</td>
+                  <td>{{$activity->text}}</td>
                   <td></td>
                   <td></td>
-                  <td>{{$task->progress*100}}%</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>{{$activity->progress*100}}%</td>
                   <td field-key='action'>
-                    <a href="{{ route('pmu.subtask',[$task->id]) }}" class="fa fa-eye"></a>
-                    <a href="{{ route('gantt.editSubtask',[$task->id]) }}" class="fa fa-edit"></a>
+                    <a href="{{ route('pmu.subactivity',[$activity->id]) }}" class="fa fa-eye"></a>
                   </td>
                 </tr>
           @endforeach
@@ -90,18 +87,13 @@
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-              <div class = "row">
-                  <div class = "col-sm-11">
-                        <a href = "/add_subtask/{{$subactivity['id']}}}"><button type="button" class="btn btn-info float-right"><i class="fa fa-plus"></i> Add</button></a>
-                      </div>
-                      <div class = "col-sm-1">
-                        <a href = "/reorder_task/{{$subactivity['id']}}"><button type="button" class="btn btn-info float-right">Reorder</button></a>
-                      </div>
-                      <!-- <div class = "col-sm-1">
-                        <a href = "/reorder_task/{{$subactivity['id']}}"><button type="button" class="btn btn-info float-right">&nbsp Gantt &nbsp</button></a>
-                      </div> -->
-              </div>
-
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
             </div>
             <!-- /. Card footer -->
           </div>

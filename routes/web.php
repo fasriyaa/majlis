@@ -24,6 +24,7 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
 
 Route::group(['middleware' => ['role:SCMember|Admin']], function () {
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
+    Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
     Route::get('/procurement/ongoing', function () {return view('procurements.ongoing');});
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
@@ -56,6 +57,7 @@ Route::group(['middleware' => ['permission:PMU'], 'middleware' => 'auth'], funct
     Route::get('/add_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@add_subtask') -> name('gantt.addSubtask');
     Route::get('/edit_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@edit_subtask') -> name('gantt.editSubtask');
     Route::post('/subitem', '\App\Http\Controllers\Gantt\TaskController@subitem_store') -> name('subitem.store');
+    Route::post('/subitem_edit', '\App\Http\Controllers\Gantt\TaskController@subitem_edit') -> name('subitem.edit');
     Route::get('/reorder_task/{id}', '\App\Http\Controllers\Gantt\TaskController@reorder_task') -> name('gantt.reorder');
     Route::post('/sortorder/{id}/{index}', '\App\Http\Controllers\Gantt\TaskController@sortorder') -> name('gantt.sortorder');
 

@@ -6,6 +6,15 @@ use App\Http\Controllers\Controller;
 
 use App\models\progress\Progress;
 use Illuminate\Http\Request;
+use App\models\gantt\Task;
+use App\models\gantt\Link;
+use App\models\timeline\Timeline;
+use App\models\taskApproval\TaskApproval;
+use App\models\docs\RequireDoc;
+use App\models\piu\piu;
+use App\User;
+
+use Auth;
 
 class ProgressController extends Controller
 {
@@ -83,5 +92,22 @@ class ProgressController extends Controller
     public function destroy(Progress $progress)
     {
         //
+    }
+
+    public function live_progress()
+    {
+      // Getting Main component ID
+      $main_id = Task::where('parent', '=', 1)
+          ->pluck('id');
+
+      $sub_id = Task::whereIn('parent', $main_id)
+          ->pluck('id');
+
+      $activities = Task::select('id', 'text', 'progress')
+          ->whereIn('parent', $sub_id)
+          ->get();
+
+        // return $sub_id;
+      return view('progress.live_progress', compact('activities'));
     }
 }

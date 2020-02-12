@@ -41,7 +41,7 @@
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['subitem.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'POST', 'route' => ['subitem.edit'], 'files' => false,]) !!}
                         <div class="card-body">
 
                           <input name = "parent" type = "hidden" value = "{{$task['id']}}" >
