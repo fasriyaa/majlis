@@ -22,5 +22,16 @@ class Task extends Model
       return $this->belongsTo('App\models\piu\piu', 'piu_id', 'id');
   }
 
+  public function children()
+      {
+          return $this->hasMany('App\models\gantt\Task','parent','id')->with('children');
+      }
+
+  public function comments()
+    {
+      return $this->hasMany('App\models\discussions\TaskDiscussions', 'task_id', 'id')->orderBy('updated_at','DESC');
+    }
+
+
 
 }

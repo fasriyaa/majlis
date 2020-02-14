@@ -53,31 +53,47 @@
               <table class="table table-hover">
 
                 <tr>
-                  <th>ID</th>
+                  <th>#</th>
                   <th>Activities</th>
-                  <th>Budget</th>
-                  <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
-                  <th>Un allocaed</th>
                   <th>Overall Progress</th>
-                  <th>Action</th>
+                  <th>Progress Tag</th>
+
                 </tr>
 
-          @foreach($activities as $activity)
-                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
-                  <td>{{$activity->id}}</td>
-                  <td>{{$activity->text}}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{{$activity->progress*100}}%</td>
-                  <td field-key='action'>
-                    <a href="{{ route('pmu.subactivity',[$activity->id]) }}" class="fa fa-eye"></a>
-                  </td>
-                </tr>
+          @foreach($components as $component)
+            @foreach($component->children as $subcomponents)
+              @foreach($subcomponents->children as $activities)
+                    <tr id = "">
+                      <td></td>
+                      <td>
+                        <p>{{$activities->text}}</p>
+                        <p>Component:{{$component->text}} > {{$subcomponents->text}}</p>
+                      </td>
+                        <td>
+                          @foreach($activities->children as $subactivies)
+                            @foreach($subactivies->children as $task)
+                              <p>{{$task->text}}</p>
+                              <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Division: {{$task->piu['short_name']}}</p>
+                              <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Progress: {{($task->progress)*100}}%</p>
+                                @foreach($comments as $comment)
+                                  @if($comment['task_id']==$task->id)
+                                    @if($comment['comment']=="")
+                                      <?php $comment = "NA";?>
+                                    @else
+                                      <?php $comment = $comment['comment']; ?>
+                                    @endif
+                                        <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Status: {{$comment}}</p>
+                                  @endif
+                                @endforeach
+                            @endforeach
+                          @endforeach
+                        </td>
+                        <td>Green</td>
+
+                      
+                    </tr>
+                @endforeach
+            @endforeach
           @endforeach
 
 

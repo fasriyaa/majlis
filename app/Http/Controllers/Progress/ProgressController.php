@@ -12,6 +12,7 @@ use App\models\timeline\Timeline;
 use App\models\taskApproval\TaskApproval;
 use App\models\docs\RequireDoc;
 use App\models\piu\piu;
+use App\models\discussions\TaskDiscussions;
 use App\User;
 
 use Auth;
@@ -96,6 +97,13 @@ class ProgressController extends Controller
 
     public function live_progress()
     {
+
+      //Components
+      $components = Task::select('id','text','parent')
+            ->where('parent',1)
+            ->with('children:parent,id,text')
+            ->get();
+
       // Getting Main component ID
       $main_id = Task::where('parent', '=', 1)
           ->pluck('id');
@@ -103,11 +111,52 @@ class ProgressController extends Controller
       $sub_id = Task::whereIn('parent', $main_id)
           ->pluck('id');
 
+      $activities_id = Task::whereIn('parent', $sub_id)
+              ->pluck('id');
+
       $activities = Task::select('id', 'text', 'progress')
           ->whereIn('parent', $sub_id)
           ->get();
 
-        // return $sub_id;
-      return view('progress.live_progress', compact('activities'));
+      $subactivies_id = Task::whereIn('parent', $activities_id)
+          ->pluck('id');
+
+      $task_id = Task::select('id')
+            ->whereIn('parent', $subactivies_id)
+            ->get();
+
+
+
+      $comments = [];
+      foreach ($task_id as $value) {
+        $comment = $this->task_comments($value->id);
+
+        $comments[] = [
+            'task_id' => $value->id,
+            'comment' => $comment['comment']
+        ];
+
+      }
+
+
+
+
+      // return $comments;
+        // return $components;
+      return view('progress.live_progress', compact('activities','components','comments'));
     }
+
+    private function task_comments($parent_id)
+    {
+      $child_id = Task::where('parent',$parent_id)
+          ->pluck('id');
+
+      $comments = TaskDiscussions::select('id','comment','updated_at')
+          ->wherein('task_id',$child_id)
+          ->orderBy('updated_at','DESC')
+          ->first();
+      return $comments;
+    }
+
+
 }
