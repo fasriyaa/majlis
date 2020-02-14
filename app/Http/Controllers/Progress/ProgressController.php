@@ -139,11 +139,22 @@ class ProgressController extends Controller
                     'comment' => $last_completed['text'] . " Completed; " .$comment['comment']
                 ];
             }else {
-              $comments[] = [
-                  'task_id' => $value->id,
-                  'comment' => $comment['comment']
-              ];
-            }
+
+                if($comment['updated_at'] < $last_completed['updated_at'])
+                {
+                  $comments[] = [
+                      'task_id' => $value->id,
+                      'comment' => $last_completed['text'] . " Completed; "
+                  ];
+                }
+                else {
+                      $comments[] = [
+                          'task_id' => $value->id,
+                          'comment' => $comment['comment']
+                      ];
+                    }
+                }
+
 
       }
 
@@ -174,7 +185,7 @@ class ProgressController extends Controller
       $child_id = Task::where('parent', $parent_id)
           ->pluck('id');
 
-      $last_completed = Task::select('text','sortorder','progress')
+      $last_completed = Task::select('text','sortorder','progress','updated_at')
           ->whereIn('id',$child_id)
           ->where('progress',1)
           ->orderBy('sortorder','DESC')
