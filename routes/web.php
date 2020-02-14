@@ -25,7 +25,7 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
 Route::group(['middleware' => ['role:SCMember|Admin']], function () {
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
-    Route::get('/procurement/ongoing', '\App\Http\Controllers\procurements\procurementController@ongoing_procurements')->name('procurements.ongoing');
+    Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('/discussions/sclist', function () {return view('discussions.sclist');});
