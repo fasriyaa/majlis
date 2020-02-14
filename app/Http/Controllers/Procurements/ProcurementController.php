@@ -41,6 +41,7 @@ class ProcurementController extends Controller
           ->whereIn('parent', $subact_id)
           ->where('procurement',1)
           ->with('piu:id,short_name')
+          ->orderBy('progress', 'DESC')
           ->get();
 
 
