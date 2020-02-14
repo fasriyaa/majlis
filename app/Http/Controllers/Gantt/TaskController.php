@@ -110,7 +110,7 @@ class TaskController extends Controller
 
 
       //get task detials
-      $task = Task::select('id','text','start_date','duration')
+      $task = Task::select('id','text','start_date','duration','procurement')
           ->where('id',$id)
           ->first();
 
@@ -150,6 +150,14 @@ class TaskController extends Controller
       $task->start_date = date("Y-m-d", strtotime($request->start_date));
       $task->duration = $request->duration;
 
+      if($request->has('procurement'))
+        {
+          $task->procurement = 1;
+        }
+        else {
+          $task->procurement = 0;
+        }
+
       $task->save();
 
       //create timeline record
@@ -159,6 +167,10 @@ class TaskController extends Controller
 
       $task_url = session('task_url');
       return Redirect::to($task_url);
+
+
+      // return $request->input('procurement');
+
 
     }
 

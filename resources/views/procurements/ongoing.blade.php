@@ -53,119 +53,29 @@
               <table class="table table-hover">
 
                 <tr>
-                  <th>ID</th>
-                  <th>Component</th>
+                  <th>#</th>
                   <th>Procument Name</th>
                   <th>Division</th>
                   <th>Progress</th>
                   <th>Action</th>
                 </tr>
-
-
+              <?php $count = 1; ?>
+              @foreach($tasks as $task)
                 <tr>
-                  <td>1</td>
-                  <td>Component 1 | SOE</td>
-                  <td>Harmonization of SOE Procurement</td>
-                  <td>PCB</td>
+                  <td>{{$count}}</td>
+                  <td>{{$task->text}}</td>
+                  <td>{{$task->piu['short_name']}}</td>
                   <td>
                     <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 95%"></div>
+                        <div class="progress-bar progress-bar-danger" style="width: {{($task->progress)*100}}%"></div>
                     </div>
                   </td>
                   <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
+                      <a href="/subtask/{{$task->id}}" class="btn btn-sm btn-info">Show</a>
                   </td>
                 </tr>
-
-                <tr>
-                  <td>2</td>
-                  <td>Component 2 | SAP</td>
-                  <td>SAP Service Contract</td>
-                  <td>PFDS</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>3</td>
-                  <td>Component 1 | SOE</td>
-                  <td>SOE Reform Consultant</td>
-                  <td>PCB</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>4</td>
-                  <td>Component 1 | Debt</td>
-                  <td>Contingent Liabiltiy Consultant</td>
-                  <td>DMD</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 20%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>5</td>
-                  <td>Component 3 | Audit</td>
-                  <td>IFRS Consultant</td>
-                  <td>AG Office</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>6</td>
-                  <td>Component 3 | Audit</td>
-                  <td>Citizen Participatory Audit</td>
-                  <td>AG Office</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>7</td>
-                  <td>Component 1 | FAD</td>
-                  <td>PEFA Self Assesment</td>
-                  <td>FAD</td>
-                  <td>
-                    <div class="progress progress-xs">
-                        <div class="progress-bar progress-bar-danger" style="width: 5%"></div>
-                    </div>
-                  </td>
-                  <td field-key='action'>
-                      <a href="{{ route('main_modules.show',1) }}" class="btn btn-sm btn-info">Show</a>
-                  </td>
-                </tr>
+                <?php $count++; ?>
+              @endforeach
 
 
 

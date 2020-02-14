@@ -63,6 +63,19 @@
                             <input type = "text" name = "duration" class = "form-control" value = "{{$task['duration']}}">
                           </div>
 
+                          <?php
+                              if($task['procurement']==1){
+                                $checked = "checked";
+                              }else {
+                                $checked = "";
+                              }
+                          ?>
+                          <div class="form-group">
+                            <input type = "checkbox" name = "procurement" class = "" value = "" {{$checked}}><label for="procurement">&nbsp&nbspProcurement?</label>
+                          </div>
+
+
+
                         </div>
                         <!-- /.card-body -->
 
