@@ -70,27 +70,36 @@
                         <p>Component:{{$component->text}} > {{$subcomponents->text}}</p>
                       </td>
                         <td>
+                          <?php $count = 1; ?>
                           @foreach($activities->children as $subactivies)
+
                             @foreach($subactivies->children as $task)
-                              <p>{{$task->text}}</p>
+                              <p>{{$count}}. {{$task->text}}</p>
                               <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Division: {{$task->piu['short_name']}}</p>
                               <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Progress: {{($task->progress)*100}}%</p>
                                 @foreach($comments as $comment)
                                   @if($comment['task_id']==$task->id)
-                                    @if($comment['comment']=="")
-                                      <?php $comment = "NA";?>
+                                    @if($task->progress == 1)
+                                      <?php $comment = "Completed";?>
                                     @else
-                                      <?php $comment = $comment['comment']; ?>
+                                          @if($comment['comment']=="")
+                                            <?php $comment = "NA";?>
+                                          @else
+
+                                          <?php $comment = $comment['comment']; ?>
+                                          @endif
                                     @endif
                                         <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Status: {{$comment}}</p>
                                   @endif
                                 @endforeach
+                                <?php $count = $count +1; ?>
                             @endforeach
+
                           @endforeach
                         </td>
                         <td>Green</td>
 
-                      
+
                     </tr>
                 @endforeach
             @endforeach

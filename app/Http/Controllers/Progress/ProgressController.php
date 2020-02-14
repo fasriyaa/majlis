@@ -130,14 +130,25 @@ class ProgressController extends Controller
       $comments = [];
       foreach ($task_id as $value) {
         $comment = $this->task_comments($value->id);
+        $last_completed = $this->last_completed($value->id);
 
-        $comments[] = [
-            'task_id' => $value->id,
-            'comment' => $comment['comment']
-        ];
+        if($last_completed['text']!= null)
+            {
+                $comments[] = [
+                    'task_id' => $value->id,
+                    'comment' => $last_completed['text'] . " Completed; " .$comment['comment']
+                ];
+            }else {
+              $comments[] = [
+                  'task_id' => $value->id,
+                  'comment' => $comment['comment']
+              ];
+            }
 
       }
 
+
+      //get last completed task
 
 
 
@@ -156,6 +167,19 @@ class ProgressController extends Controller
           ->orderBy('updated_at','DESC')
           ->first();
       return $comments;
+    }
+
+    private function last_completed ($parent_id)
+    {
+      $child_id = Task::where('parent', $parent_id)
+          ->pluck('id');
+
+      $last_completed = Task::select('text','sortorder','progress')
+          ->whereIn('id',$child_id)
+          ->where('progress',1)
+          ->orderBy('sortorder','DESC')
+          ->first();
+      return $last_completed;
     }
 
 
