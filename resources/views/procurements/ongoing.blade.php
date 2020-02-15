@@ -55,6 +55,7 @@
                 <tr>
                   <th>#</th>
                   <th>Procument Name</th>
+                  <th>Procurement Stage</th>
                   <th>Division</th>
                   <th>Progress</th>
                   <th>Action</th>
@@ -64,6 +65,18 @@
                 <tr>
                   <td>{{$count}}</td>
                   <td>{{$task->text}}</td>
+                  <td>
+                      @foreach($task_info as $info)
+                        @if($info['task_id']==$task->id)
+                          @if($info['last_completed']!=null)
+                            <p> - {{$info['last_completed']}}</p>
+                          @endif
+                          @if($info['next_task']!=null)
+                            <p> - {{$info['next_task']}} </p>
+                          @endif
+                        @endif
+                      @endforeach
+                  </td>
                   <td>{{$task->piu['short_name']}}</td>
                   <td>
                     <div class="progress progress-xs">
