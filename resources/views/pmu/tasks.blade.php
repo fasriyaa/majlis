@@ -38,9 +38,9 @@
         <div class="col-12">
           <div class="card card-info">
             <div class="card-header">
-              <h3 class="card-title">List</h3>
+              <!-- <h3 class="card-title">List</h3> -->
 
-              <div class="card-tools">
+              <!-- <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
                   <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
@@ -48,24 +48,26 @@
                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
+            <div class="card-body table-responsive">
+              <table id = "tasks_table" class="table table-hover">
+                <thead>
+                    <tr align = "left">
+                      <th>ID</th>
+                      <th>Task</th>
+                      <th>PIU</th>
+                      <th>Budget</th>
+                      <th>Start Date</th>
+                      <th>Original End Date</th>
+                      <th>End Date</th>
+                      <th>Progress</th>
+                      <th>Action</th>
+                    </tr>
+                </thead>
 
-                <tr align = "left">
-                  <th>ID</th>
-                  <th>Task</th>
-                  <th>PIU</th>
-                  <th>Budget</th>
-                  <th>Start Date</th>
-                  <th>Original End Date</th>
-                  <th>End Date</th>
-                  <th>Progress</th>
-                  <th>Action</th>
-                </tr>
-
+                <tbody>
           @foreach($tasks as $task)
                 <tr>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->id}}</td>
@@ -82,6 +84,7 @@
                   </td>
                 </tr>
           @endforeach
+            </tbody>
 
 
 
@@ -90,13 +93,13 @@
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
+                <!-- <ul class="pagination pagination-sm m-0 float-right">
                   <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
                   <li class="page-item"><a class="page-link" href="#">1</a></li>
                   <li class="page-item"><a class="page-link" href="#">2</a></li>
                   <li class="page-item"><a class="page-link" href="#">3</a></li>
                   <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- /. Card footer -->
           </div>
@@ -220,4 +223,23 @@ $("#store_piu").click(function() {
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+<!-- DataTables -->
+
+<script src="/dist/plugins/datatables/jquery.dataTables.js"></script>
+<script src="/dist/plugins/datatables/dataTables.bootstrap4.js"></script>
+<!-- /. Datatables -->
+<script>
+  $(function () {
+    $("#tasks_table").DataTable();
+
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+    });
+  });
+</script>
 @stop

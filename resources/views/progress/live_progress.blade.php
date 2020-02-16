@@ -36,9 +36,9 @@
         <div class="col-12">
           <div class="card card-info">
             <div class="card-header">
-              <h3 class="card-title">List</h3>
+              <!-- <h3 class="card-title">List</h3> -->
 
-              <div class="card-tools">
+              <!-- <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
                   <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
@@ -46,66 +46,68 @@
                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-
-                <tr>
-                  <th>#</th>
-                  <th>Activities</th>
-                  <th>Overall Progress</th>
-                  <th>Progress Tag</th>
-
-                </tr>
-
-          @foreach($components as $component)
-            @foreach($component->children as $subcomponents)
-              @foreach($subcomponents->children as $activities)
-                    <tr id = "">
-                      <td></td>
-                      <td>
-                        <p>{{$activities->text}}</p>
-                        <p>Component:{{$component->text}} > {{$subcomponents->text}}</p>
-                      </td>
-                        <td>
-                          <?php $count = 1; ?>
-                          @foreach($activities->children as $subactivies)
-
-                            @foreach($subactivies->children as $task)
-                              <p>{{$count}}. {{$task->text}}</p>
-                              <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Division: {{$task->piu['short_name']}}</p>
-                              <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Progress: {{($task->progress)*100}}%</p>
-                                @foreach($comments as $comment)
-                                  @if($comment['task_id']==$task->id)
-                                    @if($task->progress == 1)
-                                      <?php $comment = "Completed";?>
-                                    @else
-                                          @if($comment['comment']=="")
-                                            <?php $comment = "NA";?>
-                                          @else
-
-                                          <?php $comment = $comment['comment']; ?>
-                                          @endif
-                                    @endif
-                                        <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Status: {{$comment}}</p>
-                                  @endif
-                                @endforeach
-                                <?php $count = $count +1; ?>
-                            @endforeach
-
-                          @endforeach
-                        </td>
-                        <td>Green</td>
-
+            <div class="card-body table-responsive">
+              <table id = "progress_table" class="table table-hover datatable">
+                <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Activities</th>
+                      <th>Overall Progress</th>
+                      <th>Progress Tag</th>
 
                     </tr>
-                @endforeach
-            @endforeach
-          @endforeach
+              </thead>
+
+              <tbody>
+                    @foreach($components as $component)
+                      @foreach($component->children as $subcomponents)
+                        @foreach($subcomponents->children as $activities)
+                              <tr id = "">
+                                <td></td>
+                                <td>
+                                  <p>{{$activities->text}}</p>
+                                  <p>Component:{{$component->text}} > {{$subcomponents->text}}</p>
+                                </td>
+                                  <td>
+                                    <?php $count = 1; ?>
+                                    @foreach($activities->children as $subactivies)
+
+                                      @foreach($subactivies->children as $task)
+                                        <p>{{$count}}. {{$task->text}}</p>
+                                        <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Division: {{$task->piu['short_name']}}</p>
+                                        <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Progress: {{($task->progress)*100}}%</p>
+                                          @foreach($comments as $comment)
+                                            @if($comment['task_id']==$task->id)
+                                              @if($task->progress == 1)
+                                                <?php $comment = "Completed";?>
+                                              @else
+                                                    @if($comment['comment']=="")
+                                                      <?php $comment = "NA";?>
+                                                    @else
+
+                                                    <?php $comment = $comment['comment']; ?>
+                                                    @endif
+                                              @endif
+                                                  <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Status: {{$comment}}</p>
+                                            @endif
+                                          @endforeach
+                                          <?php $count = $count +1; ?>
+                                      @endforeach
+
+                                    @endforeach
+                                  </td>
+                                  <td>Green</td>
 
 
+                              </tr>
+                          @endforeach
+                      @endforeach
+                    @endforeach
+
+                </tbody>
 
               </table>
             </div>
@@ -174,4 +176,52 @@
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+<!-- DataTables -->
+<!-- <script>
+    window.deleteButtonTrans = 'Delete';
+    window.copyButtonTrans = 'Copy';
+    window.csvButtonTrans = 'csv';
+    window.excelButtonTrans = 'Excel';
+    window.pdfButtonTrans = 'pdf';
+    window.printButtonTrans = 'print';
+    window.colvisButtonTrans = 'coloumn visibility';
+</script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.flash.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.0/js/buttons.print.min.js"></script>
+
+<!-- <script src="/dist/plugins/datatables/jquery.dataTables.js"></script>
+<script src="/dist/plugins/datatables/dataTables.bootstrap4.js"></script> -->
+<!-- /. Datatables -->
+<script>
+$(document).ready(function() {
+    $('#progress_table').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+
+  // $(function () {
+  //   $("#progress_table").DataTable();
+  //
+  //   $('#example2').DataTable({
+  //     "paging": true,
+  //     "lengthChange": false,
+  //     "searching": false,
+  //     "ordering": true,
+  //     "info": true,
+  //     "autoWidth": false,
+  //   });
+  // });
+
+
+</script>
 @stop

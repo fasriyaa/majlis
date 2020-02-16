@@ -51,12 +51,12 @@ class ProcurementController extends Controller
 
         if($last_task != null)
             {
-              $last_task = $last_task['text'] . " Completed on : " . date("d M Y", strtotime($last_task['updated_at']));
+              $last_task = $last_task['text'] . " completed on : " . date("d M Y", strtotime($last_task['updated_at']));
             }
 
         if($next_task != null)
             {
-              $next_task = $next_task['text'] . "expected to complete on ". date("d M Y", strtotime($next_task['start_date'] . ' + '.$next_task['duration'] . ' days'));
+              $next_task = $next_task['text'] . " expected to complete on ". date("d M Y", strtotime($next_task['start_date'] . ' + '.$next_task['duration'] . ' days'));
             }
 
         $task_info[] = [
