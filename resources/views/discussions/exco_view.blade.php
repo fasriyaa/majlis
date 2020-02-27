@@ -7,16 +7,20 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">{{env('IMP_LV4')}} of:</h1>
-          <p>{{$subcomponent['text']}}</p>
+          <?php
+            if($discussion->type == 5)
+            {
+              $title = "EXCO View | Meeting on: ". date('d M Y', strtotime($discussion->updated_at));
+            }
+          ?>
+          <h1 class="m-0 text-dark">{{$title}}</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/components">{{env('IMP_LV2')}}</a></li>
-            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">{{env('IMP_LV3')}}</a></li>
-            <li class="breadcrumb-item active">{{env('IMP_LV4')}}</li>
+            <li class="breadcrumb-item active">Discussions</li>
+            <li class="breadcrumb-item active">EXCO</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -55,47 +59,92 @@
               <table class="table table-hover">
 
                 <tr>
-                  <th>ID</th>
-                  <th>{{env('IMP_LV4')}}</th>
-                  <th>Budget</th>
-                  <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
-                  <th>Un allocaed</th>
-                  <th>Overall Progress</th>
-                  <th>Action</th>
+                  <th>#</th>
+                  <th>Tasks</th>
+                  <th>Previous Status | {{date('d M Y', strtotime($last_discussion->updated_at))}}</th>
+                  <th>Current Status | {{date('d M Y', strtotime($discussion->updated_at))}} </th>
+                  <th>Progress</th>
+                  <!-- <th>Action</th> -->
                 </tr>
+              <?php $count = 1; ?>
 
-          @foreach($activities as $activity)
-                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
-                  <td>{{$activity->id}}</td>
-                  <td>{{$activity->text}}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{{$activity->progress*100}}%</td>
-                  <td field-key='action'>
-                    <a href="{{ route('pmu.subactivity',[$activity->id]) }}" class="fa fa-eye"></a>
-                  </td>
+              @foreach($tasks as $task)
+                <tr>
+                    <td>{{$count}}</td>
+                    <td>
+                        <p>Task: {{$task->parent['text']}}<p>
+                        <p>Division: {{$task->parent->piu['short_name']}}</p>
+                    </td>
+                    <td>
+                        @foreach($last_tasks as $last_task)
+                          @if($task->parent_id == $last_task->parent_id)
+                            <p>
+                              @if($last_task->progress == 1)
+                                  <i class="fas fa-check" style="color:green"></i>
+                                  <?php
+                                  $color = "green";
+                                  ?>
+                              @else
+                                <i class="fas fa-times" style="color:red"></i>
+                                <?php
+                                $color = "red";
+                                ?>
+                              @endif
+                              <font color = "{{$color}}">To complete {{$last_task->text}} by:{{date('d M Y', strtotime($last_task->start_date. ' + '.$last_task->duration .' day'))}} </font></p>
+                            <p>Status:
+                              @foreach($last_task->comments as $last_comment)
+                                  @if($last_discussion->id == $last_comment->discussion_id)
+                                    {{$last_comment->comment}}
+                                    <?php $last_progress = $last_comment->progress; ?>
+                                    <?php break; ?>
+                                  @endif
+                              @endforeach
+                            </p>
+                            <?php break; ?>
+                          @endif
+                        @endforeach
+                    </td>
+                    <td>
+                        <p>To complete {{$task->text}} by: {{date('d M Y', strtotime($task->start_date. ' + '.$task->duration .' day'))}} </p>
+                        <p>Status:
+                            @foreach($task->comments as $comment)
+                                  {{$comment->comment}}
+                                  <?php break; ?>
+                            @endforeach
+                         </p>
+                    </td>
+                    <td>
+                      <p>
+                          On {{date('d M Y', strtotime($last_discussion->updated_at))}} : {{$last_progress*100}}%
+                          <!-- <div class="progress progress-xs">
+
+                                <div class="progress-bar progress-bar-danger" style="width: {{$last_progress*100}}%"></div>
+                          </div> -->
+                      </p>
+                      <p>
+                          On {{date('d M Y', strtotime($discussion->updated_at))}} : {{($task->parent['progress'])*100}}%
+                          <!-- <div class="progress progress-xs">
+
+                              <div class="progress-bar progress-bar-danger" style="width: {{($task->parent['progress'])*100}}%"></div>
+                          </div> -->
+                      </p>
+                    </td>
                 </tr>
-          @endforeach
-
-
+                <?php $count ++; ?>
+              @endforeach
 
               </table>
             </div>
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-right">
+                <!-- <ul class="pagination pagination-sm m-0 float-right">
                   <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
                   <li class="page-item"><a class="page-link" href="#">1</a></li>
                   <li class="page-item"><a class="page-link" href="#">2</a></li>
                   <li class="page-item"><a class="page-link" href="#">3</a></li>
                   <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- /. Card footer -->
           </div>

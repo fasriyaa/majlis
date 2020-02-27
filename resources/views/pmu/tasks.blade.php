@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Tasks of:</h1>
+          <h1 class="m-0 text-dark">{{env('IMP_LV6')}} of:</h1>
           <p>ALL</p>
         </div>
         <!-- /.col -->
@@ -15,8 +15,8 @@
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">.....</li>
-            <li class="breadcrumb-item active">Sub Activities</li>
-            <li class="breadcrumb-item active">Tasks</li>
+            <li class="breadcrumb-item active">{{env('IMP_LV5')}}</li>
+            <li class="breadcrumb-item active">{{env('IMP_LV6')}}</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -56,8 +56,8 @@
                 <thead>
                     <tr align = "left">
                       <th>ID</th>
-                      <th>Task</th>
-                      <th>PIU</th>
+                      <th>{{env('IMP_LV6')}}</th>
+                      <th>Department</th>
                       <th>Budget</th>
                       <th>Start Date</th>
                       <th>Original End Date</th>
@@ -123,7 +123,7 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Assign PIU</h4>
+        <h4 class="modal-title">Assign Department</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
@@ -132,7 +132,7 @@
         {!! Form::open(['method' => 'POST',  'files' => false,]) !!}
         <div class="form-group">
           <input type="hidden" name = "task_id" id = "task_id">
-          <label for="name">Select PIU*</label>
+          <label for="name">Select Department*</label>
           <select id = "assign_piu" name="assign_piu" class="custom-select">
             @foreach($pius as $piu)
               <option value="{{$piu->id}}" >{{$piu->short_name}}</option>

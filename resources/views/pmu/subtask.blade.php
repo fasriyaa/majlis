@@ -7,19 +7,19 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Sub Tasks of:</h1>
+          <h1 class="m-0 text-dark">{{env('IMP_LV7')}} of:</h1>
           <p>{{$task['text']}} | {{$subactivity['text']}}</p>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
-            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Components</a></li>
-            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">Acitivities</a></li>
-            <li class="breadcrumb-item active"><a href = "/subactivity/{{$subactivity['parent']}}">Sub Acitivities</a></li>
-            <li class="breadcrumb-item active"><a href = "/task/{{$task['parent']}}">Tasks</a></li>
-            <li class="breadcrumb-item active">Sub Tasks</li>
+            <li class="breadcrumb-item active"><a href = "/components">{{env('IMP_LV2')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">{{env('IMP_LV3')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">{{env('IMP_LV4')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/subactivity/{{$subactivity['parent']}}">{{env('IMP_LV5')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/task/{{$task['parent']}}">{{env('IMP_LV6')}}</a></li>
+            <li class="breadcrumb-item active">{{env('IMP_LV7')}}</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -60,7 +60,7 @@
                 <tr align = "left">
                   <th>ID</th>
                   <th></th>
-                  <th>Task</th>
+                  <th>{{env('IMP_LV7')}}</th>
                   <th>Assigned To </th>
                   <th>Start Date</th>
                   <th>End Date</th>

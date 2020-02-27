@@ -7,14 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Components</h1>
+          <h1 class="m-0 text-dark">{{env('IMP_LV2')}}</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">PMU</li>
-            <li class="breadcrumb-item active">Components</li>
+            <li class="breadcrumb-item active">{{env('IMP_LV1')}}</li>
+            <li class="breadcrumb-item active">{{env('IMP_LV2')}}</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -54,7 +54,7 @@
 
                 <tr>
                   <th>ID</th>
-                  <th>Components</th>
+                  <th>{{env('IMP_LV2')}}</th>
                   <th>Budget</th>
                   <th>Allocated</th>
                   <th>Utilized</th>

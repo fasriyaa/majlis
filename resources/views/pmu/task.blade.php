@@ -7,18 +7,18 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Tasks of:</h1>
+          <h1 class="m-0 text-dark">{{env('IMP_LV6')}} of:</h1>
           <p>{{$subactivity['text']}}</p>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/components">Components</a></li>
-            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">Sub Component</a></li>
-            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">Activity</a></li>
-            <li class="breadcrumb-item active"><a href = "{{ URL::previous() }}">Sub Activities</a></li>
-            <li class="breadcrumb-item active">Tasks</li>
+            <li class="breadcrumb-item active"><a href = "/components">{{env('IMP_LV1')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/subcomponent/{{$subcomponent['parent']}}">{{env('IMP_LV3')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "/activity/{{$activity['parent']}}">{{env('IMP_LV4')}}</a></li>
+            <li class="breadcrumb-item active"><a href = "{{ URL::previous() }}">{{env('IMP_LV5')}}</a></li>
+            <li class="breadcrumb-item active">{{env('IMP_LV6')}}</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -58,7 +58,7 @@
 
                 <tr>
                   <th>ID</th>
-                  <th>Task</th>
+                  <th>{{env('IMP_LV6')}}</th>
                   <th>Budget</th>
                   <th>Start Date</th>
                   <th>Original End Date</th>

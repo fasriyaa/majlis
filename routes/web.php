@@ -77,6 +77,10 @@ Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], fu
     Route::get('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list')->name('piu.review_list');
     Route::post('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list_store')->name('piu_review_list.store');
     Route::get('/piu_review_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_meeting') -> name('pmu.review.meeting');
+
+    Route::get('/exco/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@exco_view')->name('exco.view');
+    Route::get('/exco_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_list')->name('exco.list');
+    Route::post('/exco_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_review_list_store')->name('exco_review_list.store');
 });
 
 

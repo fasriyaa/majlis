@@ -7,37 +7,15 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Review Meeting</h1>
-          <?php
-              if($discussion_status->type == 1)
-              {
-                $title = $discussion_status->piu['short_name'] ." Coponents | " . $discussion_status->updated_at;
-              }
-              if($discussion_status->type == 2)
-              {
-                $title = $discussion_status->piu['short_name'] ." Coponents | " . $discussion_status->updated_at;
-              }
-              if($discussion_status->type == 3)
-              {
-                $title = "PMU review Meeting on: " . $discussion_status->updated_at;
-              }
-              if($discussion_status->type == 4)
-              {
-                $title = $discussion_status->piu['short_name'] ." Coponents | " . $discussion_status->updated_at;
-              }
-              if($discussion_status->type == 5)
-              {
-                $title = "EXCO Meeting on: " . $discussion_status->updated_at;
-              }
-           ?>
-          <h6 class="m-0 text-dark">{{$title}}</h6>
+          <h1 class="m-0 text-dark">EXCO</h1>
+          <h6 class="m-0 text-dark">{{$discussion_status->piu['short_name']}} Coponents | {{$discussion_status->updated_at}}</h6>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">Discussions</li>
-            <li class="breadcrumb-item active">Review Meetings</li>
+            <li class="breadcrumb-item active">EXCO</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -188,11 +166,6 @@
 
               <div class="card-body table-responsive p-0">
                     <table class="table table-hover">
-                      @if($discussion_status->type == 5)
-                          <tr>
-                            <td onclick = "location.href='/exco/'+{{$discussion_status->id}};">EXCO View<td>
-                          </tr>
-                      @endif
                       @if($discussion_status['status'] == 1)
                           <tr>
                             <td data-toggle="modal" data-target="#add_participants">Add Participants </td>

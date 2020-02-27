@@ -130,15 +130,42 @@ class DiscussionsController extends Controller
       $subact_id = Task::whereIn('parent', $act_id)
           ->pluck('id');
 
-      if($piu_id == 0){
-        $tasks_id = Task::whereIn('parent', $subact_id)
-            ->pluck('id');
+
+      if($discussion_cat_id == 1)
+      {
+        $tasks_id = Task::select('id','progress')
+            ->whereIn('parent', $subact_id)
+            ->get();
       }
-      else {
-        $tasks_id = Task::whereIn('parent', $subact_id)
+      if($discussion_cat_id == 2)
+      {
+        $tasks_id = Task::select('id','progress')
+            ->whereIn('parent', $subact_id)
+            ->get();
+      }
+      if($discussion_cat_id == 3)
+      {
+        $tasks_id = Task::select('id','progress')
+            ->whereIn('parent', $subact_id)
+            ->get();
+      }
+      if($discussion_cat_id == 4)
+      {
+        $tasks_id = Task::select('id','progress')
+            ->whereIn('parent', $subact_id)
             ->where('piu_id', $piu_id)
-            ->pluck('id');
+            ->get();
       }
+      // if EXCO review
+      if($discussion_cat_id == 5)
+      {
+        $tasks_id = Task::select('id','progress')
+            ->whereIn('parent', $subact_id)
+            ->where('procurement',1)
+            ->get();
+      }
+
+
 
 
 
@@ -147,7 +174,7 @@ class DiscussionsController extends Controller
       foreach ($tasks_id as $task_id) {
 
         $subtasks = Task::select('id')
-            ->where('parent', $task_id)
+            ->where('parent', $task_id->id)
             ->where('progress','<',1)
             ->orderby('sortorder','ASC')
             ->first();
@@ -166,6 +193,7 @@ class DiscussionsController extends Controller
                   $task_dis = new TaskDiscussions();
                   $task_dis->discussion_id = $id;
                   $task_dis->task_id = $subtasks['id'];
+                  $task_dis->progress = $task_id->progress;
 
                   $task_dis->save();
                 }
@@ -185,7 +213,7 @@ class DiscussionsController extends Controller
     {
 
       //Getting Discussion Status
-      $discussion_status = Discussions::select('id','status','piu_id','updated_at')
+      $discussion_status = Discussions::select('id','status','piu_id','type','updated_at')
             ->where('id',$id)
             ->with('piu:id,short_name')
             ->first();
@@ -430,6 +458,91 @@ class DiscussionsController extends Controller
       return response()->json($new_timeline);
     }
 
+    public function exco_list()
+    {
+      $exco_lists = Discussions::select('id','piu_id','created_at','status')
+          ->where('type',5)
+          ->with('piu:id,short_name')
+          ->orderby('id','DESC')
+          ->get();
+
+      //getting previous meetings
+      $previous_meetings = Discussions::select('id','created_at')
+          ->where('type',5)
+          ->orderBy('created_at','DESC')
+          ->get();
+
+        // return $previous_meetings;
+      return view('discussions.exco_review_list',compact('exco_lists','previous_meetings'));
+    }
+
+    public function exco_review_list_store(Request $request)
+    {
+      $discussion = new Discussions();
+
+      $discussion->type = $request->input('type');
+      $discussion->piu_id = $request->input('piu_id');
+      $discussion->last_meeting = $request->input('last_meeting');
+      $discussion->status = 1; //1 for open
+
+      $discussion->save();
+
+
+      $data = $this->discussion_task($discussion->id,$discussion->type,$request->input('piu_id'));
+
+      return redirect()->route('exco.list');
+    }
+
+    public function exco_view($id)
+    {
+      $discussion = Discussions::select('id','last_meeting','type','updated_at')
+          ->where('id',$id)
+          ->first();
+
+      //get tasks
+      $sub_tasks_id = TaskDiscussions::where('discussion_id', $id)
+          ->pluck('task_id');
+
+      $tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
+          ->whereIn('id',$sub_tasks_id)
+          ->with('parent:id,text,progress,piu_id')
+          ->with('comments:task_id,id,comment')
+          ->get();
+
+      $last_discussion = Discussions::select('id','updated_at')
+          ->where('id',$discussion['last_meeting'])
+          ->first();
+
+      $last_sub_tasks_id = TaskDiscussions::where('discussion_id', $discussion['last_meeting'])
+          ->pluck('task_id');
+
+      $last_tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
+          ->whereIn('id',$last_sub_tasks_id)
+          ->with('parent:id,text,progress,piu_id')
+          ->with('comments:task_id,id,comment,discussion_id,progress')
+          ->get();
+
+
+      // get parents : task_id
+      // foreach($sub_tasks as $sub_task)
+      // {
+      //   $parent = Task::select('parent')
+      //         ->where('id',$sub_task->task_id)
+      //         ->first('parent');
+      //
+      //         $parents[] = $parent->parent;
+      // }
+      //
+      // $tasks = Task::select('id','text','progress','piu_id')
+      //     ->wherein('id',$parents)
+      //     ->with('piu:id,short_name')
+      //     ->with('child:parent,id,text,progress')
+      //     ->get();
+
+
+      // return $last_tasks;
+      return view('discussions.exco_view', compact('discussion','tasks','last_discussion','last_tasks'));
+    }
 
 
 }

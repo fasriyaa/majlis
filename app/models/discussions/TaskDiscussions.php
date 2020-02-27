@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskDiscussions extends Model
 {
-    protected $fillable = ['id', 'discussion_id', 'task_id', 'comment', 'next_step', 'status'];
+    protected $fillable = ['id', 'discussion_id', 'task_id', 'progress', 'comment', 'next_step', 'status'];
 
     public function task()
     {
