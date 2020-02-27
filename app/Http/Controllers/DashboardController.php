@@ -45,10 +45,38 @@ class DashboardController extends Controller
               ->whereIn('parent', $subact_id)
               ->get();
 
+          $overall_progress = Task::select('progress')
+              ->where('parent',0)
+              ->first();
+
+          //get list of activities due but not completed
+          $task_id = Task::whereIn('parent', $subact_id)
+              ->pluck('id');
+
+
+
+          $dues = Task::select('id','start_date','duration')
+                ->whereIn('parent',$task_id)
+                ->where('progress', '<', 1)
+                ->get();
+
+          $due_count = 0;
+          foreach($dues as $due)
+          {
+            if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
+            {
+              // $due_id [] = $due->id;
+              $due_count++;
+            }
+          }
+
+
           $milestone = count($subactivities);
           $activities = count($tasks);
 
-        return view('dashboard.v1', compact('milestone', 'activities'));
+
+        // return count($dues);
+        return view('dashboard.v1', compact('milestone', 'activities','overall_progress','due_count'));
     }
 
     public function versiontwo()

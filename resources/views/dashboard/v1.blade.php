@@ -48,14 +48,14 @@
           <!-- small box -->
           <div class="small-box bg-success">
             <div class="inner">
-              <h3>10<sup style="font-size: 20px">%</sup></h3>
+              <h3>{{$overall_progress['progress']*100}}<sup style="font-size: 20px">%</sup></h3>
 
               <p>Overall Progress</p>
             </div>
             <div class="icon">
               <i class="fas fa-chart-line"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="/components" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -78,7 +78,7 @@
           <!-- small box -->
           <div class="small-box bg-danger">
             <div class="inner">
-              <h3>65</h3>
+              <h3>{{$due_count}}</h3>
 
               <p>Critical</p>
             </div>
