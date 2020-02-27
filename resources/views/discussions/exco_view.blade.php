@@ -90,10 +90,12 @@
                                 $color = "red";
                                 ?>
                               @endif
-                              <font color = "{{$color}}">To complete {{$last_task->text}} by:{{date('d M Y', strtotime($last_task->start_date. ' + '.$last_task->duration .' day'))}} </font></p>
-                            <p>Status:
+
+
                               @foreach($last_task->comments as $last_comment)
                                   @if($last_discussion->id == $last_comment->discussion_id)
+                                  <font color = "{{$color}}">To complete {{$last_task->text}} by:{{date('d M Y', strtotime($last_comment->last_due))}} </font></p>
+                                  <p>Status:
                                     {{$last_comment->comment}}
                                     <?php $last_progress = $last_comment->progress; ?>
                                     <?php break; ?>
