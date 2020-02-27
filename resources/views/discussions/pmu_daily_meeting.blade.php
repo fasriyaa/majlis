@@ -190,7 +190,7 @@
                     <table class="table table-hover">
                       @if($discussion_status->type == 5)
                           <tr>
-                            <td onclick = "location.href='/exco/'+{{$discussion_status->id}};">EXCO View<td>
+                            <td onclick = "location.href='/exco/'+{{$discussion_status->id}};">EXCO View</td>
                           </tr>
                       @endif
                       @if($discussion_status['status'] == 1)
