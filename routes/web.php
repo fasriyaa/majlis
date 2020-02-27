@@ -110,6 +110,7 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
       Route::get('/dashboard/livefeed', 'DashboardController@livefeed')->name('livefeed');
       Route::get('/dashboard/v2', 'DashboardController@versiontwo')->name('v2');
       Route::get('/dashboard/v3', 'DashboardController@versionthree')->name('v3');
+      Route::get('/critical', 'DashboardController@critical')->name('critical');
 });
 
 

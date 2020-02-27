@@ -7,6 +7,7 @@ use App\models\gantt\Task;
 use App\models\timeline\Timeline;
 use App\models\taskApproval\TaskApproval;
 use App\models\docs\RequireDoc;
+use App\models\piu\piu;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -147,5 +148,50 @@ class DashboardController extends Controller
                       ->get();
         // return $feeds;
         return view('dashboard.livefeed',compact('feeds','subtasks', 'users', 'tasks','pending_approvals','user_name','pending_docs'));
+    }
+
+    public function critical()
+    {
+      // Getting Main component ID
+          $main_id = Task::where('parent', '=', 1)
+              ->pluck('id');
+
+          $sub_id = Task::whereIn('parent', $main_id)
+              ->pluck('id');
+
+          $act_id = Task::whereIn('parent', $sub_id)
+              ->pluck('id');
+
+          $subact_id = Task::whereIn('parent', $act_id)
+              ->pluck('id');
+
+          $task_id = Task::whereIn('parent', $subact_id)
+              ->pluck('id');
+
+
+
+          $dues = Task::select('id','start_date','duration','parent')
+                ->whereIn('parent',$task_id)
+                ->where('progress', '<', 1)
+                ->get();
+
+          // $due_count = 0;
+          foreach($dues as $due)
+          {
+            if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
+            {
+              $due_parent [] = $due->parent;
+              // $due_count++;
+            }
+          }
+
+          $tasks = Task::select('id', 'text', 'progress','piu_id')
+              ->whereIn('id', $due_parent)
+              ->with('piu:id,short_name')
+              ->get();
+
+          $pius = piu::all();
+
+          return view('pmu.critical', compact('tasks','pius'));
     }
 }
