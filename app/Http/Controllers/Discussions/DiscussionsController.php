@@ -159,7 +159,7 @@ class DiscussionsController extends Controller
       // if EXCO review
       if($discussion_cat_id == 5)
       {
-        $tasks_id = Task::select('id','progress','start_date','duration')
+        $tasks_id = Task::select('id','progress')
             ->whereIn('parent', $subact_id)
             ->where('procurement',1)
             ->get();
@@ -173,7 +173,7 @@ class DiscussionsController extends Controller
 
       foreach ($tasks_id as $task_id) {
 
-        $subtasks = Task::select('id')
+        $subtasks = Task::select('id','start_date','duration')
             ->where('parent', $task_id->id)
             ->where('progress','<',1)
             ->orderby('sortorder','ASC')
@@ -194,7 +194,7 @@ class DiscussionsController extends Controller
                   $task_dis->discussion_id = $id;
                   $task_dis->task_id = $subtasks['id'];
                   $task_dis->progress = $task_id->progress;
-                  $task_dis->last_due = date('Y-m-d', strtotime($task_id->start_date . ' + ' . $task_id->duration . ' day'));
+                  $task_dis->last_due = date('Y-m-d', strtotime($subtasks['start_date'] . ' + ' . $subtasks['duration'] . ' day'));
 
                   $task_dis->save();
                 }
