@@ -55,27 +55,28 @@ class DashboardController extends Controller
 
 
 
-          $dues = Task::select('id','start_date','duration')
+          $dues = Task::select('id','start_date','duration','parent')
                 ->whereIn('parent',$task_id)
                 ->where('progress', '<', 1)
                 ->get();
 
-          $due_count = 0;
+          // $due_count = 0;
           foreach($dues as $due)
           {
             if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
             {
-              // $due_id [] = $due->id;
-              $due_count++;
+              $due_parent [] = $due->parent;
+              // $due_count++;
             }
           }
 
 
           $milestone = count($subactivities);
           $activities = count($tasks);
+          $due_count = count(array_unique($due_parent));
 
 
-        // return count($dues);
+        // return $due_count;
         return view('dashboard.v1', compact('milestone', 'activities','overall_progress','due_count'));
     }
 
