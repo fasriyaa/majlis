@@ -28,8 +28,6 @@ Route::group(['middleware' => ['role:SCMember|Admin']], function () {
     Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
-    Route::get('/discussions/sclist', function () {return view('discussions.sclist');});
-    Route::get('/discussions/sc/1', function () {return view('discussions.sc');});
     Route::get('/discussions/tclist', function () {return view('discussions.tclist');});
     Route::get('/discussions/tc/1', function () {return view('discussions.tc');});
     Route::get('/resultframework/pdo', function () {return view('resultframework.pdo');});
@@ -64,6 +62,7 @@ Route::group(['middleware' => ['permission:PMU'], 'middleware' => 'auth'], funct
     Route::resource('pmu_daily_list', '\App\Http\Controllers\Discussions\DiscussionsController');
     Route::get('/pmu_daily_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@pmu_daily_meeting') -> name('pmu.daily.meeting');
     Route::post('/review', '\App\Http\Controllers\Discussions\DiscussionsController@review') -> name('pmu.review');
+    Route::post('/new_comment', '\App\Http\Controllers\Discussions\DiscussionsController@new_comment') -> name('new.comment');
     Route::post('/add_participants', '\App\Http\Controllers\Discussions\DiscussionsController@add_participants') -> name('add.participants');
     Route::post('/close_discussion', '\App\Http\Controllers\Discussions\DiscussionsController@close_discussion') -> name('close.discussion');
 
@@ -81,6 +80,11 @@ Route::group(['middleware' => ['role:Editor|Admin'], 'middleware' => 'auth'], fu
     Route::get('/exco/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@exco_view')->name('exco.view');
     Route::get('/exco_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_list')->name('exco.list');
     Route::post('/exco_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_review_list_store')->name('exco_review_list.store');
+
+    Route::get('/sc_list', '\App\Http\Controllers\Discussions\DiscussionsController@sc_list')->name('sc.list');
+    Route::post('/sc_list', '\App\Http\Controllers\Discussions\DiscussionsController@sc_list_store')->name('sc_list.store');
+    Route::get('/sc/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@sc_view')->name('sc.view');
+    Route::resource('agenda', '\App\Http\Controllers\Discussions\DiscussionAgendaController');
 });
 
 

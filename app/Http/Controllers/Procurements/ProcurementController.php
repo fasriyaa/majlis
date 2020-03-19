@@ -40,6 +40,7 @@ class ProcurementController extends Controller
       $tasks = Task::select('id', 'text', 'progress','piu_id','procurement')
           ->whereIn('parent', $subact_id)
           ->where('procurement',1)
+          ->where('progress','<',1)
           ->with('piu:id,short_name')
           ->orderBy('progress', 'DESC')
           ->get();

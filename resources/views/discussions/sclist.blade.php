@@ -14,7 +14,7 @@
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">Discussions</li>
-            <li class="breadcrumb-item active">Steering Committee</li>
+            <li class="breadcrumb-item active">SC Meetings</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -33,79 +33,97 @@
       <!-- Main row -->
       <div class="row">
 
-        <div class="col-12">
-          <div class="card card">
+        <section class="col-lg-7">
+          <div class="card card-info">
             <div class="card-header">
               <h3 class="card-title">List</h3>
 
+              <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                    <div class="card-tools">
-                      <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                        <div class="input-group-append">
-                          <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-
-
-            </div>
-            <!-- /.card-header -->
-            <br>
-
-                <div class="col-md-6">
-                  <div class="card card-info collapsed-card card-outline">
-                    <div class="card-header">
-                      <h3 class="card-title">Year : 2019</h3>
-
-                      <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                      <!-- /.card-tools -->
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                    <a href = "/discussions/sc/1">> Meeting | 27 November 2019 </a><br>
-                    </div>
-                    <!-- /.card-body -->
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                   </div>
                 </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
 
-                <!-- <div class="col-md-3 col-sm-6 col-12">
-                    <div class="info-box">
-                      <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+                <tr align = "left">
+                  <th>ID</th>
+                  <th>Date</th>
+                  <!-- <th>Details</th> -->
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
 
-                      <div class="info-box-content">
-                        <span class="info-box-text">Messages</span>
-                        <span class="info-box-number">1,410</span>
-                      </div>
-                    </div>
-                </div> -->
+                @foreach($sc_lists as $sc_list)
+                <tr id = "{{$sc_list->id}}" onclick = "location.href='/sc/'+this.id;">
+                  <td>{{$sc_list->id}}</td>
+                  <td>Meeting on: {{date("d M Y", strtotime($sc_list->meeting_date))}}</td>
+
+                    <?php
+                      if($sc_list->status == 1)
+                      {
+                        $status = "Open";
+                        $color = "green";
+                      }else {
+                        $status = "Closed";
+                        $color = "red";
+                      }
+                    ?>
+                  <td><font color = "{{$color}}">{{$status}}</font></td>
+                  <td field-key='action'>
+                    <a href="#" class="fa fa-eye"></a>
+                  </td>
+                </tr>
+                @endforeach
 
 
 
 
-
-
+              </table>
+            </div>
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-
-
-                <a href="{{ route('progress.create') }}" class="btn btn-info float-right">Create New</a>
-
-
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
             </div>
             <!-- /. Card footer -->
           </div>
           <!-- /.card -->
-        </div>
+        </section>
+        <!-- /. Left col -->
 
+        <!-- Right Col -->
+        <div class = "col-sm-5">
+          <div class = "col-sm-12">
+            <div class="card card">
+              <div class="card-header">
+                <h3 class="card-title">Actions</a></h3>
+              </div>
+              <!-- /. card header -->
+
+              <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                      <tr>
+                        <td><a href = "" data-toggle="modal" data-target="#new_meeting">Create New Meeting </a></td>
+                      </tr>
+                    </table>
+              </div>
+            </div>
+          </dvi>
+        </div>
+        <!-- /. Right col -->
 
       </div>
       <!-- /.row (main row) -->
@@ -117,7 +135,47 @@
 <!-- /.content-wrapper -->
 @endsection
 
+<!-- Create New meeting Modal -->
+<div class="modal fade" id="new_meeting">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Create New Meeting</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['sc_list.store'], 'files' => false,]) !!}
+        <input type="hidden" name = "type" id = "type" value = "6">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <label for="name">Select Date of Meeting*</label>
+          <input type = "text" id = "datepicker" class = "form-control" name = "meeting_date" value = "">
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Create new meeting Modal -->
+
 @section('javascript')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+
+
+
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
@@ -126,7 +184,19 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 
+  $(document).ready(function () {
+      $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap'
+      });
+  });
+
 </script>
+
+<style>
+    .datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+</style>
 <!-- Bootstrap 4 -->
 <script src="/dist/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Morris.js charts -->

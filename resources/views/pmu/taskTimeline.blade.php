@@ -181,6 +181,11 @@
                       <td> Require Document <a href="" class="fa fa-hand-point-right" id = "{{$task_name['id']}}" onclick = "require_doc(this);"></a>
                       </td>
                     </tr>
+                    <tr align = "left">
+                      <td></td>
+                      <td> Insert a comment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#new_comment" data-id = "{{$task_name['id']}}" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
+                      </td>
+                    </tr>
                   </table>
                 </div>
               </div>
@@ -447,6 +452,49 @@
 </div>
 <!-- /. Assign Staff Modal -->
 <!-- /. upload file modal -->
+
+<!-- Review line items modal -->
+<div class="modal fade" id="new_comment">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Comment</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['new.comment'], 'files' => false,]) !!}
+        <input type="hidden" name = "task_id" id = "task_id" value = "{{$task_name['id']}}">
+        <input type="hidden" name = "discussion_id" id = "discussion_id" value = "0">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <p>Task: {{$task_name['text']}}</p>
+          <p>Assigned To: {{$task_name['user']['name']}}</p>
+          <label for="status">Current Status</label>
+
+          <textarea id = "status" name = "status" class="form-control" rows="3" value = "">{{$comments['comment']}}</textarea>
+          <br>
+          <label for="next_step">Next Step</label>
+          <textarea id = "next_step" name = "next_step" class="form-control" rows="3">{{$comments['next_step']}}</textarea>
+          <br>
+
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Review line items modal -->
 
 @section('javascript')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Meeting | 27 November 2019</h1>
+          <h1 class="m-0 text-dark">Meeting | {{date('d F Y', strtotime($discussion['meeting_date']))}}</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
@@ -44,48 +44,93 @@
               <div class="card-body p-0">
                 <table class="table">
                   <thead>
-                    <tr>
+                    <tr align = "left">
                       <th style="width: 10px">#</th>
                       <th>Item</th>
                       <th>Submitted by:</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1.</td>
-                      <td>Introduction by Minister of Finance</td>
-                      <td>PMU</td>
-                    </tr>
-
-                    <tr>
-                      <td>2.</td>
-                      <td>Brief Presentation of PFM Project</td>
-                      <td>PMU</td>
-                    </tr>
-
-                    <tr>
-                      <td>3.</td>
-                      <td>Accrual Accounting TOR</td>
-                      <td>Financial Controller</td>
-                    </tr>
-
-
+                    <?php $count = 1; ?>
+                    @foreach($agendas as $agenda)
+                        <tr>
+                          <td>{{$count}}</td>
+                          <td>{{$agenda->description}}</td>
+                          <td>
+                            @if($agenda->submitter_type == 1)
+                              {{$agenda->piu['short_name']}}
+                            @else
+                              {{$agenda->user['name']}}
+                            @endif
+                          </td>
+                        </tr>
+                        <?php $count++; ?>
+                    @endforeach
                   </tbody>
                 </table>
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <button type="submit" class="btn btn-info float-right">New</button>
+                @if($discussion['status']==1)
+                  <a href = "" data-toggle="modal" data-target="#new_agenda"><button class="btn btn-info float-right">Add</button></a>
+                @endif
               </div>
 
 
             </div>
             <!-- /.card -->
+
           </div>
           <!-- /. col -->
 
           <!-- Documents -->
                 <div class="col-md-6">
+
+                      <!-- / Actions Table -->
+                        <div class="card card">
+                          <div class="card-header">
+                            <?php if($discussion['status'] == 1)
+                                  {
+                                      $color = "green";
+                                      $text = "[Open]";
+                                  }else
+                                    {
+                                      $color = "red";
+                                      $text = "[Closed]";
+                                    } ?>
+
+                            <h3 class="card-title">Actions <font color = "{{$color}}">{{$text}} </font></h3>
+                          </div>
+                          <!-- /. card header -->
+
+                          <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+
+                                  @if($discussion['status'] == 1)
+                                      <tr>
+                                        <td data-toggle="modal" data-target="#add_participants">Add Participants </td>
+                                      </tr>
+                                  @endif
+
+                                  @if($discussion['status'] == 1)
+                                      <tr>
+                                        <td data-toggle="modal" data-target="#upload_min" data-id = "{{$discussion['id']}}" onclick = "$('#disucssion1_id').val($(this).data('id'));">Upload Minutes </td>
+                                      </tr>
+                                  @endif
+                                  @if($discussion['status'] == 1)
+                                      <tr>
+                                        <td data-toggle="modal" data-target="#close_discussion">Close Meeting </td>
+                                      </tr>
+                                  @endif
+
+
+                                </table>
+                          </div>
+                        </div>
+                      </dvi>
+                  <!-- /. Action Table -->
+
+                    <!-- Documents -->
                       <div class="card">
                         <div class="card-header">
                           <h3 class="card-title">Reference Documents</h3>
@@ -96,60 +141,61 @@
                         <div class="card-body p-0">
                           <table class="table table-striped">
                             <thead>
-                              <tr>
+                              <tr align = "left">
                                 <th style="width: 10px">#</th>
                                 <th>Document Name</th>
                                 <th>Document Date:</th>
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td>1.</td>
-                                <td><a href = "files/ppt.pdf">Project Desription PPT</a></td>
-                                <td>27 November 2019</td>
-                              </tr>
-
-                              <tr>
-                                <td>2.</td>
-                                <td><a href = "/files/pad.pdf">Project Apraisal Document</a></td>
-                                <td>20 June 2018</td>
-                              </tr>
-
-                              <tr>
-                                <td>3.</td>
-                                <td><a href = "/files/2019_q3.pdf">2019 Q3 Progress Report</a></td>
-                                <td>15 November 2019</td>
-                              </tr>
-
-                              <tr>
-                                <td>4.</td>
-                                <td><a href = "/files/AM_27_11_2019.pdf">Draft Aide Memore | 12-14 Nov 2019</a></td>
-                                <td>27 November 2019</td>
-                              </tr>
-
-                              <tr>
-                                <td>5.</td>
-                                <td><a href = "/files/Accrual_Accounting_TOR.pdf">Draft Accural Accounting TOR</td>
-                                <td>27 November 2019</td>
-                              </tr>
-
-
+                              <?php $count = 1; ?>
+                              @foreach($docs as $doc)
+                                <tr>
+                                  <td>{{$count}}</td>
+                                  <td><a href = "{{ url('/files', $doc->doc_name) }}">{{$doc->alias_name}}</a></td>
+                                  <td>
+                                    @if($doc->doc_date == null)
+                                      NA
+                                    @else
+                                      {{date("d F Y", strtotime($doc->doc_date))}}
+                                    @endif
+                                  </td>
+                                </tr>
+                                <?php $count++; ?>
+                              @endforeach
                             </tbody>
                           </table>
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                          <button type="submit" class="btn btn-info float-right">Add</button>
+                            @if($discussion['status'] == 1)
+                              <a href = "" data-toggle="modal" data-target="#upload_doc_modal" data-id = "{{$discussion['id']}}" onclick = "$('#subtask6_id').val($(this).data('id'));"><button type="" class="btn btn-info float-right">Upload</button></a>
+                            @endif
                         </div>
                       </div>
                       <!-- /.card -->
 
                       <!-- Meeting Minutes -->
                       <div class="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Meeting Minutes: <font color = "red">Not Available</font> |<a href = "#"> Upload</a></h3>
-                        </div>
+                        <!-- <div class="card-header">
+                          <h3 class="card-title">Meeting Minutes: <a href = "#"> </a></h3>
+                        </div> -->
                         <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0">
+                              <table class="table table-hover">
+                                @if(empty($mins))
+                                <tr>
+                                  <td>Meeting Minutes: <font color = "red">Not Available</font></td>
+                                </tr>
+                                @else
+                                  @foreach($mins as $min)
+                                    <tr>
+                                      <td>Meeting Minutes: <a href = "">{{$min->doc_name}}</a></td>
+                                    </tr>
+                                  @endforeach
+                                @endif
+                              </table>
+                        </div>
 
                         <!-- /.card-body -->
                       </div>
@@ -157,58 +203,26 @@
                       <!-- /. Meeting Minutes -->
 
                       <!-- Meeting Minutes -->
-                      <div class="card">
+                      <div class="card card">
                         <div class="card-header">
-                          <h3 class="card-title">Attendence: <font color= "red">Not Available</font> |<a href = "#"> Upload</a></h3>
+                          <h3 class="card-title">Participants</a></h3>
                         </div>
-                        <!-- /.card-header -->
+                        <!-- /. card header -->
 
-                        <!-- /.card-body -->
+                        <div class="card-body table-responsive p-0">
+                              <table class="table table-hover">
+                                @foreach($participants as $participant)
+                                    <tr>
+                                      <td>{{$participant->user['name']}}</td>
+                                    </tr>
+                                @endforeach
+                              </table>
+                        </div>
                       </div>
                       <!-- /.card -->
                       <!-- /. Meeting Minutes -->
 
-                      <!-- Notes -->
-                      <div class="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Notes</font></h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body p-0">
-                          <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th style="width: 10px">#</th>
-                                <th>Member</th>
-                                <th>View</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1.</td>
-                                <td>PMU Notes</td>
-                                <td>Public</td>
-                                <td><a href = "#">Show</a></td>
-                              </tr>
 
-                              <tr>
-                                <td>2.</td>
-                                <td>Ahmed Ameer</td>
-                                <td>Private</td>
-                                <td></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-
-                        <!-- /.card-body -->
-                        <div class="card-footer">
-                          <button type="submit" class="btn btn-info float-right">New Note</button>
-                        </div>
-                      </div>
-                      <!-- /.card -->
-                      <!-- /. Notes -->
 
 
 
@@ -228,16 +242,244 @@
 <!-- /.content-wrapper -->
 @endsection
 
+<!-- Create New agenda item -->
+<div class="modal fade" id="new_agenda">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Agenda Item</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['agenda.store'], 'files' => false,]) !!}
+        <input type="hidden" name = "discussion_id" id = "discussion_id" value = "{{$discussion['id']}}">
+        <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+          <label for="name">Select Group*</label>
+          <select id = "submitter_type" name="submitter_type" class="custom-select" onChange="getSubmitter(this.value);">
+              <option value="1" >PIU</option>
+              <option value="2" >Users</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="name">Select Submited By*</label>
+          <select id = "submitter_id" name="submitter_id" class="custom-select">
+            @foreach($pius as $piu)
+              <option value="{{$piu->id}}" >{{$piu->short_name}}</option>
+            @endforeach
+          </select>
+
+        </div>
+        <div class="form-group">
+          <label for="name">Enter Description*</label>
+          <input type="text" name = "description" id = "description" class="form-control">
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Create new agenda item -->
+
+<!-- Add participants modal -->
+<div class="modal fade" id="add_participants">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Participants</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['add.participants'], 'files' => false,]) !!}
+        <div class="form-group">
+          <input type="hidden" name = "discussion_id" id = "discussion_id" value = "{{$discussion['id']}}">
+          <input type="hidden" name = "discussion_type" id = "discussion_type" value = "{{$discussion['type']}}">
+          <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+          <label for="name">Select Staff*</label>
+          <select id = "user_id" name="user_id" class="custom-select">
+            @foreach($users as $user)
+              <option value="{{$user->id}}" >{{$user->name}}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "save_participants" type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. add participants modal -->
+
+<!-- Upload file Modal -->
+<div class="modal fade" id="upload_doc_modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Upload Document</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['pmu.upload_doc'], 'files' => true,]) !!}
+        @csrf
+        <div class="form-group">
+          <input type="hidden" name = "subtask6_id" id = "subtask6_id">
+          <input type="hidden" name = "req_doc_type" id = "req_doc_type" value = "2">
+          <div class="custom-file">
+            <input type="file" name = "file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name">Enter Document Name*</label>
+          <input type="text" name = "alias_name" id = "alias_name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="name">Select Date of Document*</label>
+          <input type = "text" id = "datepicker" class = "form-control" name = "doc_date" value = "">
+        </div>
+
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "upload_doc" type="submit" class="btn btn-info">Upload</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. upload file modal -->
+
+<!-- Upload Miniutes -->
+<div class="modal fade" id="upload_min">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Upload Minutes</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['pmu.upload_doc'], 'files' => true,]) !!}
+        @csrf
+        <div class="form-group">
+          <input type="hidden" name = "subtask6_id" id = "disucssion1_id">
+          <input type="hidden" name = "req_doc_type" id = "req_doc_type" value = "3">
+          <div class="custom-file">
+            <input type="file" name = "file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "upload_doc" type="submit" class="btn btn-info">Upload</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. upload Minutes modal -->
+
+<!-- Close discussion modal -->
+<div class="modal fade" id="close_discussion">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Close Discussion</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['close.discussion'], 'files' => false,]) !!}
+        <div class="form-group">
+          <input type="hidden" name = "discussion_id" id = "discussion_id" value = "{{$discussion['id']}}">
+          <input type="hidden" name = "discussion_type" id = "discussion_type" value = "{{$discussion['type']}}">
+          <input type="hidden" name = "_token" value="{{ csrf_token() }}">
+          <p> Are you sure you want to close the discussoin?</p>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "save_participants" type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. close discussion modal -->
+
 @section('javascript')
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script src="/dist/plugins/customfiles/custom-files.min.js"></script>
+
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 
+  $(document).ready(function () {
+      $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap'
+      });
+  });
+
+  //view of selected upload file
+  $(document).ready(function () {
+    bsCustomFileInput.init();
+  });
+
 </script>
+<style>
+    .datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+</style>
 <!-- Bootstrap 4 -->
 <script src="/dist/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Morris.js charts -->
@@ -267,4 +509,22 @@
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+
+<script>
+function getSubmitter(val)
+{
+          $('#submitter_id').empty();
+            if(val == 1)
+              {
+                <?php  foreach($pius as $piu) { ?>
+                  $('#submitter_id').append($('<option></option>').val({{$piu->id}}).html('{{$piu->short_name}}'));
+                <?php  } ?>
+              }else {
+                <?php  foreach($users as $user) { ?>
+                  $('#submitter_id').append($('<option></option>').val({{$user->id}}).html('{{$user->name}}'));
+                <?php  } ?>
+              }
+}
+</script>
+
 @stop

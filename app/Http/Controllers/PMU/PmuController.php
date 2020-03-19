@@ -13,6 +13,7 @@ use App\models\timeline\Timeline;
 use App\models\taskApproval\TaskApproval;
 use App\models\docs\RequireDoc;
 use App\models\piu\piu;
+use App\models\discussions\TaskDiscussions;
 use App\User;
 
 use Auth;
@@ -468,14 +469,20 @@ class PmuController extends Controller
             ->where('status','=',2)
             ->get();
 
+      $comments = TaskDiscussions::select('id','task_id','comment','next_step','updated_at')
+          ->where('task_id',$id)
+          ->where('comment','!=',null)
+          ->orderBy('updated_at','DESC')
+          ->first();
+
 
       $approval_count = count($approvals);
       $approve_count = count($approves);
       $documents_count = count($documents);
       $req_docs_count = count($req_docs);
 
-
-      return view('pmu.taskTimeline', compact('task_name','timelines','users','approvals','user_id','approval_count','approves','approve_count','req_docs','documents','documents_count','req_docs_count'));
+      // return $comments['comment'];
+      return view('pmu.taskTimeline', compact('task_name','timelines','users','approvals','user_id','approval_count','approves','approve_count','req_docs','documents','documents_count','req_docs_count','comments'));
     }
 
     public function assign_approval_staff($task_id,$staff_id)
@@ -627,7 +634,16 @@ class PmuController extends Controller
           {
             $up_doc = RequireDoc::Where('id', $req_doc['id'])->Update(['doc_name' => $request->input('file'), 'status' => 2]);
           }else {
-            $up_doc = RequireDoc::create(['task_id'=>$request->subtask6_id, 'doc_name'=>$request->input('file'),'status'=>2]);
+            $up_doc = new RequireDoc;
+
+            $up_doc->task_id = $request->input('subtask6_id');
+            $up_doc->doc_name = $request->input('file');
+            $up_doc->status = 2;
+            $up_doc->req_doc_type = $request->has("req_doc_type") ? $request->req_doc_type : null;
+            $up_doc->doc_date = $request->has("doc_date") ? date("Y-m-d", strtotime($request->doc_date)) : null;
+            $up_doc->alias_name = $request->has("alias_name") ? $request->alias_name : null;
+
+            $up_doc->save();
           }
 
           //updating the timeline
@@ -636,8 +652,13 @@ class PmuController extends Controller
 
           // $new_record = new_timeline($text, $request->subtask6_id,0);
           $new_timeline = Timeline::create(['text' => $text, 'task' => $request->subtask6_id, 'user' => $user_id, 'url' => $url, 'type' => 6]);
+          if($request->has('req_doc_type'))
+          {
+            return redirect()->route('sc.view', [$request->subtask6_id]);
+            }else{
+              return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
+          }
 
-          return redirect()->route('pmu.task_timeline', [$request->subtask6_id]);
     }
 
     public function toTaskTimeline($id)

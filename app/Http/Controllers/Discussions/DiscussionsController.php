@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\models\gantt\Task;
 use App\models\discussions\TaskDiscussions;
+use App\models\discussions\DiscussionAgenda;
 use App\models\discussions\DiscussionParticipants;
 use App\models\discussions\Snooz;
 use App\models\docs\RequireDoc;
@@ -235,7 +236,7 @@ class DiscussionsController extends Controller
 
       if(isset($next_item->task_id))
       {
-            $next_item_prev = TaskDiscussions::select('comment','next_step')
+            $next_item_prev = TaskDiscussions::select('comment','next_step','created_at')
                 ->where('task_id',$next_item->task_id)
                 ->where('status',2)
                 ->orderby('updated_at','DESC')
@@ -300,10 +301,32 @@ class DiscussionsController extends Controller
         $new_snooz->save();
       }
 
-
       return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
-
     }
+
+    public function new_comment(Request $request)
+    {
+      $new_comment = new TaskDiscussions;
+
+      $new_comment->comment = $request->input('status');
+      $new_comment->next_step = $request->input('next_step');
+      $new_comment->status = 2;
+      $new_comment->discussion_id = $request->discussion_id;
+      $new_comment->task_id = $request->task_id;
+      $new_comment->save();
+
+      //time line entry
+      $url = "/task_timeline/" . $new_comment->task_id;
+      $text = "New comment: ". $new_comment->comment;
+      $this->new_timeline(8, $new_comment->task_id, $url, $text);
+
+      // return $new_comment;
+
+    return redirect()->route('pmu.task_timeline', [$request->input('task_id')]);
+
+  }
+
+
 
     public function add_participants(Request $request)
     {
@@ -323,7 +346,13 @@ class DiscussionsController extends Controller
           $record->save();
         }
 
-        return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+        if($request->input('discussion_type') == 6)
+          {
+            return redirect()->route('sc.view', [$request->input('discussion_id')]);
+          }else{
+            return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+        }
+
     }
 
     public function close_discussion(Request $request)
@@ -335,10 +364,17 @@ class DiscussionsController extends Controller
 
       //time line entry
       $url = "/pmu_daily_meeting/" . $request->input('discussion_id');
-      $this->new_timeline(4, $request->input('discussion_id'), $url);
+      $text = "";
+      $this->new_timeline(4, $request->input('discussion_id'), $url, $text);
 
+      // return $record;
+      if($request->discussion_type == 6)
+      {
+          return redirect()->route('sc.view', [$request->input('discussion_id')]);
+          }else{
+            return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+          }
 
-      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
     }
 
     public function piu_review_list()
@@ -437,7 +473,7 @@ class DiscussionsController extends Controller
       return view('discussions.piu_review_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
     }
 
-    private function new_timeline($var1, $var2, $url)
+    private function new_timeline($var1, $var2, $url, $text)
     {
       $user_id = Auth::id();
 
@@ -454,6 +490,8 @@ class DiscussionsController extends Controller
 
         $text = "Held a Review Meeting with ". $piu_name['short_name'];
       }
+
+
 
       $new_timeline = Timeline::create(['text' => $text, 'task' => $var2, 'user' => $user_id, 'type' => $var1, 'url' => $url]);
       return response()->json($new_timeline);
@@ -543,6 +581,71 @@ class DiscussionsController extends Controller
 
       // return $last_tasks;
       return view('discussions.exco_view', compact('discussion','tasks','last_discussion','last_tasks'));
+    }
+
+    public function sc_list()
+    {
+      $sc_lists = Discussions::select('id','meeting_date','created_at','status')
+          ->where('type',6)
+          ->orderby('id','DESC')
+          ->get();
+
+
+
+        // return $previous_meetings;
+      return view('discussions.sclist',compact('sc_lists'));
+    }
+
+    public function sc_list_store(Request $request)
+    {
+      $discussion = new Discussions();
+
+      $discussion->type = $request->input('type');
+      $discussion->meeting_date = date("Y-m-d", strtotime($request->input('meeting_date')));
+      $discussion->last_meeting = $request->input('last_meeting');
+      $discussion->status = 1; //1 for open
+
+      $discussion->save();
+      // return $discussion;
+
+      return redirect()->route('sc.list');
+    }
+
+    public function sc_view($id)
+    {
+      $discussion = Discussions::select('id','meeting_date','type','status')
+          ->where('id',$id)
+          ->first();
+
+      $agendas = DiscussionAgenda::select('description','submitter_type','submitter_id as staff', 'submitter_id as piu_id')
+          ->where('discussion_id',$id)
+          ->with('user:id,name')
+          ->with('piu:id,short_name')
+          ->get();
+
+      //get piu list
+      $pius = piu::select('id','short_name')
+        ->get();
+
+      $users = User::select('id','name')
+        ->get();
+
+      $participants = DiscussionParticipants::select('user_id')
+          ->where('discussion_id',$id)
+          ->with('user:id,name')
+          ->get();
+
+      $docs = RequireDoc::select('doc_name','alias_name','doc_date','req_doc_type')
+          ->where('task_id',$id)
+          ->where('req_doc_type', 2)
+          ->get();
+
+      $mins = RequireDoc::select('doc_name','req_doc_type')
+          ->where('task_id',$id)
+          ->where('req_doc_type', 3)
+          ->get();
+      // return $mins;
+      return view('discussions.sc',compact('discussion','pius','users','agendas','participants','docs','mins'));
     }
 
 

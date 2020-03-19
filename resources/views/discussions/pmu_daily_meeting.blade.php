@@ -304,7 +304,7 @@
               $comment = "";
               $next_step = "";
             }else {
-              $comment = $next_item_prev->comment;
+              $comment = $next_item_prev->comment . " - " . date('d M Y', strtotime($next_item_prev->created_at));
               $next_step = $next_item_prev->next_step;
             }
           ?>

@@ -311,7 +311,7 @@
 
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="/discussions/sclist" class="nav-link">
+                            <a href="/sc_list" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Steering Committee</p>
                             </a>
