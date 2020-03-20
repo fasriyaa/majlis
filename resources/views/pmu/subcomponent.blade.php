@@ -57,7 +57,6 @@
                 <tr>
                   <th>ID</th>
                   <th>{{env('IMP_LV3')}}</th>
-                  <th>Budget</th>
                   <th>Allocated</th>
                   <th>Utilized</th>
                   <th>Balance</th>
@@ -70,8 +69,7 @@
                 <tr id = "{{$subcomponent->id}}" onclick = "location.href='/activity/'+this.id;">
                   <td>{{$subcomponent->id}}</td>
                   <td>{{$subcomponent->text}}</td>
-                  <td></td>
-                  <td></td>
+                  <td>USD: {{number_format($subcomponent->allocations['base_allocation'])}}</td>
                   <td></td>
                   <td></td>
                   <td></td>

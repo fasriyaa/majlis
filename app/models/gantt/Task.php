@@ -41,6 +41,16 @@ class Task extends Model
       return $this->hasMany('App\models\discussions\TaskDiscussions', 'task_id', 'id')->orderBy('updated_at','DESC');
     }
 
+  public function allocations()
+  {
+    return $this->belongsTo('App\models\budget\Allocation','id','task_id');
+  }
+
+  public function child_allocations()
+      {
+          return $this->hasMany('App\models\gantt\Task','parent','id')->with('allocations');
+      }
+
 
 
 }

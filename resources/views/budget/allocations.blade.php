@@ -7,14 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">{{env('IMP_LV2')}}</h1>
+          <h1 class="m-0 text-dark">Budget Allocations</h1>
+          <p></p>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">{{env('IMP_LV1')}}</li>
-            <li class="breadcrumb-item active">{{env('IMP_LV2')}}</li>
+            <li class="breadcrumb-item active">Budget Allocations</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -53,35 +53,28 @@
               <table class="table table-hover">
 
                 <tr>
-                  <th>ID</th>
-                  <th>{{env('IMP_LV2')}}</th>
-                  <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
-                  <th>Un allocaed</th>
-                  <th>Overall Progress</th>
+                  <th>#</th>
+                  <th>{{env('IMP_LV3')}}</th>
+                  <th>Base Allocation</th>
+                  <th>Re-allocated</th>
+                  <th>Revised Allocation</th>
                   <th>Action</th>
                 </tr>
 
-          @foreach($components as $component)
-                <tr id = "{{$component->id}}" onclick = "location.href='/subcomponent/'+this.id;">
-                  <td>{{$component->id}}</td>
-                  <td>{{$component->text}}</td>
-                  <td>
-                      <?php $allocation = 0; ?>
-                      @foreach($component->child_allocations as $child_allocation)
-                        <?php $allocation = $allocation + $child_allocation->allocations['base_allocation']; ?>
-                      @endforeach
-                      USD: {{number_format($allocation)}}
-                  </td>
+          <?php $count = 1; ?>
+          @foreach($subcomponents as $subcomponent)
+                <tr id = "{{$subcomponent->id}}" onclick = "">
+                  <td>{{$count}}</td>
+                  <td>{{$subcomponent->text}}</td>
+                  <td>USD: {{number_format($subcomponent->allocations['base_allocation'])}}</td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td>{{$component->progress*100}}%</td>
                   <td field-key='action'>
-                    <a href="{{ route('pmu.subcomponent',[$component->id]) }}" class="fa fa-eye"></a>
+                    <a href="{{ route('pmu.activity',[$subcomponent->id]) }}" class="fa fa-eye"></a>
+                    <a href="{{ route('allocations.edit',[$subcomponent->id]) }}" class="fa fa-edit"></a>
                   </td>
                 </tr>
+          <?php $count++; ?>
           @endforeach
 
 

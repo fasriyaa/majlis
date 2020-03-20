@@ -16,6 +16,11 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
+    Route::resource('allocations', '\App\Http\Controllers\Budget\AllocationController');
+
+});
+
+Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
     Route::get('/gantt', function () {return view('gantt.gantt');});
     Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
     Route::get('/gantt/m', function () {return view('gantt.gantt_month');});

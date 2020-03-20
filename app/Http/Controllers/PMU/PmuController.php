@@ -14,6 +14,7 @@ use App\models\taskApproval\TaskApproval;
 use App\models\docs\RequireDoc;
 use App\models\piu\piu;
 use App\models\discussions\TaskDiscussions;
+use App\models\budget\Allocation;
 use App\User;
 
 use Auth;
@@ -26,9 +27,13 @@ class PmuController extends Controller
 
     public function components()
     {
-        $components = Task::select('id','text','progress')
+        $components = Task::select('id','text','progress','parent')
               ->where('parent', '=', 1)
+              ->with('child_allocations:parent,text,id')
               ->get();
+
+
+
         // return $components;
         return view('pmu.components', compact('components'));
     }
@@ -43,6 +48,7 @@ class PmuController extends Controller
 
       $subcomponents = Task::select('id', 'text', 'progress')
           ->whereIn('parent', $main_id)
+          ->with('allocations:task_id,base_allocation')
           ->get();
 
 
@@ -57,6 +63,7 @@ class PmuController extends Controller
 
       $subcomponents = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
+          ->with('allocations:task_id,base_allocation')
           ->get();
 
       // return $component;
