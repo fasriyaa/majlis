@@ -475,7 +475,7 @@
           <p>Assigned To: {{$task_name['user']['name']}}</p>
           <label for="status">Current Status</label>
 
-          <textarea id = "status" name = "status" class="form-control" rows="3" value = "">{{$comments['comment']}}</textarea>
+          <textarea id = "status" name = "status" class="form-control" rows="3" value = "">{{$comments['comment']}} - {{date("d F Y", strtotime($comments['updated_at']))}}</textarea>
           <br>
           <label for="next_step">Next Step</label>
           <textarea id = "next_step" name = "next_step" class="form-control" rows="3">{{$comments['next_step']}}</textarea>

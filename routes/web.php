@@ -20,6 +20,10 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
     Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
     Route::get('/gantt/m', function () {return view('gantt.gantt_month');});
     Route::get('/gantt/y', function () {return view('gantt.gantt_year');});
+    Route::resource('profile', '\App\Http\Controllers\Auth\ProfileController');
+    Route::post('/profile_pic', '\App\Http\Controllers\Auth\ProfileController@upload_profile_pic') -> name('profile.upload_pic');
+    Route::post('/update_profile', '\App\Http\Controllers\Auth\ProfileController@update_profile') -> name('profile.update');
+
 });
 
 Route::group(['middleware' => ['role:SCMember|Admin']], function () {

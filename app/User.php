@@ -35,4 +35,9 @@ class User extends Authenticatable
      * @return \Illuminate\Http\Response
      */
 
+     public function piu()
+     {
+        return $this->belongsTo('App\models\piu\piu', 'piu_id', 'id');
+     }
+
 }

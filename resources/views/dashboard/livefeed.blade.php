@@ -121,7 +121,11 @@ function time_difference($updated_at)
               <div class = "card-body">
                 <div class = "row">
                     <div class = "col-sm-1">
-                      <img class="direct-chat-img" src="/img/avatar5.png" alt="message user image">
+                      @if($feed->user['profile_pic']==null)
+                        <img class="direct-chat-img" src="../img/avatar5.png" alt="message user image">
+                      @else
+                        <img class="direct-chat-img" src="{{$feed->user['profile_pic']}}" alt="message user image">
+                      @endif
                     </div>
                     <div class = "col-sm-9">
                         <p>{{$feed->user['name']}}</p>

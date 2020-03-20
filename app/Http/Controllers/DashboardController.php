@@ -96,7 +96,7 @@ class DashboardController extends Controller
         //Getting feed from timeline
 
         $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id','type','url')
-            ->with('user:id,name')
+            ->with('user:id,name,profile_pic')
             ->with('task:id,text')
             ->orderby('updated_at','DESC')
             ->limit(20)
@@ -116,7 +116,7 @@ class DashboardController extends Controller
 
 
                   $subtasks = Task::select('id', 'text', 'progress', 'start_date', 'duration', 'staff', 'parent')
-                      ->with('user:id,name')
+                      ->with('user:id,name,profile_pic')
                       ->where('staff', '=', $user_id)
                       ->where('progress', '<', 1)
                       ->orderby('sortorder', 'ASC')

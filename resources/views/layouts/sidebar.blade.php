@@ -435,6 +435,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/profile" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>My Profile</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/register" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>New User</p>
