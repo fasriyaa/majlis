@@ -33,7 +33,7 @@ class ProfileController extends Controller
             ->get();
 
         // return $pius;
-        return view('auth.Profile',compact('user','pius'));
+        return view('auth.profile',compact('user','pius'));
 
     }
 
