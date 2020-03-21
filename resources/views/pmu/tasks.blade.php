@@ -73,7 +73,7 @@
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->id}}</td>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->text}}</td>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->piu['short_name']}}</td>
-                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>
+                  <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">USD {{number_format($task->budget['budget'])}}</td>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">{{$task->start_date}}</td>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>
                   <td id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;"></td>

@@ -71,7 +71,7 @@
                 <tr id = "{{$task->id}}" onclick = "location.href='/subtask/'+this.id;">
                   <td>{{$task->id}}</td>
                   <td>{{$task->text}}</td>
-                  <td></td>
+                  <td>USD {{number_format($task->budget['budget'])}}</td>
                   <td>{{$task->start_date}}</td>
                   <td></td>
                   <td></td>

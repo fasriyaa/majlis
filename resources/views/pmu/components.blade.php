@@ -53,19 +53,18 @@
               <table class="table table-hover">
 
                 <tr>
-                  <th>ID</th>
+                  <th>#</th>
                   <th>{{env('IMP_LV2')}}</th>
+                  <th>Allocation</th>
                   <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
                   <th>Un allocaed</th>
                   <th>Overall Progress</th>
                   <th>Action</th>
                 </tr>
-
+          <?php $count = 1; ?>
           @foreach($components as $component)
                 <tr id = "{{$component->id}}" onclick = "location.href='/subcomponent/'+this.id;">
-                  <td>{{$component->id}}</td>
+                  <td>{{$count}}</td>
                   <td>{{$component->text}}</td>
                   <td>
                       <?php $allocation = 0; ?>
@@ -74,14 +73,24 @@
                       @endforeach
                       USD: {{number_format($allocation)}}
                   </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>
+                      @foreach($budgets as $budget)
+                        @if($component->id == $budget['id'])
+                          USD {{number_format($budget['budget'])}}
+                        </td>
+                        <td>
+                            USD {{number_format($allocation - $budget['budget'])}}
+                        </td>
+                        <?php break; ?>
+                        @endif
+                      @endforeach
+
                   <td>{{$component->progress*100}}%</td>
                   <td field-key='action'>
                     <a href="{{ route('pmu.subcomponent',[$component->id]) }}" class="fa fa-eye"></a>
                   </td>
                 </tr>
+          <?php $count++; ?>
           @endforeach
 
 

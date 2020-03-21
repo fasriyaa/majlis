@@ -70,7 +70,13 @@
                 <tr id = "{{$subactivity->id}}" onclick = "location.href='/task/'+this.id;">
                   <td>{{$subactivity->id}}</td>
                   <td>{{$subactivity->text}}</td>
-                  <td></td>
+                  <td>
+                      <?php $budget = 0; ?>
+                      @foreach($subactivity->child_budget as $child_budget)
+                        <?php $budget = $budget + $child_budget['budget']['budget']; ?>
+                      @endforeach
+                      USD {{number_format($budget)}}
+                  </td>
                   <td></td>
                   <td></td>
                   <td></td>

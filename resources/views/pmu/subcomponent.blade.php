@@ -57,9 +57,8 @@
                 <tr>
                   <th>ID</th>
                   <th>{{env('IMP_LV3')}}</th>
+                  <th>Allocation</th>
                   <th>Allocated</th>
-                  <th>Utilized</th>
-                  <th>Balance</th>
                   <th>Un allocaed</th>
                   <th>Overall Progress</th>
                   <th>Action</th>
@@ -70,9 +69,19 @@
                   <td>{{$subcomponent->id}}</td>
                   <td>{{$subcomponent->text}}</td>
                   <td>USD: {{number_format($subcomponent->allocations['base_allocation'])}}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>
+                      @foreach($budgets as $budget)
+                          @if($budget['id'] == $subcomponent->id )
+                              USD {{number_format($budget['budget'])}}
+
+
+                              </td>
+                              <td>
+                                    USD {{number_format($subcomponent->allocations['base_allocation']-$budget['budget'])}}
+                              </td>
+                              <?php break; ?>
+                          @endif
+                      @endforeach
                   <td>{{$subcomponent->progress*100}}%</td>
                   <td field-key='action'>
                     <a href="{{ route('pmu.activity',[$subcomponent->id]) }}" class="fa fa-eye"></a>

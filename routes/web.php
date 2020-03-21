@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
     Route::resource('allocations', '\App\Http\Controllers\Budget\AllocationController');
+    Route::resource('budget', '\App\Http\Controllers\Budget\BudgetController');
 
 });
 

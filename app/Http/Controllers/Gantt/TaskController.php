@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\models\gantt\Task;
 use App\models\timeline\Timeline;
+use App\models\budget\budget;
+use App\models\budget\Allocation;
 use Redirect;
 use Auth;
+use Session;
 
 // use Session;
 
@@ -108,14 +111,17 @@ class TaskController extends Controller
       $task_url = url()->previous();
       $task_url = session(['task_url' => $task_url]);
 
+      $level = $this->task_level($id);
+
 
       //get task detials
       $task = Task::select('id','text','start_date','duration','procurement')
           ->where('id',$id)
+          ->with('budget:task_id,budget')
           ->first();
 
       // return $task;
-      return view('gantt.edit_subtask', compact('task'));
+      return view('gantt.edit_subtask', compact('task','level'));
     }
 
     public function subitem_store(Request $request)
@@ -164,6 +170,83 @@ class TaskController extends Controller
       $text = "Task Edited";
       $type = 3; // for creating new task
       $this->new_timeline($text, $task->id, $type);
+
+      //checking and saving budget entry
+      $budget_id = budget::select('id')
+          ->where('task_id',$task->id)
+          ->first();
+
+      $budget = budget::find($budget_id['id']);
+
+      $allocation = 0;
+      $subactivity_id = Task::where('id',$task->id)
+            ->pluck('parent');
+      $activity_id = Task::where('id',$subactivity_id)
+            ->pluck('parent');
+      $subcomponent_id = Task::where('id',$activity_id)
+            ->pluck('parent');
+      $allocation = Allocation::select('base_allocation')
+          ->where('task_id', $subcomponent_id)
+          ->first();
+
+      $activities_id = Task::where('parent',$subcomponent_id)
+          ->pluck('id');
+      $subactivities_id = Task::whereIn('parent',$activities_id)
+          ->pluck('id');
+      $tasks_id = Task::whereIn('parent',$subactivities_id)
+          ->pluck('id');
+
+      $allocated = budget::select('budget')
+          ->whereIn('task_id',$tasks_id)
+          ->get()->sum('budget');
+
+
+      $old_budget = $budget->budget ?? 0;
+      $allocated = $allocated - $old_budget + $request->budget;
+      $dif = $allocated - $allocation['base_allocation'];
+
+
+      if($allocated > $allocation['base_allocation'])
+      {
+          $error = "Exceeds subcomponent allocations by USD ". number_format($dif);
+          // $task_url = session('task_url');
+          // return Redirect::to($task_url);
+          // return $error;
+          Session::flash('error', $error);
+          return back();
+      }else{
+            if($budget == null)
+            {
+                $new_budget = new budget;
+                $new_budget->task_id = $task->id;
+                $new_budget->budget = $request->budget;
+                $new_budget->status = 1;
+                $new_budget->save();
+
+                $text = "Entered a new budget figure: USD ". number_format($new_budget->budget);
+                $type = 9;
+                $this->new_timeline($text, $task->id, $type);
+
+                // return "no existing budget";
+
+             }elseif($budget->budget == $request->budget){
+                  // No need to do anything
+                  // return "budget found but same";
+                  }else {
+                  $old_budget = $budget->budget;
+                  $budget->budget = $request->budget;
+                  $budget->save();
+
+                  $text = "Budget figure revised from USD ". number_format($old_budget). " to USD ". number_format($budget->budget);
+                  $type = 9;
+                  $this->new_timeline($text, $task->id, $type);
+
+                  // return "need to revise budget";
+              }
+      }
+
+
+      // return $budget;
 
       $task_url = session('task_url');
       return Redirect::to($task_url);
@@ -221,6 +304,23 @@ class TaskController extends Controller
       $user_id = Auth::id();
       $new_timeline = Timeline::create(['text' => $text, 'task' => $task, 'user' => $user_id, 'type' => $type]);
 
+    }
+
+    private function task_level($id)
+    {
+      $level = Task::select('parent')
+          ->where('id',$id)
+          ->first();
+
+      $count = 1;
+      while($level['parent'] > 1){
+        $level = Task::select('parent')
+              ->where('id',$level['parent'])
+              ->first();
+        $count++;
+      }
+
+      return $count;
     }
 
 

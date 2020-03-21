@@ -15,6 +15,7 @@ use App\models\docs\RequireDoc;
 use App\models\piu\piu;
 use App\models\discussions\TaskDiscussions;
 use App\models\budget\Allocation;
+use App\models\budget\budget;
 use App\User;
 
 use Auth;
@@ -32,10 +33,36 @@ class PmuController extends Controller
               ->with('child_allocations:parent,text,id')
               ->get();
 
+        $components_id = Task::where('parent', 1)
+            ->pluck('id');
 
+        foreach($components_id as $component)
+        {
+            $subcomponent_id = Task::where('parent',$component)
+                  ->pluck('id');
+            $activities_id = Task::whereIn('parent', $subcomponent_id)
+                ->pluck('id');
 
-        // return $components;
-        return view('pmu.components', compact('components'));
+            $subactivities_id = Task::whereIn('parent', $activities_id)
+                ->pluck('id');
+
+            $task_id = Task::whereIn('parent',$subactivities_id)
+                ->pluck('id');
+
+                //getting budget aggregation for the collecction of tasks
+                  $activity_budget = budget::select('budget')
+                      ->whereIn('task_id',$task_id)
+                      ->get()->sum('budget');
+
+                      $budgets[] = [
+                            'id' => $component,
+                            'budget'  => $activity_budget
+                      ];
+
+        }
+
+        // return $budgets;
+        return view('pmu.components', compact('components','budgets'));
     }
 
     public function subcomponents()
@@ -51,8 +78,35 @@ class PmuController extends Controller
           ->with('allocations:task_id,base_allocation')
           ->get();
 
+      $subcomponents_id = Task::whereIn('parent',$main_id)
+          ->pluck('id');
 
-      return view('pmu.subcomponents', compact('subcomponents'));
+      foreach($subcomponents_id as $subcomponent)
+      {
+          $activities_id = Task::where('parent', $subcomponent)
+              ->pluck('id');
+          $subactivities_id = Task::whereIn('parent', $activities_id)
+              ->pluck('id');
+
+          $task_id = Task::whereIn('parent',$subactivities_id)
+              ->pluck('id');
+
+              //getting budget aggregation for the collecction of tasks
+                $activity_budget = budget::select('budget')
+                    ->whereIn('task_id',$task_id)
+                    ->get()->sum('budget');
+
+                    $budgets[] = [
+                          'id' => $subcomponent,
+                          'budget'  => $activity_budget
+                    ];
+
+      }
+
+
+
+      // return $budgets;
+      return view('pmu.subcomponents', compact('subcomponents','budgets'));
     }
 
     public function subcomponent($id)
@@ -66,9 +120,39 @@ class PmuController extends Controller
           ->with('allocations:task_id,base_allocation')
           ->get();
 
-      // return $component;
+      // getting the task to compile budget
+      $subcomponents_id = Task::where('parent', '=', $id)
+          ->pluck('id');
 
-      return view('pmu.subcomponent', compact('subcomponents', 'component'));
+      foreach($subcomponents_id as $subcomponent)
+          {
+            $activities_id = Task::where('parent', $subcomponent)
+                ->pluck('id');
+
+            $subactivities_id = Task::whereIn('parent', $activities_id)
+                ->pluck('id');
+
+            $task_id = Task::whereIn('parent',$subactivities_id)
+                ->pluck('id');
+
+                //getting budget aggregation for the collecction of tasks
+                  $activity_budget = budget::select('budget')
+                      ->whereIn('task_id',$task_id)
+                      ->get()->sum('budget');
+
+                      $budgets[] = [
+                            'id' => $subcomponent,
+                            'budget'  => $activity_budget
+                      ];
+
+          }
+
+
+
+
+      // return $budget;
+
+      return view('pmu.subcomponent', compact('subcomponents', 'component','budgets'));
     }
 
     public function activity($id)
@@ -81,9 +165,42 @@ class PmuController extends Controller
       $activities = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
           ->orderby('sortorder','ASC')
-          ->get();
+          ->get()->toArray();
 
-      // return $subcomponent;
+
+
+      //getting collection of tasks under activity
+          $activities_id = Task::select('id')
+              ->where('parent', $id)
+              ->get();
+
+          foreach($activities_id as $activity)
+            {
+              $subactivities_id = Task::whereIn('parent',$activity)
+                  ->pluck('id');
+
+              $task_id = Task::whereIn('parent',$subactivities_id)
+                  ->pluck('id');
+
+              //getting budget aggregation for the collecction of tasks
+                $activity_budget = budget::select('budget')
+                    ->whereIn('task_id',$task_id)
+                    ->get()->sum('budget');
+
+                    $budget[] = [
+                          'id' => $activity['id'],
+                          'budget'  => $activity_budget
+                    ];
+            }
+      if($activities == null)
+      {
+
+            }else {
+              $activities = array_replace_recursive($activities, $budget);
+      }
+
+
+      // return $activities;
       return view('pmu.activity', compact('subcomponent', 'activities'));
     }
 
@@ -98,9 +215,43 @@ class PmuController extends Controller
 
       $activities = Task::select('id', 'text', 'progress')
           ->whereIn('parent', $sub_id)
-          ->get();
+          ->get()->toArray();
 
-        // return $sub_id;
+
+          //getting collection of tasks under activity
+              $activities_id = Task::select('id')
+                  ->whereIn('parent', $sub_id)
+                  ->get();
+
+              foreach($activities_id as $activity)
+                {
+                  $subactivities_id = Task::whereIn('parent',$activity)
+                      ->pluck('id');
+
+                  $task_id = Task::whereIn('parent',$subactivities_id)
+                      ->pluck('id');
+
+                  //getting budget aggregation for the collecction of tasks
+                    $activity_budget = budget::select('budget')
+                        ->whereIn('task_id',$task_id)
+                        ->get()->sum('budget');
+
+                        $budget[] = [
+                              'id' => $activity['id'],
+                              'budget'  => $activity_budget
+                        ];
+                }
+          if($activities == null)
+          {
+
+                }else {
+                  $activities = array_replace_recursive($activities, $budget);
+          }
+
+
+
+
+        // return $activities;
       return view('pmu.activities', compact('activities'));
     }
 
@@ -112,6 +263,7 @@ class PmuController extends Controller
 
       $subactivities = Task::select('id', 'text', 'progress')
           ->where('parent', '=', $id)
+          ->with('child_budget:parent,text,id')
           ->orderby('sortorder','ASC')
           ->get();
 
@@ -120,7 +272,7 @@ class PmuController extends Controller
             ->where('id',$activity['parent'])
             ->first();
 
-      // return $activity;
+      // return $subactivities;
 
       return view('pmu.subactivity', compact('activity', 'subactivities','subcomponent'));
     }
@@ -139,8 +291,10 @@ class PmuController extends Controller
 
       $subactivities = Task::select('id', 'text', 'progress')
           ->whereIn('parent', $act_id)
+          ->with('child_budget:parent,id')
           ->get();
 
+      // return $subactivities;
       return view('pmu.subactivities', compact('subactivities'));
     }
 
@@ -152,6 +306,7 @@ class PmuController extends Controller
 
       $tasks = Task::select('id', 'text', 'progress', 'start_date', 'duration')
           ->where('parent', '=', $id)
+          ->with('budget:task_id,budget')
           ->orderby('sortorder','ASC')
           ->get();
 
@@ -163,7 +318,7 @@ class PmuController extends Controller
                 ->where('id',$activity['parent'])
                 ->first();
 
-      // return $subcomponent;
+      // return $tasks;
 
       return view('pmu.task', compact('subactivity', 'tasks','activity','subcomponent'));
     }
@@ -186,6 +341,7 @@ class PmuController extends Controller
       $tasks = Task::select('id', 'text', 'progress','piu_id')
           ->whereIn('parent', $subact_id)
           ->with('piu:id,short_name')
+          ->with('budget:task_id,budget')
           ->get();
 
       // return $tasks;

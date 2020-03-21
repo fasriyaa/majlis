@@ -13,12 +13,14 @@ class CreateAllocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('allocations', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('task_id');
-            $table->double('base_allocation');
-            $table->timestamps();
-        });
+        if(! Schema::hasTable('allocations')) {
+            Schema::create('allocations', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('task_id');
+                $table->double('base_allocation');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

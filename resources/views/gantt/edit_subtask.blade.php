@@ -1,5 +1,7 @@
 @extends('layouts.master')
 @section('content')
+
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -8,6 +10,7 @@
       <div class="row mb-2">
         <div class="col-sm-6">
           <h1 class="m-0 text-dark">{{$task['text']}}</h1>
+
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
@@ -62,6 +65,14 @@
                             <label for="name">Duration (days)</label>
                             <input type = "text" name = "duration" class = "form-control" value = "{{$task['duration']}}">
                           </div>
+                          <!-- need to check for subactivity & user role -->
+                          @if($level == 5)
+                            <div class="form-group">
+                              <label for="name">Budget (USD)</label>
+                              <input type = "number" step = "100" name = "budget" class = "form-control" value = "{{$task['budget']['budget']}}">
+                            </div>
+                          @endif
+                          <!-- /. subactiity user role -->
 
                           <?php
                               if($task['procurement']==1){
@@ -70,9 +81,14 @@
                                 $checked = "";
                               }
                           ?>
+                          @if($level == 5)
                           <div class="form-group">
                             <input type = "checkbox" name = "procurement" class = "" value = "" {{$checked}}><label for="procurement">&nbsp&nbspProcurement?</label>
                           </div>
+                          @endif
+                          @if(Session::has('error'))
+                              <p class="alert alert-danger">{{ Session::get('error') }}</p>
+                          @endif
 
 
 
@@ -147,4 +163,5 @@
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+
 @stop

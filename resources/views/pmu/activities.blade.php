@@ -67,17 +67,17 @@
                 </tr>
 
           @foreach($activities as $activity)
-                <tr id = "{{$activity->id}}" onclick = "location.href='/subactivity/'+this.id;">
-                  <td>{{$activity->id}}</td>
-                  <td>{{$activity->text}}</td>
+                <tr id = "{{$activity['id']}}" onclick = "location.href='/subactivity/'+this.id;">
+                  <td>{{$activity['id']}}</td>
+                  <td>{{$activity['text']}}</td>
+                  <td>USD {{number_format($activity['budget'])}}</td>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td>{{$activity->progress*100}}%</td>
+                  <td>{{$activity['progress']*100}}%</td>
                   <td field-key='action'>
-                    <a href="{{ route('pmu.subactivity',[$activity->id]) }}" class="fa fa-eye"></a>
+                    <a href="{{ route('pmu.subactivity',[$activity['id']]) }}" class="fa fa-eye"></a>
                   </td>
                 </tr>
           @endforeach
