@@ -22,6 +22,14 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
 });
 
 Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
+    Route::resource('contracts', '\App\Http\Controllers\Procurements\ContractsController');
+    Route::get('/contracts/timeline/{id}', '\App\Http\Controllers\Procurements\ContractsController@timeline')->name('contracts.timeline');
+    Route::post('/contracts/upload_contract', '\App\Http\Controllers\Procurements\ContractsController@upload_contracts')->name('contracts.upload');
+    Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
+
+});
+
+Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
     Route::get('/gantt', function () {return view('gantt.gantt');});
     Route::get('/gantt/w', function () {return view('gantt.gantt_month');});
     Route::get('/gantt/m', function () {return view('gantt.gantt_month');});

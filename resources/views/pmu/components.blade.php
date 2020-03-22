@@ -57,7 +57,7 @@
                   <th>{{env('IMP_LV2')}}</th>
                   <th>Allocation</th>
                   <th>Allocated</th>
-                  <th>Un allocaed</th>
+                  <th>Un allocated</th>
                   <th>Overall Progress</th>
                   <th>Action</th>
                 </tr>
