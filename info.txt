@@ -1,0 +1,68 @@
+
+
+//models;
+  1 : variation table
+
+
+
+  to display error messages;
+  @if(Session::has('error'))
+      <p class="alert alert-danger">{{ Session::get('error') }}</p>
+  @endif
+
+
+how to create database seeder;
+php artisan make:seeder tablenameTableSeeder
+how to seed :php artisan db:seed --class=CurrencyTableSeeder
+
+blad url link
+{ url('/variations', $variation->id) }}
+
+how to add days
+$newDate = strtotime($myDate . '+ '.$nDays.'days');
+
+js code to load a div and pass and get data from server
+$("#selected").load("/selected/" + task_id);
+
+
+              ajax parital update implementation
+
+              // partial blade : in view/partials
+              <div class="col-lg-6 collapse" >
+                  <div class="job-summ-panel" id="job-summ-panel" >
+                      @foreach($jobs as $job)
+                          {{$job['active']}}
+                      @endforeach
+                  </div>
+              </div>
+
+              // controller
+              public function task_link_budget(Request $request)
+              {
+                // $input = $request->input('job_ref');
+                $generatedData = 1;
+                // return View::make("partials/task_link_budget");
+                return View::make("partials/task_link_budget", ["jobs" => $generatedData]);
+              }
+
+              ajax. call with error:
+              $.ajax({
+              method: "POST",
+              url: '/task_link_budget',
+              data: {
+                      "_token": "{{ csrf_token() }}",
+                      "id": object
+              },
+                success: function (response) {
+                    $('.collapse').collapse('show');
+                    $('#task_link_budget').html(response)
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                  }
+              });
+
+
+
+    to call function in another model
+    ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate')

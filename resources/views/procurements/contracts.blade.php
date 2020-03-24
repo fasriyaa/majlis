@@ -115,7 +115,7 @@
                                 <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
                                 <a class="dropdown-item" href="">Terminate</a>
                                 <a class="dropdown-item" href="">Upload Contract</a>
-                                <a class="dropdown-item" href="">Enter Variation</a>
+                                <a class="dropdown-item" href="">Variations</a>
                                 <a class="dropdown-item" href="">Link to a task</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="">Record a payment</a>

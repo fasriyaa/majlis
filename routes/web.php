@@ -24,8 +24,17 @@ Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], 
 Route::group(['middleware' => ['role:SCMember|Admin'], 'middleware' => 'auth'], function () {
     Route::resource('contracts', '\App\Http\Controllers\Procurements\ContractsController');
     Route::get('/contracts/timeline/{id}', '\App\Http\Controllers\Procurements\ContractsController@timeline')->name('contracts.timeline');
+    Route::get('/contracts/link_task/{id}', '\App\Http\Controllers\Procurements\ContractsController@link_tasks')->name('contracts.link_tasks');
     Route::post('/contracts/upload_contract', '\App\Http\Controllers\Procurements\ContractsController@upload_contracts')->name('contracts.upload');
+    Route::post('/contracts/upload_amendment', '\App\Http\Controllers\Procurements\ContractsController@upload_amendment')->name('amendment.upload');
     Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
+
+
+    Route::resource('variations', '\App\Http\Controllers\Procurements\VariationsController');
+    Route::get('/variations/create/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_create')->name('variation.create');
+
+    Route::get('/selected/{id}', '\App\Http\Controllers\Procurements\ContractsController@selected');
+    Route::post("task_link_budget", '\App\Http\Controllers\Procurements\ContractsController@task_link_budget');
 
 });
 

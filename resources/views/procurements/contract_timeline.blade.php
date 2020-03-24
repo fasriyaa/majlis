@@ -137,12 +137,12 @@
                     @endif
                     <tr align = "left">
                       <td></td>
-                      <td> Request for Variation <a href="" class="fa fa-hand-point-right" id = "" onclick = ""></a>
+                      <td onclick = "new_variation({{$contract['id']}},{{$contract['task_id']}});"> Request for Variation <a  class="fa fa-hand-point-right" id = ""></a>
                       </td>
                     </tr>
                     <tr align = "left">
                       <td></td>
-                      <td> Upload contract ammendment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#new_comment" data-id = "" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
+                      <td> Upload contract amendment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_amendment" data-id = "" onclick = ""></a>
                       </td>
                     </tr>
                     <tr align = "left">
@@ -153,7 +153,7 @@
                     @if($contract['task_id'] == null)
                         <tr align = "left">
                           <td></td>
-                          <td>Link to a Task <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#link_task" data-id = "" onclick = ""></a>
+                          <td>Link to a Task <a href="{{ url('/contracts/link_task', $contract['id']) }}" class="fa fa-hand-point-right"  data-target="" data-id = "" onclick = ""></a>
                           </td>
                         </tr>
                     @endif
@@ -167,6 +167,50 @@
               </div>
             </div>
             <!-- /. left First Table -->
+
+            <!-- Left variation table -->
+            @if($contract['task_id'] != null)
+                <div class = "col-sm-12">
+                  <div class="card card">
+                    <div class="card-header">
+                      <h3 class="card-title">Variations</h3>
+                    </div>
+                    <!-- /. card header -->
+
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover">
+                        <tr align = "left">
+                          <th>Variation_No</th>
+                          <th>Text</th>
+                          <th>Status</th>
+                        </tr>
+                        @foreach($variations as $variation)
+
+                            <tr>
+                              <td><a href = "{{ url('/variations', $variation->id) }}">{{$variation->id}}</a></td>
+                              <td>
+                                @foreach($variation->timeline as $tl)
+                                    @if($tl->type == 11)
+                                      {{$tl->text}}
+                                      <?php break; ?>
+                                    @endif
+                                @endforeach
+                              </td>
+                              <td>
+                                  @if($variation->status == 1)
+                                      <?php $status = "Pending"; $col = "orange"; ?>
+                                  @endif
+                                  <font color = "{{$col}}"> {{$status}} </font>
+                              </td>
+                            </tr>
+
+                      @endforeach
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            @endif
+            <!-- /. Left variation Table -->
 
             <!-- Left Documents Table -->
             @if($doc_count>0)
@@ -316,12 +360,107 @@
   </div>
 </div>
 <!-- /. link to a task Modal -->
+<!-- link to a task -->
+<div class="modal fade" id="link_task_err">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Contract must be linked to a task before processing any variation</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['contracts.link_task'], 'files' => false,]) !!}
+        <div class="form-group">
+          <input type="hidden" name = "contract_id" value = "{{$contract['id']}}">
+          <label for="name">Select Task*</label>
+          <select id = "task_id" name="task_id" class="custom-select">
+            @foreach($tasks as $task)
+              <option value="{{$task->id}}" >{{$task->text}}</option>
+            @endforeach
+          </select>
+        </div>
+      </div>
+      <!-- /. link to a task Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. link to a task Modal -->
+
+<!-- Upload Contract amendements Modal -->
+<div class="modal fade" id="upload_amendment">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Upload Contract amendment</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST', 'route' => ['amendment.upload'], 'files' => true,]) !!}
+        @csrf
+        <div class="form-group">
+          <input type="hidden" name = "contract_id" value = "{{$contract['id']}}">
+          <div class="custom-file">
+            <input type="file" name = "file" class="custom-file-input" id="customFile" required>
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name">Contract Amendment Name</label>
+          <input type = "text" name = "amendment" class = 'form-control' value = "" required>
+        </div>
+
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "upload_doc" type="submit" class="btn btn-info">Upload</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. upload contract amendment modal -->
 
 @section('javascript')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="/dist/plugins/customfiles/custom-files.min.js"></script>
 
 <script type="text/javascript">
+
+
+    function new_variation(contract_id,task_id)
+    {
+      if(task_id == null)
+      {
+        $('#link_task_err').modal('show');
+        // alert("ERROR: Contract should be linked to a Task");
+
+      }else {
+        window.location.href= '/variations/create/' + contract_id ,true;
+        // alert(contract_id);
+      }
+      return false;
+    }
+
 
 //view of selected upload file
 $(document).ready(function () {

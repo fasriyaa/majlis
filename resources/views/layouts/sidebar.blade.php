@@ -268,6 +268,12 @@
                                   <p>Awarded</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/contracts" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Contracts</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <!-- End | Procurement -->

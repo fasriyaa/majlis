@@ -17,4 +17,9 @@ class contracts extends Model
     {
       return $this->belongsTo('App\models\gantt\Task','task_id');
     }
+
+    public function currency()
+    {
+      return $this->belongsTo('App\models\currency\Currency','currency_id');
+    }
 }

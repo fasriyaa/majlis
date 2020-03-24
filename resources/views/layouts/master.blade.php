@@ -23,6 +23,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" type="text/css"  href="https://cdn.datatables.net/buttons/1.4.0/css/buttons.dataTables.min.css" />
     <!-- iCheck -->
     <link rel="stylesheet" href="/dist/plugins/iCheck/flat/blue.css">
+    <!-- select2  -->
+    <link rel="stylesheet" href="/dist/plugins/select2/select2.min.css">
+    <link rel="stylesheet" href="/dist/plugins/select2/select2-bootstrap4.css">
+    <!-- /.select2 -->
     <!-- Morris chart -->
     <link rel="stylesheet" href="/dist/plugins/morris/morris.css">
     <!-- jvectormap -->

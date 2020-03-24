@@ -61,6 +61,10 @@ class Task extends Model
           return $this->hasMany('App\models\gantt\Task','parent','id')->with('budget');
       }
 
+  public function contracts()
+      {
+          return $this->hasMany('App\models\procurement\contracts','task_id');
+      }
 
 
 }

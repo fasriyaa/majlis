@@ -9,6 +9,8 @@ use App\models\procurement\ContractTypes;
 use App\models\timeline\Timeline;
 use App\models\docs\RequireDoc;
 use App\models\gantt\Task;
+use App\models\procurement\Variations;
+use App\models\currency\Currency;
 
 use Illuminate\Http\Request;
 
@@ -16,6 +18,7 @@ use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Traits\FileUploadTrait;
 
 use Auth;
+use View;
 
 class ContractsController extends Controller
 {
@@ -60,6 +63,8 @@ class ContractsController extends Controller
      */
     public function store(Request $request)
     {
+
+
         $contract = new contracts;
 
         $contract->type = $request->type;
@@ -67,6 +72,19 @@ class ContractsController extends Controller
         $contract->name = $request->name;
         $contract->currency = $request->currency;
         $contract->amount = $request->amount;
+
+            $base_currency_id = env('base_currency_id');
+            $contract_currency = Currency::select('id','code','xrate')
+              ->where('id',$request->currency)
+              ->first();
+
+            if($base_currency_id ==$contract_currency['id'])
+            {
+                  $contract->base_curr_eqv = $request->amount;
+                  }else {
+                          $contract->base_curr_eqv = round($request->amount/$contract_currency['xrate'],2);
+            }
+
         $contract->contractor = $request->contractor;
         $contract->date = date('Y-m-d',strtotime($request->contract_date));
         $contract->duration = $request->duration;
@@ -82,6 +100,7 @@ class ContractsController extends Controller
         $url = "/contracts/timeline/". $contract->id;
         $this->new_timeline($text, $task, $type, $url);
 
+        // return $contract;
         return redirect()->route('contracts.index');
         // return redirect()->route('user.profile', ['step' => $step, 'id' => $id]);
     }
@@ -139,8 +158,8 @@ class ContractsController extends Controller
           ->find($id);
 
       //retriving timeline records
-      $timelines = Timeline::select('text','task','user as user_id','type','updated_at')
-          ->where('type',10)
+      $timelines = Timeline::select('text','task','user as user_id','type','updated_at','record_id')
+          ->whereIn('type',[10,11])
           ->where('task',$id)
           ->with('user:id,name')
           ->orderBy('updated_at', 'DESC')
@@ -171,12 +190,18 @@ class ContractsController extends Controller
               ->get();
         //getting all tasks end
 
+        //getting variations;
+        $variations = Variations::select('id', 'contract_id', 'status', 'id as record_id')
+            ->where('contract_id', $id)
+            ->with('timeline:record_id,id,text,type')
+            ->get();
+
       $doc_count = count($docs);
       $contract_count = count($docs);
 
 
-      // return $contract;
-      return view('procurements.contract_timeline', compact('contract','timelines','docs','doc_count','contract_count','tasks'));
+      // return $variations;
+      return view('procurements.contract_timeline', compact('contract','timelines','docs','doc_count','contract_count','tasks','variations'));
     }
 
     public function upload_contracts(Request $request)
@@ -200,7 +225,7 @@ class ContractsController extends Controller
 
       //create timeline record
       $contract_name = $doc['name'];
-      $text = "Contract Uploaded ". $contract_name;
+      $text = "Contract Uploaded for contract: ". $contract_name;
       $task = $request->contract_id;
       $type = 10;
       $url = "/files/". $doc_name;
@@ -210,15 +235,123 @@ class ContractsController extends Controller
       return redirect()->route('contracts.timeline', [$request->contract_id]);
     }
 
-    public function link_task(Request $request)
+    public function upload_amendment(Request $request)
     {
-      $contract = contracts::find($request->contract_id);
+      $file_name = $request->file('file')->getClientOriginalName();
+      $request = $this->saveFiles($request);
 
-      $contract->task_id = $request->task_id;
-      $contract->save();
+      //recording document details
+      $task_id = $request->contract_id;
+      $doc_name = $request->input('file');
+      $status = 2;
+      $req_doc_type = 4;
+      $doc = contracts::select('date','name')
+            ->where('id',$request->contract_id)
+            ->first();
+      $doc_date = date('Y-m-d',strtotime($doc['date']));
+      $alias_name = $request->amendment;
+
+      $this->new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name);
+
+
+      //create timeline record
+      $contract_name = $doc['name'];
+      $text = "Contract amendment Uploaded for contract: ". $contract_name;
+      $task = $request->contract_id;
+      $type = 10;
+      $url = "/files/". $doc_name;
+      $this->new_timeline($text, $task, $type, $url);
+
 
       // return $request;
       return redirect()->route('contracts.timeline', [$request->contract_id]);
+    }
+
+    public function link_task(Request $request)
+    {
+      $contract = contracts::find($request->contract_id);
+      $contract_amount = $contract['base_curr_eqv'];
+
+      //getting task budget figure;
+      $task = Task::select('id', 'text', 'id as task_id')
+          ->where('id', $request->task_id)
+          ->with('budget:id,task_id,budget')
+          ->with('contracts:id,task_id,base_curr_eqv,name')
+          ->first();
+      $task_budget = $task['budget']['budget'];
+
+      //getting commitments of the task
+          //getting existing contracts
+          $commitments = $contract['base_curr_eqv'];
+          foreach($task['contracts'] as $contracts)
+          {
+            $commitments = $commitments + $contracts['base_curr_eqv'];
+            $contract_id [] = $contracts['id'];
+          }
+          $contract_id [] = $request->contract_id;
+
+          //getting all pending variations
+          $variations = Variations::select('id','contract_id','variation_amount','status','id as record_id')
+                ->whereIn('contract_id',$contract_id)
+                ->where('status',1)
+                ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate')
+                ->get();
+
+          foreach($variations as $variation)
+          {
+              $commitments = $commitments + $variation['variation_amount']/$variation['contract']['currency']['xrate'];
+          }
+
+      if($task['budget']['budget'] < $commitments)
+      {
+        return back()-> with(["message" => "No sufficient budget", "label" =>"danger"]);
+      }else {
+            $contract->task_id = $request->task_id;
+            $contract->save();
+      }
+
+      // return $commitments;
+      return redirect()->route('contracts.timeline', [$request->contract_id]);
+    }
+
+    public function link_tasks($id)
+    {
+      //getting contract details
+      $contract = contracts::select('id', 'contract_no', 'name', 'currency as currency_id','amount','base_curr_eqv','contractor','date','duration','status')
+          ->where('id',$id)
+          ->with('currency:id,code,xrate')
+          ->first();
+
+
+      //getting all tasks
+          // Getting Main component ID
+          $main_id = Task::where('parent', '=', 1)
+              ->pluck('id');
+
+          $sub_id = Task::whereIn('parent', $main_id)
+              ->pluck('id');
+
+          $act_id = Task::whereIn('parent', $sub_id)
+              ->pluck('id');
+
+          $subact_id = Task::whereIn('parent', $act_id)
+              ->pluck('id');
+
+          $tasks = Task::select('id', 'text', 'id as task_id')
+              ->whereIn('parent', $subact_id)
+              ->with('budget:id,task_id,budget')
+              ->with('contracts:id,task_id,base_curr_eqv,name')
+              ->get();
+        //getting all tasks end\
+
+
+
+      $base_currency_id = env('base_currency_id');
+      $base_currency = Currency::find($base_currency_id);
+      $base_currency = $base_currency['code'];
+
+
+      return view('Procurements.link_task', compact('tasks','contract','base_currency'));
     }
 
 
@@ -253,4 +386,41 @@ class ContractsController extends Controller
 
       $up_doc->save();
     }
+
+
+    public function task_link_budget(Request $request)
+    {
+
+      //get budget
+      $task = Task::select('id', 'text', 'id as task_id')
+          ->where('id', $request->id)
+          ->with('budget:id,task_id,budget')
+          ->with('contracts:id,task_id,base_curr_eqv,name')
+          ->first();
+
+
+      $base_currency_id = env('base_currency_id');
+      $base_currency = Currency::find($base_currency_id);
+      $base_currency = $base_currency['code'];
+
+      //get variations for the contract
+        foreach($task['contracts'] as $contracts)
+        {
+          $contract_id [] = $contracts['id'];
+        }
+        $contract_id [] = $request->contract_id;
+
+      $variations = Variations::select('id','contract_id','variation_amount','status','id as record_id')
+            ->whereIn('contract_id',$contract_id)
+            ->where('status',1)
+            ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate')
+            ->with('timeline:record_id,id,text,type')
+            ->get();
+
+
+      // return $variations;
+      return View::make("procurements/partials/task_link_budget", ["task" => $task, "base_currency" => $base_currency, "variations" => $variations]);
+    }
+
+
 }
