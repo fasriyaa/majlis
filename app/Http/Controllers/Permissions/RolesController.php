@@ -209,4 +209,37 @@ class RolesController extends Controller
           }
 
     }
+
+    public function attach_user($id)
+    {
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+          {
+              $user = User::where('id',$id)
+                  ->with('roles')->first();
+
+              $roles = Role::all();
+              return view('roles.attach_user',compact('roles','user'));
+              }else {
+                return view('layouts.exceptions.403');
+              }
+    }
+
+    public function attach_user_store(Request $request)
+    {
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+          {
+                
+                $user = User::find($request->user_id);
+                $user->syncRoles($request->roles_id);
+                // return $request;
+                return redirect()->route('users');
+                }else {
+                  // 403
+                  return view('layouts.exceptions.403');
+          }
+
+    }
+
 }

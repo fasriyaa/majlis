@@ -56,7 +56,7 @@
                   <th>User Name</th>
                   <th>Email</th>
                   <th>Role</th>
-                  
+
                   <th>Action</th>
                 </tr>
 
@@ -74,7 +74,7 @@
                   </td>
                   <td field-key='action'>
                       <a href="{{ route('main_modules.show',[$user->id]) }}" class="btn btn-sm btn-info">Show</a>
-                      <a href="{{ route('main_modules.edit',[$user->id]) }}" class="btn btn-sm btn-warning">Assign Role</a>
+                      <a href="{{ route('roles.attach_user',[$user->id]) }}" class="btn btn-sm btn-warning">Assign Role</a>
                       <a href="{{ route('main_modules.edit',[$user->id]) }}" class="btn btn-sm btn-danger">Reject</a>
                   </td>
                 </tr>

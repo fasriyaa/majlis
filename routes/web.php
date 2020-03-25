@@ -153,6 +153,8 @@ Route::group(['middleware' => ['role:Admin'], 'middleware' => 'auth'], function 
           Route::resource('roles', '\App\Http\Controllers\Permissions\RolesController');
           Route::get('/roles/attach_permission/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_permission')->name('roles.attach_permission');
           Route::post('/roles/attach_permission)', '\App\Http\Controllers\Permissions\RolesController@attach_permission_store')->name('roles.attach_permission_store');
+          Route::get('/roles/user/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_user')->name('roles.attach_user');
+          Route::post('/roles/user', '\App\Http\Controllers\Permissions\RolesController@attach_user_store')->name('roles.attach_user_store');
           Route::resource('permissions', '\App\Http\Controllers\Permissions\PermissionsController');
           Route::get('/permissions/attach_role/{id}', '\App\Http\Controllers\Permissions\PermissionsController@attach_role') -> name('permissions.attach_role');
           Route::post('/permissions/attach_role', '\App\Http\Controllers\Permissions\PermissionsController@attach_role_store') -> name('permissions.attach_role_store');
