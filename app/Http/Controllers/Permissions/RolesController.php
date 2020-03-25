@@ -24,7 +24,7 @@ class RolesController extends Controller
     public function index()
     {
 
-      $permission = "default";
+      $permission = "View Roles";
       if(auth()->user()->can($permission) == true)
       {
             $roles = Role::with('permissions')->get();
@@ -42,7 +42,7 @@ class RolesController extends Controller
      */
     public function create()
     {
-      $permission = "default";
+      $permission = "Create Roles";
       if(auth()->user()->can($permission) == true)
       {
           return view('roles.create');
@@ -60,7 +60,7 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-      $permission = "default";
+      $permission = "Create Roles";
       if(auth()->user()->can($permission) == true)
       {
         $existing_record_check = Role::select('id')
@@ -102,7 +102,7 @@ class RolesController extends Controller
     public function edit($roles)
     {
 
-      $permission = "default";
+      $permission = "Edit Roles";
       if(auth()->user()->can($permission) == true)
       {
           $role = Role::select('id','name')
@@ -126,7 +126,7 @@ class RolesController extends Controller
      */
     public function update(Request $request, $role_id)
     {
-        $permission = "default";
+        $permission = "Edit Roles";
         if(auth()->user()->can($permission) == true)
         {
             //getting the role
@@ -163,7 +163,7 @@ class RolesController extends Controller
 
     public function attach_permission($id)
     {
-      $permission = "default";
+      $permission = "Assign Permission";
       if(auth()->user()->can($permission) == true)
           {
               $role = Role::with('permissions')
@@ -180,7 +180,7 @@ class RolesController extends Controller
 
     public function attach_permission_store(Request $request)
     {
-      $permission = "default";
+      $permission = "Assign Permission";
       if(auth()->user()->can($permission) == true)
           {
                 //removing existing permission from the role
@@ -212,7 +212,7 @@ class RolesController extends Controller
 
     public function attach_user($id)
     {
-      $permission = "default";
+      $permission = "Assign a Role to User";
       if(auth()->user()->can($permission) == true)
           {
               $user = User::where('id',$id)
@@ -227,10 +227,10 @@ class RolesController extends Controller
 
     public function attach_user_store(Request $request)
     {
-      $permission = "default";
+      $permission = "Assign a Role to User";
       if(auth()->user()->can($permission) == true)
           {
-                
+
                 $user = User::find($request->user_id);
                 $user->syncRoles($request->roles_id);
                 // return $request;

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\models\discussions\DiscussionAgenda;
 use Illuminate\Http\Request;
 
+use Auth;
 class DiscussionAgendaController extends Controller
 {
     /**
@@ -36,17 +37,23 @@ class DiscussionAgendaController extends Controller
      */
     public function store(Request $request)
     {
-        $agenda = new DiscussionAgenda;
+              $permission = "Create SC Meetings Agenda";
+              $err_url = "layouts.exceptions.403";
+              if(auth()->user()->can($permission) == true)
+              {
+                $agenda = new DiscussionAgenda;
 
-        $agenda->description = $request->input('description');
-        $agenda->submitter_type = $request->input('submitter_type');
-        $agenda->submitter_id = $request->input('submitter_id');
-        $agenda->discussion_id = $request->input('discussion_id');
+                $agenda->description = $request->input('description');
+                $agenda->submitter_type = $request->input('submitter_type');
+                $agenda->submitter_id = $request->input('submitter_id');
+                $agenda->discussion_id = $request->input('discussion_id');
 
-        $agenda->save();
+                $agenda->save();
+                return redirect()->route('sc.view', [$request->input('discussion_id')]);
+              }else {
+                return view($err_url);
+      }
 
-        // return $agenda;
-        return redirect()->route('sc.view', [$request->input('discussion_id')]);
     }
 
     /**

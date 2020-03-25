@@ -28,12 +28,19 @@ class DiscussionsController extends Controller
      */
     public function index()
     {
-        //PMU Discussions
-        $pmu_lists = Discussions::select('id','created_at','status')
-            ->where('type',3)
-            ->orderby('id','DESC')
-            ->get();
-        return view('discussions.pmu_daily_list',compact('pmu_lists'));
+            $permission = "View PMU Meetings";
+            $err_url = "layouts.exceptions.403";
+            if(auth()->user()->can($permission) == true)
+            {
+              //PMU Discussions
+              $pmu_lists = Discussions::select('id','created_at','status')
+                  ->where('type',3)
+                  ->orderby('id','DESC')
+                  ->get();
+              return view('discussions.pmu_daily_list',compact('pmu_lists'));
+            }else {
+              return view($err_url);
+      }
     }
 
     /**
@@ -54,20 +61,26 @@ class DiscussionsController extends Controller
      */
     public function store(Request $request)
     {
+      $permission = "Create PMU Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $discussion = new Discussions();
 
-        $discussion = new Discussions();
+            $discussion->type = $request->input('type');
+            $discussion->status = 1; //1 for open
 
-        $discussion->type = $request->input('type');
-        $discussion->status = 1; //1 for open
+            $discussion->save();
 
-        $discussion->save();
-
-        if($request->input('type') == 3)
-        {
-            $data = $this->discussion_task($discussion->id,3,0);
-        }
-        return redirect()->route('pmu_daily_list.index');
-        // return $data;
+            if($request->input('type') == 3)
+            {
+                $data = $this->discussion_task($discussion->id,3,0);
+            }
+            return redirect()->route('pmu_daily_list.index');
+            // return $data;
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -213,264 +226,312 @@ class DiscussionsController extends Controller
 
     public function pmu_daily_meeting($id)
     {
+      $permission = "View Review Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+            {
+              //Getting Discussion Status
+              $discussion_status = Discussions::select('id','status','piu_id','type','updated_at')
+                    ->where('id',$id)
+                    ->with('piu:id,short_name')
+                    ->first();
 
-      //Getting Discussion Status
-      $discussion_status = Discussions::select('id','status','piu_id','type','updated_at')
-            ->where('id',$id)
-            ->with('piu:id,short_name')
-            ->first();
+              $subtasks = TaskDiscussions::select('task_id','comment','next_step','status')
+                  ->where('discussion_id',$id)
+                  ->with('task:id,text')
+                  ->get();
 
-      $subtasks = TaskDiscussions::select('task_id','comment','next_step','status')
-          ->where('discussion_id',$id)
-          ->with('task:id,text')
-          ->get();
+              $subtasks_id = TaskDiscussions::where('discussion_id',$id)
+                  ->pluck('task_id');
 
-      $subtasks_id = TaskDiscussions::where('discussion_id',$id)
-          ->pluck('task_id');
+              $next_item = TaskDiscussions::select('id as item_id','task_id','comment','next_step','status')
+                  ->where('discussion_id',$id)
+                  ->where('status',1)
+                  ->with('task:id,text,staff')
+                  ->first();
 
-      $next_item = TaskDiscussions::select('id as item_id','task_id','comment','next_step','status')
-          ->where('discussion_id',$id)
-          ->where('status',1)
-          ->with('task:id,text,staff')
-          ->first();
+              if(isset($next_item->task_id))
+              {
+                    $next_item_prev = TaskDiscussions::select('comment','next_step','created_at')
+                        ->where('task_id',$next_item->task_id)
+                        ->where('status',2)
+                        ->orderby('updated_at','DESC')
+                        ->first();
+              }else {
+                $next_item_prev = null;
+              }
 
-      if(isset($next_item->task_id))
-      {
-            $next_item_prev = TaskDiscussions::select('comment','next_step','created_at')
-                ->where('task_id',$next_item->task_id)
-                ->where('status',2)
-                ->orderby('updated_at','DESC')
-                ->first();
-      }else {
-        $next_item_prev = null;
+
+              //getting assinged staff
+              if(isset($next_item->task_id))
+              {
+                    $assinged_staff = User::select('name')
+                        ->where('id',$next_item->task['staff'])
+                        ->first();
+              }else{
+                $assinged_staff = null;
+              }
+
+
+              // Getting users
+              $users = User::select('id', 'name')
+                  ->get();
+
+              $participants = DiscussionParticipants::select('user_id')
+                  ->where('discussion_id',$id)
+                  ->with('user:id,name')
+                  ->get();
+
+
+
+              $docs = RequireDoc::select('doc_name')
+                  ->wherein('task_id',$subtasks_id )
+                  ->get();
+
+
+
+                // return $discussion_status;
+              return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
+            }else {
+              return view($err_url);
       }
-
-
-      //getting assinged staff
-      if(isset($next_item->task_id))
-      {
-            $assinged_staff = User::select('name')
-                ->where('id',$next_item->task['staff'])
-                ->first();
-      }else{
-        $assinged_staff = null;
-      }
-
-
-      // Getting users
-      $users = User::select('id', 'name')
-          ->get();
-
-      $participants = DiscussionParticipants::select('user_id')
-          ->where('discussion_id',$id)
-          ->with('user:id,name')
-          ->get();
-
-
-
-      $docs = RequireDoc::select('doc_name')
-          ->wherein('task_id',$subtasks_id )
-          ->get();
-
-
-
-        // return $discussion_status;
-      return view('discussions.pmu_daily_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
     }
 
     public function review(Request $request)
     {
-      $review = TaskDiscussions::find($request->input('id'));
-
-      $review->comment = $request->input('status');
-      $review->next_step = $request->input('next_step');
-      $review->status = 2;
-      $review->save();
-
-      // Record in snooz if defined
-      if($request->has("snooz"))
+      $permission = "Review Meeting items";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
       {
-        $new_snooz = new Snooz();
+        $review = TaskDiscussions::find($request->input('id'));
 
-        $new_snooz->task_id = $request->input('task_id');
-        $new_snooz->discussion_id = $request->input('discussion_id');
-        $new_snooz->discussion_cat_id = $request->input('discussion_cat_id');
-        $new_snooz->start_date = date('Y-m-d');
-        $new_snooz->end_date = Date('Y-m-d', strtotime("+".$request->input('snooz')." days"));
+        $review->comment = $request->input('status');
+        $review->next_step = $request->input('next_step');
+        $review->status = 2;
+        $review->save();
 
-        $new_snooz->save();
+        // Record in snooz if defined
+        if($request->has("snooz"))
+        {
+          $new_snooz = new Snooz();
+
+          $new_snooz->task_id = $request->input('task_id');
+          $new_snooz->discussion_id = $request->input('discussion_id');
+          $new_snooz->discussion_cat_id = $request->input('discussion_cat_id');
+          $new_snooz->start_date = date('Y-m-d');
+          $new_snooz->end_date = Date('Y-m-d', strtotime("+".$request->input('snooz')." days"));
+
+          $new_snooz->save();
+        }
+
+        return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+          }else {
+            return view($err_url);
       }
-
-      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
     }
 
     public function new_comment(Request $request)
     {
-      $new_comment = new TaskDiscussions;
+      $permission = "Review Meeting items";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $new_comment = new TaskDiscussions;
 
-      $new_comment->comment = $request->input('status');
-      $new_comment->next_step = $request->input('next_step');
-      $new_comment->status = 2;
-      $new_comment->discussion_id = $request->discussion_id;
-      $new_comment->task_id = $request->task_id;
-      $new_comment->save();
+            $new_comment->comment = $request->input('status');
+            $new_comment->next_step = $request->input('next_step');
+            $new_comment->status = 2;
+            $new_comment->discussion_id = $request->discussion_id;
+            $new_comment->task_id = $request->task_id;
+            $new_comment->save();
 
-      //time line entry
-      $url = "/task_timeline/" . $new_comment->task_id;
-      $text = "New comment: ". $new_comment->comment;
-      $this->new_timeline(8, $new_comment->task_id, $url, $text);
+            //time line entry
+            $url = "/task_timeline/" . $new_comment->task_id;
+            $text = "New comment: ". $new_comment->comment;
+            $this->new_timeline(8, $new_comment->task_id, $url, $text);
 
-      // return $new_comment;
+            // return $new_comment;
 
-    return redirect()->route('pmu.task_timeline', [$request->input('task_id')]);
-
+            return redirect()->route('pmu.task_timeline', [$request->input('task_id')]);
+          }else {
+            return view($err_url);
+      }
   }
 
 
 
     public function add_participants(Request $request)
     {
+      $permission = "Review Meeting items";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+              $user = DiscussionParticipants::where('discussion_id',$request->input('discussion_id'))
+                  ->where('user_id',$request->input('user_id'))
+                  ->first();
 
-        $user = DiscussionParticipants::where('discussion_id',$request->input('discussion_id'))
-            ->where('user_id',$request->input('user_id'))
-            ->first();
+              if(isset($user->id))
+              {
 
-        if(isset($user->id))
-        {
+              }else {
+                $record = new DiscussionParticipants();
 
-        }else {
-          $record = new DiscussionParticipants();
+                $record->discussion_id = $request->input('discussion_id');
+                $record->user_id = $request->input('user_id');
+                $record->save();
+              }
 
-          $record->discussion_id = $request->input('discussion_id');
-          $record->user_id = $request->input('user_id');
-          $record->save();
-        }
-
-        if($request->input('discussion_type') == 6)
-          {
-            return redirect()->route('sc.view', [$request->input('discussion_id')]);
-          }else{
-            return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
-        }
-
+              if($request->input('discussion_type') == 6)
+                {
+                  return redirect()->route('sc.view', [$request->input('discussion_id')]);
+                }else{
+                  return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+              }
+            }else {
+              return view($err_url);
+      }
     }
 
     public function close_discussion(Request $request)
     {
-      $record = Discussions::find($request->input('discussion_id'));
-
-      $record->status = 2;
-      $record->save();
-
-      //time line entry
-      $url = "/pmu_daily_meeting/" . $request->input('discussion_id');
-      $text = "";
-      $this->new_timeline(4, $request->input('discussion_id'), $url, $text);
-
-      // return $record;
-      if($request->discussion_type == 6)
+      $permission = "Review Meeting items";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
       {
-          return redirect()->route('sc.view', [$request->input('discussion_id')]);
-          }else{
-            return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
-          }
+                $record = Discussions::find($request->input('discussion_id'));
 
+                $record->status = 2;
+                $record->save();
+
+                //time line entry
+                $url = "/pmu_daily_meeting/" . $request->input('discussion_id');
+                $text = "";
+                $this->new_timeline(4, $request->input('discussion_id'), $url, $text);
+
+                // return $record;
+                if($request->discussion_type == 6)
+                {
+                    return redirect()->route('sc.view', [$request->input('discussion_id')]);
+                    }else{
+                      return redirect()->route('pmu.daily.meeting', [$request->input('discussion_id')]);
+                    }
+            }else {
+              return view($err_url);
+      }
     }
 
     public function piu_review_list()
     {
-      $piu_lists = Discussions::select('id','piu_id','created_at','status')
-          ->where('type',4)
-          ->with('piu:id,short_name')
-          ->orderby('id','DESC')
-          ->get();
+      $permission = "View Review Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+              $piu_lists = Discussions::select('id','piu_id','created_at','status')
+                  ->where('type',4)
+                  ->with('piu:id,short_name')
+                  ->orderby('id','DESC')
+                  ->get();
 
-      $pius = piu::all();
+              $pius = piu::all();
 
-          // return $piu_lists;
-      return view('discussions.piu_review_list',compact('piu_lists','pius'));
+                  // return $piu_lists;
+              return view('discussions.piu_review_list',compact('piu_lists','pius'));
+            }else {
+              return view($err_url);
+      }
     }
 
     public function piu_review_list_store(Request $request)
     {
-      $discussion = new Discussions();
+      $permission = "Create PIU Review Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $discussion = new Discussions();
 
-      $discussion->type = $request->input('type');
-      $discussion->piu_id = $request->input('piu_id');
-      $discussion->status = 1; //1 for open
+            $discussion->type = $request->input('type');
+            $discussion->piu_id = $request->input('piu_id');
+            $discussion->status = 1; //1 for open
 
-      $discussion->save();
+            $discussion->save();
 
 
-      $data = $this->discussion_task($discussion->id,4,$request->input('piu_id'));
+            $data = $this->discussion_task($discussion->id,4,$request->input('piu_id'));
 
-      return redirect()->route('piu.review_list');
+            return redirect()->route('piu.review_list');
+          }else {
+            return view($err_url);
+      }
     }
 
     public function piu_review_meeting($id)
     {
+      $permission = "Review Meeting items";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        //Getting Discussion Status
+        $discussion_status = Discussions::select('id','status')
+              ->where('id',$id)
+              ->first();
 
-      //Getting Discussion Status
-      $discussion_status = Discussions::select('id','status')
-            ->where('id',$id)
+        $subtasks = TaskDiscussions::select('task_id','comment','next_step','status')
+            ->where('discussion_id',$id)
+            ->with('task:id,text')
+            ->get();
+
+        $subtasks_id = TaskDiscussions::where('discussion_id',$id)
+            ->pluck('task_id');
+
+        $next_item = TaskDiscussions::select('id as item_id','task_id','comment','next_step','status')
+            ->where('discussion_id',$id)
+            ->where('status',1)
+            ->with('task:id,text,staff')
             ->first();
 
-      $subtasks = TaskDiscussions::select('task_id','comment','next_step','status')
-          ->where('discussion_id',$id)
-          ->with('task:id,text')
-          ->get();
+        if(isset($next_item->task_id))
+        {
+              $next_item_prev = TaskDiscussions::select('comment','next_step')
+                  ->where('task_id',$next_item->task_id)
+                  ->where('status',2)
+                  ->orderby('updated_at','DESC')
+                  ->first();
+        }else {
+          $next_item_prev = null;
+        }
 
-      $subtasks_id = TaskDiscussions::where('discussion_id',$id)
-          ->pluck('task_id');
 
-      $next_item = TaskDiscussions::select('id as item_id','task_id','comment','next_step','status')
-          ->where('discussion_id',$id)
-          ->where('status',1)
-          ->with('task:id,text,staff')
-          ->first();
+        //getting assinged staff
+        if(isset($next_item->task_id))
+        {
+              $assinged_staff = User::select('name')
+                  ->where('id',$next_item->task['staff'])
+                  ->first();
+        }else{
+          $assinged_staff = null;
+        }
 
-      if(isset($next_item->task_id))
-      {
-            $next_item_prev = TaskDiscussions::select('comment','next_step')
-                ->where('task_id',$next_item->task_id)
-                ->where('status',2)
-                ->orderby('updated_at','DESC')
-                ->first();
-      }else {
-        $next_item_prev = null;
+
+        // Getting users
+        $users = User::select('id', 'name')
+            ->get();
+
+        $participants = DiscussionParticipants::select('user_id')
+            ->where('discussion_id',$id)
+            ->with('user:id,name')
+            ->get();
+
+
+
+        $docs = RequireDoc::select('doc_name')
+            ->wherein('task_id',$subtasks_id )
+            ->get();
+
+          // return $assinged_staff;
+        return view('discussions.piu_review_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
+          }else {
+            return view($err_url);
       }
-
-
-      //getting assinged staff
-      if(isset($next_item->task_id))
-      {
-            $assinged_staff = User::select('name')
-                ->where('id',$next_item->task['staff'])
-                ->first();
-      }else{
-        $assinged_staff = null;
-      }
-
-
-      // Getting users
-      $users = User::select('id', 'name')
-          ->get();
-
-      $participants = DiscussionParticipants::select('user_id')
-          ->where('discussion_id',$id)
-          ->with('user:id,name')
-          ->get();
-
-
-
-      $docs = RequireDoc::select('doc_name')
-          ->wherein('task_id',$subtasks_id )
-          ->get();
-
-
-
-        // return $assinged_staff;
-      return view('discussions.piu_review_meeting',compact('subtasks','discussion_status','next_item','users','participants','docs','assinged_staff','next_item_prev'));
     }
 
     private function new_timeline($var1, $var2, $url, $text)
@@ -499,153 +560,174 @@ class DiscussionsController extends Controller
 
     public function exco_list()
     {
-      $exco_lists = Discussions::select('id','piu_id','created_at','status')
-          ->where('type',5)
-          ->with('piu:id,short_name')
-          ->orderby('id','DESC')
-          ->get();
+      $permission = "View EXCO Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $exco_lists = Discussions::select('id','piu_id','created_at','status')
+                ->where('type',5)
+                ->with('piu:id,short_name')
+                ->orderby('id','DESC')
+                ->get();
 
-      //getting previous meetings
-      $previous_meetings = Discussions::select('id','created_at')
-          ->where('type',5)
-          ->orderBy('created_at','DESC')
-          ->get();
+            //getting previous meetings
+            $previous_meetings = Discussions::select('id','created_at')
+                ->where('type',5)
+                ->orderBy('created_at','DESC')
+                ->get();
 
-        // return $previous_meetings;
-      return view('discussions.exco_review_list',compact('exco_lists','previous_meetings'));
+              // return $previous_meetings;
+            return view('discussions.exco_review_list',compact('exco_lists','previous_meetings'));
+          }else {
+            return view($err_url);
+      }
     }
 
     public function exco_review_list_store(Request $request)
     {
-      $discussion = new Discussions();
+      $permission = "Create EXCO Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $discussion = new Discussions();
 
-      $discussion->type = $request->input('type');
-      $discussion->piu_id = $request->input('piu_id');
-      $discussion->last_meeting = $request->input('last_meeting');
-      $discussion->status = 1; //1 for open
+            $discussion->type = $request->input('type');
+            $discussion->piu_id = $request->input('piu_id');
+            $discussion->last_meeting = $request->input('last_meeting');
+            $discussion->status = 1; //1 for open
 
-      $discussion->save();
+            $discussion->save();
 
 
-      $data = $this->discussion_task($discussion->id,$discussion->type,$request->input('piu_id'));
+            $data = $this->discussion_task($discussion->id,$discussion->type,$request->input('piu_id'));
 
-      return redirect()->route('exco.list');
+            return redirect()->route('exco.list');
+            }else {
+              return view($err_url);
+      }
     }
 
     public function exco_view($id)
     {
-      $discussion = Discussions::select('id','last_meeting','type','updated_at')
-          ->where('id',$id)
-          ->first();
+      $permission = "View EXCO Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        $discussion = Discussions::select('id','last_meeting','type','updated_at')
+            ->where('id',$id)
+            ->first();
 
-      //get tasks
-      $sub_tasks_id = TaskDiscussions::where('discussion_id', $id)
-          ->pluck('task_id');
+        //get tasks
+        $sub_tasks_id = TaskDiscussions::where('discussion_id', $id)
+            ->pluck('task_id');
 
-      $tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
-          ->whereIn('id',$sub_tasks_id)
-          ->with('parent:id,text,progress,piu_id')
-          ->with('comments:task_id,id,comment')
-          ->get();
+        $tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
+            ->whereIn('id',$sub_tasks_id)
+            ->with('parent:id,text,progress,piu_id')
+            ->with('comments:task_id,id,comment')
+            ->get();
 
-      $last_discussion = Discussions::select('id','updated_at')
-          ->where('id',$discussion['last_meeting'])
-          ->first();
+        $last_discussion = Discussions::select('id','updated_at')
+            ->where('id',$discussion['last_meeting'])
+            ->first();
 
-      $last_sub_tasks_id = TaskDiscussions::where('discussion_id', $discussion['last_meeting'])
-          ->pluck('task_id');
+        $last_sub_tasks_id = TaskDiscussions::where('discussion_id', $discussion['last_meeting'])
+            ->pluck('task_id');
 
-      $last_tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
-          ->whereIn('id',$last_sub_tasks_id)
-          ->with('parent:id,text,progress,piu_id')
-          ->with('comments:task_id,id,comment,discussion_id,progress,last_due')
-          ->get();
-
-
-      // get parents : task_id
-      // foreach($sub_tasks as $sub_task)
-      // {
-      //   $parent = Task::select('parent')
-      //         ->where('id',$sub_task->task_id)
-      //         ->first('parent');
-      //
-      //         $parents[] = $parent->parent;
-      // }
-      //
-      // $tasks = Task::select('id','text','progress','piu_id')
-      //     ->wherein('id',$parents)
-      //     ->with('piu:id,short_name')
-      //     ->with('child:parent,id,text,progress')
-      //     ->get();
-
-
-      // return $last_tasks;
-      return view('discussions.exco_view', compact('discussion','tasks','last_discussion','last_tasks'));
+        $last_tasks = Task::select('id','text','progress','start_date','duration','parent as parent_id','id as task_id')
+            ->whereIn('id',$last_sub_tasks_id)
+            ->with('parent:id,text,progress,piu_id')
+            ->with('comments:task_id,id,comment,discussion_id,progress,last_due')
+            ->get();
+        return view('discussions.exco_view', compact('discussion','tasks','last_discussion','last_tasks'));
+          }else {
+            return view($err_url);
+      }
     }
 
     public function sc_list()
     {
-      $sc_lists = Discussions::select('id','meeting_date','created_at','status')
-          ->where('type',6)
-          ->orderby('id','DESC')
-          ->get();
+      $permission = "View SC Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        $sc_lists = Discussions::select('id','meeting_date','created_at','status')
+            ->where('type',6)
+            ->orderby('id','DESC')
+            ->get();
 
-
-
-        // return $previous_meetings;
-      return view('discussions.sclist',compact('sc_lists'));
+          // return $previous_meetings;
+        return view('discussions.sclist',compact('sc_lists'));
+          }else {
+            return view($err_url);
+      }
     }
 
     public function sc_list_store(Request $request)
     {
-      $discussion = new Discussions();
+      $permission = "Create SC Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $discussion = new Discussions();
 
-      $discussion->type = $request->input('type');
-      $discussion->meeting_date = date("Y-m-d", strtotime($request->input('meeting_date')));
-      $discussion->last_meeting = $request->input('last_meeting');
-      $discussion->status = 1; //1 for open
+            $discussion->type = $request->input('type');
+            $discussion->meeting_date = date("Y-m-d", strtotime($request->input('meeting_date')));
+            $discussion->last_meeting = $request->input('last_meeting');
+            $discussion->status = 1; //1 for open
 
-      $discussion->save();
-      // return $discussion;
+            $discussion->save();
+            // return $discussion;
 
-      return redirect()->route('sc.list');
+            return redirect()->route('sc.list');
+            }else {
+              return view($err_url);
+      }
     }
 
     public function sc_view($id)
     {
-      $discussion = Discussions::select('id','meeting_date','type','status')
-          ->where('id',$id)
-          ->first();
+      $permission = "View SC Meetings";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        $discussion = Discussions::select('id','meeting_date','type','status')
+            ->where('id',$id)
+            ->first();
 
-      $agendas = DiscussionAgenda::select('description','submitter_type','submitter_id as staff', 'submitter_id as piu_id')
-          ->where('discussion_id',$id)
-          ->with('user:id,name')
-          ->with('piu:id,short_name')
+        $agendas = DiscussionAgenda::select('description','submitter_type','submitter_id as staff', 'submitter_id as piu_id')
+            ->where('discussion_id',$id)
+            ->with('user:id,name')
+            ->with('piu:id,short_name')
+            ->get();
+
+        //get piu list
+        $pius = piu::select('id','short_name')
           ->get();
 
-      //get piu list
-      $pius = piu::select('id','short_name')
-        ->get();
-
-      $users = User::select('id','name')
-        ->get();
-
-      $participants = DiscussionParticipants::select('user_id')
-          ->where('discussion_id',$id)
-          ->with('user:id,name')
+        $users = User::select('id','name')
           ->get();
 
-      $docs = RequireDoc::select('doc_name','alias_name','doc_date','req_doc_type')
-          ->where('task_id',$id)
-          ->where('req_doc_type', 2)
-          ->get();
+        $participants = DiscussionParticipants::select('user_id')
+            ->where('discussion_id',$id)
+            ->with('user:id,name')
+            ->get();
 
-      $mins = RequireDoc::select('doc_name','req_doc_type')
-          ->where('task_id',$id)
-          ->where('req_doc_type', 3)
-          ->get();
-      // return $mins;
-      return view('discussions.sc',compact('discussion','pius','users','agendas','participants','docs','mins'));
+        $docs = RequireDoc::select('doc_name','alias_name','doc_date','req_doc_type')
+            ->where('task_id',$id)
+            ->where('req_doc_type', 2)
+            ->get();
+
+        $mins = RequireDoc::select('doc_name','req_doc_type')
+            ->where('task_id',$id)
+            ->where('req_doc_type', 3)
+            ->get();
+        // return $mins;
+        return view('discussions.sc',compact('discussion','pius','users','agendas','participants','docs','mins'));
+            }else {
+              return view($err_url);
+      }
+
     }
 
 

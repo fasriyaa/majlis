@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\models\currency\Currency;
 use Illuminate\Http\Request;
 
+use Auth;
 class CurrencyController extends Controller
 {
     /**

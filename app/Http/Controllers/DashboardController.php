@@ -22,77 +22,88 @@ class DashboardController extends Controller
   }
     public function versionone()
     {
+      $permission = "View Dashboards";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        // Getting subactivies as milestones
+        // Getting Main component ID
+            $main_id = Task::where('parent', '=', 1)
+                ->pluck('id');
 
-      // Getting subactivies as milestones
-      // Getting Main component ID
-          $main_id = Task::where('parent', '=', 1)
-              ->pluck('id');
+            $sub_id = Task::whereIn('parent', $main_id)
+                ->pluck('id');
 
-          $sub_id = Task::whereIn('parent', $main_id)
-              ->pluck('id');
+            $act_id = Task::whereIn('parent', $sub_id)
+                ->pluck('id');
 
-          $act_id = Task::whereIn('parent', $sub_id)
-              ->pluck('id');
-
-          $subact_id = Task::whereIn('parent', $act_id)
-              ->pluck('id');
-
-
-          $subactivities = Task::select('id', 'text', 'progress')
-              ->whereIn('parent', $act_id)
-              ->get();
-
-          $tasks = Task::select('id', 'text', 'progress')
-              ->whereIn('parent', $subact_id)
-              ->get();
-
-          $overall_progress = Task::select('progress')
-              ->where('parent',0)
-              ->first();
-
-          //get list of activities due but not completed
-          $task_id = Task::whereIn('parent', $subact_id)
-              ->pluck('id');
+            $subact_id = Task::whereIn('parent', $act_id)
+                ->pluck('id');
 
 
-
-          $dues = Task::select('id','start_date','duration','parent')
-                ->whereIn('parent',$task_id)
-                ->where('progress', '<', 1)
+            $subactivities = Task::select('id', 'text', 'progress')
+                ->whereIn('parent', $act_id)
                 ->get();
 
-          // $due_count = 0;
-          foreach($dues as $due)
-          {
-            if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
+            $tasks = Task::select('id', 'text', 'progress')
+                ->whereIn('parent', $subact_id)
+                ->get();
+
+            $overall_progress = Task::select('progress')
+                ->where('parent',0)
+                ->first();
+
+            //get list of activities due but not completed
+            $task_id = Task::whereIn('parent', $subact_id)
+                ->pluck('id');
+
+
+
+            $dues = Task::select('id','start_date','duration','parent')
+                  ->whereIn('parent',$task_id)
+                  ->where('progress', '<', 1)
+                  ->get();
+
+            // $due_count = 0;
+            foreach($dues as $due)
             {
-              $due_parent [] = $due->parent;
-              // $due_count++;
+              if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
+              {
+                $due_parent [] = $due->parent;
+                // $due_count++;
+              }
             }
-          }
 
 
-          $milestone = count($subactivities);
-          $activities = count($tasks);
-          $due_count = count(array_unique($due_parent));
+            $milestone = count($subactivities);
+            $activities = count($tasks);
+            $due_count = count(array_unique($due_parent));
 
 
-        // return $due_count;
-        return view('dashboard.v1', compact('milestone', 'activities','overall_progress','due_count'));
+          // return $due_count;
+          return view('dashboard.v1', compact('milestone', 'activities','overall_progress','due_count'));
+          }else {
+            return view($err_url);
+      }
+
+
     }
 
     public function versiontwo()
     {
-        return view('dashboard.v2');
+        // return view('dashboard.v2');
     }
     public function versionthree()
     {
-        return view('dashboard.v3');
+        // return view('dashboard.v3');
     }
 
     public function livefeed()
     {
-
+      $permission = "View Dashboards";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         //Getting feed from timeline
 
         $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id','type','url')
@@ -148,50 +159,61 @@ class DashboardController extends Controller
                       ->get();
         // return $feeds;
         return view('dashboard.livefeed',compact('feeds','subtasks', 'users', 'tasks','pending_approvals','user_name','pending_docs'));
+          }else {
+            return view($err_url);
+      }
     }
 
     public function critical()
     {
-      // Getting Main component ID
-          $main_id = Task::where('parent', '=', 1)
-              ->pluck('id');
+      $permission = "View Critial Task";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        // Getting Main component ID
+            $main_id = Task::where('parent', '=', 1)
+                ->pluck('id');
 
-          $sub_id = Task::whereIn('parent', $main_id)
-              ->pluck('id');
+            $sub_id = Task::whereIn('parent', $main_id)
+                ->pluck('id');
 
-          $act_id = Task::whereIn('parent', $sub_id)
-              ->pluck('id');
+            $act_id = Task::whereIn('parent', $sub_id)
+                ->pluck('id');
 
-          $subact_id = Task::whereIn('parent', $act_id)
-              ->pluck('id');
+            $subact_id = Task::whereIn('parent', $act_id)
+                ->pluck('id');
 
-          $task_id = Task::whereIn('parent', $subact_id)
-              ->pluck('id');
+            $task_id = Task::whereIn('parent', $subact_id)
+                ->pluck('id');
 
 
 
-          $dues = Task::select('id','start_date','duration','parent')
-                ->whereIn('parent',$task_id)
-                ->where('progress', '<', 1)
+            $dues = Task::select('id','start_date','duration','parent')
+                  ->whereIn('parent',$task_id)
+                  ->where('progress', '<', 1)
+                  ->get();
+
+            // $due_count = 0;
+            foreach($dues as $due)
+            {
+              if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
+              {
+                $due_parent [] = $due->parent;
+                // $due_count++;
+              }
+            }
+
+            $tasks = Task::select('id', 'text', 'progress','piu_id')
+                ->whereIn('id', $due_parent)
+                ->with('piu:id,short_name')
                 ->get();
 
-          // $due_count = 0;
-          foreach($dues as $due)
-          {
-            if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
-            {
-              $due_parent [] = $due->parent;
-              // $due_count++;
-            }
-          }
+            $pius = piu::all();
 
-          $tasks = Task::select('id', 'text', 'progress','piu_id')
-              ->whereIn('id', $due_parent)
-              ->with('piu:id,short_name')
-              ->get();
+            return view('pmu.critical', compact('tasks','pius'));
+          }else {
+            return view($err_url);
+      }
 
-          $pius = piu::all();
-
-          return view('pmu.critical', compact('tasks','pius'));
     }
 }

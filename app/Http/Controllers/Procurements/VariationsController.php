@@ -27,6 +27,10 @@ class VariationsController extends Controller
      */
     public function index()
     {
+      $permission = "View Variations";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         $variations = Variations::select('id','contract_id','variation_amount','variation_duration','status')
             ->with('contract:id,contract_no,date,name,amount,duration,contractor,currency as currency_id', 'contract.currency:id,code')
             ->with('timeline:id,text,record_id,type')
@@ -34,6 +38,9 @@ class VariationsController extends Controller
 
         // return $variations;
         return view('procurements.variations',compact('variations'));
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -54,6 +61,10 @@ class VariationsController extends Controller
      */
     public function store(Request $request)
     {
+      $permission = "Create Variations";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         //checking for changes;
         $contract = contracts::select('id','amount','duration','name','task_id')
             ->where('id',$request->contract_id)
@@ -118,6 +129,9 @@ class VariationsController extends Controller
           // return redirect()->route('contracts.timeline', [$request->contract_id]);
           return back()-> with(["message" => "Nothing changed", "label" =>"warning"]);
         }
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -167,39 +181,46 @@ class VariationsController extends Controller
 
     public function variation_create($id)
     {
-      // getting contract details;
-      $contract = contracts::select('id','amount', 'date','duration','name','currency as currency_id','task_id','base_curr_eqv')
-          ->where('id',$id)
-          ->with('task:id,text', 'task.budget:id,task_id,budget')
-          ->with('currency:id,code')
-          ->first();
+      $permission = "Create Variations";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        // getting contract details;
+        $contract = contracts::select('id','amount', 'date','duration','name','currency as currency_id','task_id','base_curr_eqv')
+            ->where('id',$id)
+            ->with('task:id,text', 'task.budget:id,task_id,budget')
+            ->with('currency:id,code')
+            ->first();
 
-          $base_currency_id = env('base_currency_id');
-          $base_currency = Currency::find($base_currency_id);
+            $base_currency_id = env('base_currency_id');
+            $base_currency = Currency::find($base_currency_id);
 
-          //get other contracts linked to the task
-          $other_contracts = contracts::select('id','amount', 'date','duration','name','currency as currency_id','task_id','base_curr_eqv')
-              ->where('task_id',$contract['task_id'])
-              ->with('task:id,text', 'task.budget:id,task_id,budget')
-              ->with('currency:id,code,xrate')
-              ->get();
+            //get other contracts linked to the task
+            $other_contracts = contracts::select('id','amount', 'date','duration','name','currency as currency_id','task_id','base_curr_eqv')
+                ->where('task_id',$contract['task_id'])
+                ->with('task:id,text', 'task.budget:id,task_id,budget')
+                ->with('currency:id,code,xrate')
+                ->get();
 
-          //getting pending variations
-            foreach($other_contracts as $other_contract)
-            {
-              $contracts_id [] = $other_contract->id;
-            }
+            //getting pending variations
+              foreach($other_contracts as $other_contract)
+              {
+                $contracts_id [] = $other_contract->id;
+              }
 
-            $variations = Variations::select('id','contract_id','variation_amount','status','id as record_id')
-                  ->whereIn('contract_id',$contracts_id)
-                  ->where('status',1)
-                  ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate,code')
-                  ->with('timeline:record_id,id,text,type')
-                  ->get();
+              $variations = Variations::select('id','contract_id','variation_amount','status','id as record_id')
+                    ->whereIn('contract_id',$contracts_id)
+                    ->where('status',1)
+                    ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate,code')
+                    ->with('timeline:record_id,id,text,type')
+                    ->get();
 
 
-      // return $other_contracts;
-      return view('procurements.create_variation', compact('contract','base_currency','other_contracts','variations'));
+        // return $other_contracts;
+        return view('procurements.create_variation', compact('contract','base_currency','other_contracts','variations'));
+          }else {
+            return view($err_url);
+      }
     }
 
     private function new_approval_matrix($model, $model_id, $varification_check, $approval_check, $authorization_check)

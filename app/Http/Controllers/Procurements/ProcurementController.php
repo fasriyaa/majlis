@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\models\gantt\Task;
 use app\User;
+use Auth;
 
 class ProcurementController extends Controller
 {
@@ -23,52 +24,58 @@ class ProcurementController extends Controller
 
     public function ongoing_procurements()
     {
-
-      // Getting Main component ID
-      $main_id = Task::where('parent', '=', 1)
-          ->pluck('id');
-
-      $sub_id = Task::whereIn('parent', $main_id)
-          ->pluck('id');
-
-      $act_id = Task::whereIn('parent', $sub_id)
-          ->pluck('id');
-
-      $subact_id = Task::whereIn('parent', $act_id)
-          ->pluck('id');
-
-      $tasks = Task::select('id', 'text', 'progress','piu_id','procurement')
-          ->whereIn('parent', $subact_id)
-          ->where('procurement',1)
-          ->where('progress','<',1)
-          ->with('piu:id,short_name')
-          ->orderBy('progress', 'DESC')
-          ->get();
-
-      foreach($tasks as $task)
+      $permission = "View Procurements";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
       {
-        $last_task = $this->last_completed($task->id);
-        $next_task = $this->next_task($task->id);
+        // Getting Main component ID
+        $main_id = Task::where('parent', '=', 1)
+            ->pluck('id');
 
-        if($last_task != null)
-            {
-              $last_task = $last_task['text'] . " completed on : " . date("d M Y", strtotime($last_task['updated_at']));
-            }
+        $sub_id = Task::whereIn('parent', $main_id)
+            ->pluck('id');
 
-        if($next_task != null)
-            {
-              $next_task = $next_task['text'] . " expected to complete on ". date("d M Y", strtotime($next_task['start_date'] . ' + '.$next_task['duration'] . ' days'));
-            }
+        $act_id = Task::whereIn('parent', $sub_id)
+            ->pluck('id');
 
-        $task_info[] = [
-            'task_id' => $task->id,
-            'last_completed' => $last_task,
-            'next_task' => $next_task
-        ];
+        $subact_id = Task::whereIn('parent', $act_id)
+            ->pluck('id');
+
+        $tasks = Task::select('id', 'text', 'progress','piu_id','procurement')
+            ->whereIn('parent', $subact_id)
+            ->where('procurement',1)
+            ->where('progress','<',1)
+            ->with('piu:id,short_name')
+            ->orderBy('progress', 'DESC')
+            ->get();
+
+        foreach($tasks as $task)
+        {
+          $last_task = $this->last_completed($task->id);
+          $next_task = $this->next_task($task->id);
+
+          if($last_task != null)
+              {
+                $last_task = $last_task['text'] . " completed on : " . date("d M Y", strtotime($last_task['updated_at']));
+              }
+
+          if($next_task != null)
+              {
+                $next_task = $next_task['text'] . " expected to complete on ". date("d M Y", strtotime($next_task['start_date'] . ' + '.$next_task['duration'] . ' days'));
+              }
+
+          $task_info[] = [
+              'task_id' => $task->id,
+              'last_completed' => $last_task,
+              'next_task' => $next_task
+          ];
+        }
+
+        // return $task_info;
+        return view('procurements.ongoing', compact('tasks','task_info'));
+          }else {
+            return view($err_url);
       }
-
-      // return $task_info;
-      return view('procurements.ongoing', compact('tasks','task_info'));
     }
 
 

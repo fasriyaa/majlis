@@ -19,8 +19,15 @@ class PiuController extends Controller
      */
     public function index()
     {
+      $permission = "View PIU";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         $pius = piu::all();
         return view('piu.index', compact('pius'));
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -30,7 +37,14 @@ class PiuController extends Controller
      */
     public function create()
     {
-        return view('piu.create');
+      $permission = "Create PIU";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+          return view('piu.create');
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -41,9 +55,17 @@ class PiuController extends Controller
      */
     public function store(Request $request)
     {
+      $permission = "Create PIU";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         $piu = piu::create($request->all());
         return redirect()->route('piu.index');
         // return $request;
+          }else {
+            return view($err_url);
+      }
+
     }
 
     /**
@@ -93,20 +115,27 @@ class PiuController extends Controller
 
     public function assign_piu($task_id, $piu_id)
     {
-      $user_id = Auth::id();
-      // updating Task Table
-      $update_assign_piu = Task::Where('id', $task_id)->Update(['piu_id' => $piu_id]);
+      $permission = "Assign PIU to Task";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+        $user_id = Auth::id();
+        // updating Task Table
+        $update_assign_piu = Task::Where('id', $task_id)->Update(['piu_id' => $piu_id]);
 
-      // Updating Timeline
-      //getting the staff
-      $piu = piu::select('short_name')
-        ->where('id','=',$piu_id)
-        ->first();
+        // Updating Timeline
+        //getting the staff
+        $piu = piu::select('short_name')
+          ->where('id','=',$piu_id)
+          ->first();
 
-      $text = "Assigned to ". $piu->short_name;
-      $url = "/subtask/" . $task_id;
+        $text = "Assigned to ". $piu->short_name;
+        $url = "/subtask/" . $task_id;
 
-      $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id, 'type'=>5, 'url' => $url]);
-      return response()->json($new_timeline);
+        $new_timeline = Timeline::create(['text' => $text, 'task' => $task_id, 'user' => $user_id, 'type'=>5, 'url' => $url]);
+        return response()->json($new_timeline);
+            }else {
+              return view($err_url);
+      }
     }
 }

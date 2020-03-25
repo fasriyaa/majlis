@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use app\User;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -29,13 +30,16 @@ class HomeController extends Controller
 
     public function users()
     {
-        $users = User::with('roles')->get();
-        // $users_permission = User::with('permissions')->get();
+      $permission = "View Users";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+            $users = User::with('roles')->get();
 
+            return view('auth.users', compact('users'));
+            }else {
+              return view($err_url);
+      }
 
-        // $roles = $user->getRoleNames(); // Returns a collection of roles name assinged to user
-
-        // return $users_permission;
-        return view('auth.users', compact('users'));
     }
 }

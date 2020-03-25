@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 use App\Requests\Modules\StoreMainModulesRequest;
 
+use Auth;
 class MainModulesController extends Controller
 {
     /**
@@ -18,13 +19,16 @@ class MainModulesController extends Controller
      */
     public function index()
     {
-
+      $permission = "View Modules";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         // Getting the full list of main modules list
         $main_modules = MainModules::get();
-
-        // return $main_modules;
-        // var_dump($main_modules);
         return view('modules.index', compact('main_modules'));
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -34,7 +38,14 @@ class MainModulesController extends Controller
      */
     public function create()
     {
-        return view('modules.create');
+      $permission = "Create Modules";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
+          return view('modules.create');
+          }else {
+            return view($err_url);
+      }
     }
 
     /**
@@ -45,10 +56,16 @@ class MainModulesController extends Controller
      */
     public function store(StoreMainModulesRequest $request)
     {
+      $permission = "Create Modules";
+      $err_url = "layouts.exceptions.403";
+      if(auth()->user()->can($permission) == true)
+      {
         $main_modules = MainModules::create($request->all() + ['status' => 1]);
         return redirect()->route('main_modules.index');
         // return route('modules.index');
-
+          }else {
+            return view($err_url);
+      }
     }
 
     /**

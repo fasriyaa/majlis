@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\models\modules\MainModules;
 use App\User;
+use Auth;
 
 class PermissionsController extends Controller
 {
@@ -20,7 +21,7 @@ class PermissionsController extends Controller
      */
     public function index()
     {
-      $permission = "default";
+      $permission = "View Permission";
       if(auth()->user()->can($permission) == true)
       {
             $permissions = Permission::with('module:id,name')
@@ -46,7 +47,7 @@ class PermissionsController extends Controller
      */
     public function create()
     {
-      $permission = "default";
+      $permission = "Create Permission";
       if(auth()->user()->can($permission) == true)
       {
             //geting modules
@@ -68,7 +69,7 @@ class PermissionsController extends Controller
      */
     public function store(Request $request)
     {
-      $permission = "default";
+      $permission = "Create Permission";
       if(auth()->user()->can($permission) == true)
       {
             $existing_record_check = Permission::select('id')
@@ -110,7 +111,7 @@ class PermissionsController extends Controller
      */
     public function edit($id)
     {
-        $permission = "default";
+        $permission = "Edit Permission";
         if(auth()->user()->can($permission) == true)
         {
             $permissions = Permission::select('id','name','module_id')
@@ -139,7 +140,7 @@ class PermissionsController extends Controller
      */
     public function update(Request $request, $id)
     {
-          $permission = "default";
+          $permission = "Edit Permission";
           if(auth()->user()->can($permission) == true)
           {
               //getting the role
@@ -174,7 +175,7 @@ class PermissionsController extends Controller
 
     public function assign_permission($role_id,$permission_id)
     {
-      $permission = "default";
+      $permission = "Assign Permission";
       if(auth()->user()->can($permission) == true)
       {
             $role = Role::FindById($role_id);
@@ -192,7 +193,7 @@ class PermissionsController extends Controller
 
     public function assign_role($user_id,$role_id)
     {
-      $permission = "default";
+      $permission = "Assign Role";
       if(auth()->user()->can($permission) == true)
       {
             $role = Role::FindById($role_id);
@@ -208,7 +209,7 @@ class PermissionsController extends Controller
 
     public function attach_role($id)
     {
-      $permission = "default";
+      $permission = "Assign Role to Permission";
       if(auth()->user()->can($permission) == true)
           {
               $permissions = Permission::with('roles')
@@ -225,7 +226,7 @@ class PermissionsController extends Controller
 
     public function attach_role_store(Request $request)
     {
-      $permission = "default";
+      $permission = "Assign Role to Permission";
       if(auth()->user()->can($permission) == true)
           {
                 //removing existing roles from the permissoin

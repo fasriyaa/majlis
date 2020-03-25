@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\models\budget\budget;
 use Illuminate\Http\Request;
 
+use Auth;
 class BudgetController extends Controller
 {
     /**
