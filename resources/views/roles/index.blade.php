@@ -8,7 +8,10 @@
       <div class="row mb-2">
         <div class="col-sm-6">
           <h1 class="m-0 text-dark">Roles</h1>
+          <p>ALL</p>
         </div>
+
+
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -19,6 +22,14 @@
         <!-- /.col -->
       </div>
       <!-- /.row -->
+
+      <div class="row mb-2">
+        <div class="col-sm-1">
+            <!-- can('Create Roles') -->
+            <a href = "{{route('roles.create')}}"><button type="button" class="btn btn-info">New Role</button></a>
+            <!-- endcan -->
+        </div>
+      </div>
     </div>
     <!-- /.container-fluid -->
   </div>
@@ -33,65 +44,79 @@
       <div class="row">
 
         <div class="col-12">
-          <div class="card card">
-            <div class="card-header">
-              <h3 class="card-title">List</h3>
+          <div class="card">
+            <!-- <div class="card-header"> -->
+              <!-- <h3 class="card-title">List</h3> -->
 
+              <!-- <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                    <div class="card-tools">
-                      <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                        <div class="input-group-append">
-                          <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-
-
-            </div>
-            <!-- /.card-header -->
-            <br><br>
-            <!-- roles displya card expandible -->
-
-            @foreach($roles as $role)
-            <div class="col-md-6">
-              <div class="card card-info collapsed-card card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">{{$role->name}}</h3>
-
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                    </button>
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                   </div>
-                  <!-- /.card-tools -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  @foreach($role->permissions as $permission)
-                      > {{$permission->name}}<br>
+              </div> -->
+            <!-- </div> -->
+            <!-- /.card-header -->
+            <div class="card-body table-responsive">
+              <table id = "variations_table" class="table table-hover">
+                <thead>
+                    <tr align = "left">
+                      <th>#</th>
+                      <th>Role ID</td>
+                      <th>Role Namee</th>
+                      <th>Permissions</th>
+                      <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                  <?php $count = 1; ?>
+                  @foreach($roles as $role)
+                      <tr>
+                          <td>{{$count}}</td>
+                          <td>{{$role->id}}</td>
+                          <td>{{$role->name}}</td>
+                          <td>
+                            @foreach($role->permissions as $permission)
+                              <p>
+                                {{$permission->name}}
+                              </p>
+                            @endforeach
+                          </td>
+                        <td field-key='action'>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-info">Action</button>
+                            <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
+
+                              <div class="dropdown-menu" role="menu">
+                                <a class="dropdown-item" href="" onclick ="location.href='/roles/'+{{$role->id}}+'/edit';">Edit</a>
+                                <a class="dropdown-item" href="" onclick ="location.href='/roles/attach_permission/'+{{$role->id}};">Give Permissions</a>
+                              </div>
+                            </button>
+                          </div>
+                        </td>
+
+                      </tr>
+                  <?php $count++; ?>
                   @endforeach
-                </div>
-                <!-- /.card-body -->
-              </div>
+            </tbody>
+
+
+
+              </table>
             </div>
-            @endforeach
-
-
-
-            <!-- /. roles display card -->
-
             <!-- /.card-body -->
             <!-- Card Footer -->
             <div class="card-footer clearfix">
-
-
-                <a href="{{ route('roles.create') }}" class="btn btn-info float-right">New Role</a>
-
-
+                <!-- <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul> -->
             </div>
             <!-- /. Card footer -->
           </div>
@@ -108,7 +133,10 @@
 <!-- /.content-wrapper -->
 @endsection
 
+
+
 @section('javascript')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <!-- jQuery -->
 <script src="/dist/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
@@ -147,4 +175,26 @@
 <script src="/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
+<!-- DataTables -->
+
+<script src="/dist/plugins/datatables/jquery.dataTables.js"></script>
+<script src="/dist/plugins/datatables/dataTables.bootstrap4.js"></script>
+<!-- /. Datatables -->
+
+
+<script>
+  $(function () {
+    $("#variations_table").DataTable();
+
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+    });
+  });
+</script>
+
 @stop

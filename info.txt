@@ -1,4 +1,9 @@
 
+permission listing
+Create Main Module -> role: admin
+Create Permission -> role: admin
+default -> role:admin
+
 
 //models;
   1 : variation table
@@ -6,14 +11,17 @@
 
 
   to display error messages;
-  @if(Session::has('error'))
-      <p class="alert alert-danger">{{ Session::get('error') }}</p>
+  in controller
+  return back()->with(['message' => "Permission name exist", 'label' => "danger"]);
+  in blade
+  @if(Session::has('message'))
+      <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
   @endif
 
 
 how to create database seeder;
 php artisan make:seeder tablenameTableSeeder
-how to seed :php artisan db:seed --class=CurrencyTableSeeder
+how to seed :php artisan db:seed --class=PermissionsTableSeeder
 
 blad url link
 { url('/variations', $variation->id) }}

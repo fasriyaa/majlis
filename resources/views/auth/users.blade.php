@@ -56,6 +56,7 @@
                   <th>User Name</th>
                   <th>Email</th>
                   <th>Role</th>
+                  
                   <th>Action</th>
                 </tr>
 
@@ -65,7 +66,11 @@
                   <td>{{$user->name}}</td>
                   <td>{{$user->email}}</td>
                   <td>
-                    To be filled
+                    @foreach($user->roles as $roles)
+                      <p>
+                        {{$roles['name']}}
+                      </p>
+                    @endforeach
                   </td>
                   <td field-key='action'>
                       <a href="{{ route('main_modules.show',[$user->id]) }}" class="btn btn-sm btn-info">Show</a>

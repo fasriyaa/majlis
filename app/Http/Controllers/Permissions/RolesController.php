@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Permissions;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
 
+use Auth;
+
 class RolesController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -19,14 +23,16 @@ class RolesController extends Controller
      */
     public function index()
     {
-        // $roles = Role::get();
-        // $permissions = Permission::get();
-        // return $permissions;
-        // return User::with('roles')->get();
-        // return User::with('permissions')->get();
-        $roles = Role::with('permissions')->get();
-        // return $roles;
-        return view('roles.index', compact('roles'));
+
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+      {
+            $roles = Role::with('permissions')->get();
+            return view('roles.index', compact('roles'));
+
+            }else {
+            // return view('layouts.403');
+      }
     }
 
     /**
@@ -36,7 +42,14 @@ class RolesController extends Controller
      */
     public function create()
     {
-        return view('roles.create');
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+      {
+          return view('roles.create');
+          }else {
+            // return error page;
+      }
+
     }
 
     /**
@@ -47,8 +60,26 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        $role = Role::create($request->all());
-        return redirect()->route('roles.index');
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+      {
+        $existing_record_check = Role::select('id')
+          ->where('name',$request->name)
+          ->first();
+
+          if($existing_record_check == null)
+          {
+                $role = Role::create($request->all());
+                return redirect()->route('roles.index');
+
+                }else {
+                    return back()->with(['message' => "Role exist", 'label' => "danger"]);
+          }
+
+          }else {
+            return back()->with(['message' => "You do not have required permission", 'label' => "danger"]);
+      }
+
     }
 
     /**
@@ -68,9 +99,22 @@ class RolesController extends Controller
      * @param  \App\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function edit(Roles $roles)
+    public function edit($roles)
     {
-        //
+
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+      {
+          $role = Role::select('id','name')
+              ->find($roles);
+
+          // return $role;
+          return view('roles.edit',compact('role'));
+
+          }else {
+            // return error page
+          }
+
     }
 
     /**
@@ -80,9 +124,30 @@ class RolesController extends Controller
      * @param  \App\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Roles $roles)
+    public function update(Request $request, $role_id)
     {
-        //
+        $permission = "default";
+        if(auth()->user()->can($permission) == true)
+        {
+            //getting the role
+            $role = Role::find($role_id);
+
+              if($role['name']==$request->name)
+              {
+                  return back()->with(['message' => "No Change", 'label' => "warning"]);
+                  }else {
+
+                        $role->name = $request->name;
+                        $role->save();
+                        return redirect()->route('roles.index')->with(['message' => "Record Upated", 'label' => "success"]);
+              }
+
+
+
+          }else {
+              return back()->with(['message' => "You do not have required permission", 'label' => "danger"]);
+        }
+
     }
 
     /**
@@ -94,5 +159,54 @@ class RolesController extends Controller
     public function destroy(Roles $roles)
     {
         //
+    }
+
+    public function attach_permission($id)
+    {
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+          {
+              $role = Role::with('permissions')
+                  // ->with('module:id,name')
+                  ->find($id);
+              $permissions = Permission::select('id','name')
+                  ->get();
+              // return $role;
+              return view('roles.attach_permission',compact('role', 'permissions'));
+              }else {
+                return view('layouts.exceptions.403');
+              }
+    }
+
+    public function attach_permission_store(Request $request)
+    {
+      $permission = "default";
+      if(auth()->user()->can($permission) == true)
+          {
+                //removing existing permission from the role
+                $role = Role::with('permissions:id,name')
+                    ->find($request->role_id);
+
+                //revoking old permissions
+                foreach($role->permissions as $permissions)
+                {
+                    $role->revokePermissionTo($permissions['id']);
+                }
+
+                //giving new permissions
+                if($request->has('permission_id'))
+                {
+                    foreach($request->permission_id as $permission_id)
+                      {
+                          // $role = Role::find($role_id);
+                          $role->givePermissionTo($permission_id);
+                      }
+                }
+                return redirect()->route('roles.index');
+                }else {
+                  // 403
+                  return view('layouts.exceptions.403');
+          }
+
     }
 }

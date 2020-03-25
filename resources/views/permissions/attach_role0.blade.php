@@ -7,13 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Main Modules</h1>
+          <h1 class="m-0 text-dark">Permission</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Dashboard v1</li>
+            <li class="breadcrumb-item"><a href="/permissions">Permissions</a></li>
+            <li class="breadcrumb-item active">Attach a role</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -37,34 +38,78 @@
                     <!-- general form elements -->
                     <div class="card card-info">
                       <div class="card-header">
-                        <h3 class="card-title">New Main Module</h3>
+                        <h3 class="card-title">Attach Permission to a Role</h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['main_modules.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'POST', 'route' => ['permissions.store'], 'files' => false]) !!}
                         <div class="card-body">
 
-                          <div class="form-group">
-                            <label for="name">Module Name</label>
-                            <input type="text" class="form-control" id="name" name = "name" placeholder="Enter Module Name" required>
-                          </div>
 
                           <div class="form-group">
-                            <label for="name">Module Order</label>
-                            <input type="text" class="form-control" id="order"  name = "order" placeholder="Enter module order" required>
+                            <label for="name">Roles</label>
+                            <select id = "type" name="module_id" class="custom-select">
+                              @foreach($roles as $role)
+                                <option value="{{$role->id}}" >{{$role->name}}</option>
+                              @endforeach
+                            </select>
                           </div>
+
+                          @if(Session::has('message'))
+                              <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+                          @endif
 
                         </div>
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-                          <button type="submit" class="btn btn-info">Submit</button>
+                          <!-- can('Create Permission') -->
+                            <button type="submit" class="btn btn-info">Attach</button>
+                          <!-- endcan -->
                         </div>
                       </form>
                     </div>
                     <!-- /.card -->
                   </div>
         <!-- /. left coloumn -->
+
+        <!-- Right column -->
+                  <div class="col-md-6">
+                    <!-- general form elements -->
+                    <div class="card card">
+                      <div class="card-header">
+                        <h3 class="card-title"><font color = "#176781"> Selected Permission Details</font></h3>
+                      </div>
+                      <!-- /.card-header -->
+
+                        <div class="card-body">
+                          <div class="form-group">
+                              <p>Permission ID : <font color = "#176781">{{$permissions['id']}}</font></p>
+                              <p>Permission Name : <font color = "#176781">{{$permissions['name']}}</font></p>
+                              <p>Module : <font color = "#176781">{{$permissions['module']['name']}}</font></p>
+                              <table class="table table-condensed">
+                                <p>Attached Roles:
+
+                                @foreach($permissions['roles'] as $roles)
+                                  <p>
+                                    <font color = "#176781">
+                                        - {{$roles['name']}}
+                                    </font>
+                                  </p>
+                                @endforeach
+
+                              </table>
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                  </div>
+        <!-- /. Right coloumn -->
 
 
 

@@ -7,13 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Main Modules</h1>
+          <h1 class="m-0 text-dark">Edit Permission</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Dashboard v1</li>
+            <li class="breadcrumb-item"><a href="/permissions">Permission</a></li>
+            <li class="breadcrumb-item active">Edit</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -37,28 +38,37 @@
                     <!-- general form elements -->
                     <div class="card card-info">
                       <div class="card-header">
-                        <h3 class="card-title">New Main Module</h3>
+                        <h3 class="card-title">New Permission Creation</h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['main_modules.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'PUT', 'route' => ['permissions.update', $permissions['id']], 'files' => false]) !!}
                         <div class="card-body">
 
                           <div class="form-group">
-                            <label for="name">Module Name</label>
-                            <input type="text" class="form-control" id="name" name = "name" placeholder="Enter Module Name" required>
+                            <label for="name">Permission Name</label>
+                            <input type = "text" name = "name" class = "form-control" value = "{{$permissions['name']}}" required>
+                          </div>
+                          <div class="form-group">
+                            <label for="name">Module</label>
+                            <select id = "type" name="module_id" class="custom-select">
+                              @foreach($modules as $module)
+                                <option value="{{$module->id}}" <?php if($module->id == $permissions['module_id'] ){echo "selected";}?>>{{$module->name}}</option>
+                              @endforeach
+                            </select>
                           </div>
 
-                          <div class="form-group">
-                            <label for="name">Module Order</label>
-                            <input type="text" class="form-control" id="order"  name = "order" placeholder="Enter module order" required>
-                          </div>
+                          @if(Session::has('message'))
+                              <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+                          @endif
 
                         </div>
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-                          <button type="submit" class="btn btn-info">Submit</button>
+                          <!-- can('Create Permission') -->
+                            <button type="submit" class="btn btn-info">Upate</button>
+                          <!-- endcan -->
                         </div>
                       </form>
                     </div>

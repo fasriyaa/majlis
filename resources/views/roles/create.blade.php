@@ -13,7 +13,8 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">New Role</li>
+            <li class="breadcrumb-item"><a href="/roles">Roles</a></li>
+            <li class="breadcrumb-item active">New</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -46,11 +47,13 @@
 
                           <div class="form-group">
                             <label for="name">Role Name</label>
-                            {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Enter Role Name']) !!}
+                            {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Enter Role Name', 'required']) !!}
                           </div>
 
-
-
+                          @if(Session::has('message'))
+                              <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+                          @endif
+                          
                         </div>
                         <!-- /.card-body -->
 

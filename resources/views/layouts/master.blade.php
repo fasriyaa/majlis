@@ -27,6 +27,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="/dist/plugins/select2/select2.min.css">
     <link rel="stylesheet" href="/dist/plugins/select2/select2-bootstrap4.css">
     <!-- /.select2 -->
+    <!-- duallist box bootsr -->
+    <link rel="stylesheet" href="/dist/plugins/duallistbox/duallistbox.min.css">
+    <!-- /. duallist box bootsr -->
     <!-- Morris chart -->
     <link rel="stylesheet" href="/dist/plugins/morris/morris.css">
     <!-- jvectormap -->

@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Permissions</h1>
+          <h1 class="m-0 text-dark">Variations</h1>
           <p>ALL</p>
         </div>
 
@@ -16,7 +16,8 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Permissions</li>
+            <li class="breadcrumb-item"><a href="/contracts">Contracts</a></li>
+            <li class="breadcrumb-item active">Variations</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -25,9 +26,9 @@
 
       <div class="row mb-2">
         <div class="col-sm-1">
-            <!-- can('Create Variation') -->
-            <a href = "{{route('permissions.create')}}"><button type="button" class="btn btn-info">New Permission</button></a>
-            <!-- endcan -->
+            @can('Create Variation')
+            <a href = "{{route('contracts.create')}}"><button type="button" class="btn btn-info">New Variation</button></a>
+            @endcan
         </div>
       </div>
     </div>
@@ -64,46 +65,76 @@
                 <thead>
                     <tr align = "left">
                       <th>#</th>
-                      <th>Permission ID</td>
-                      <th>Permission Name</th>
-                      <th>Guard Name</th>
-                      <th>Module</th>
-                      <th>Attached Roles</th>
+                      <th>Variation Description</td>
+                      <th>Contract No</th>
+                      <th>Contractor </th>
+                      <th>Contract Amount</th>
+                      <th>Contract Expiry</th>
+                      <th>Variation</th>
+                      <th>Status</th>
                       <th>Action</th>
                     </tr>
                 </thead>
 
                 <tbody>
                   <?php $count = 1; ?>
-                  @foreach($permissions as $permission)
+                  @foreach($variations as $variation)
                       <tr>
                         <td>{{$count}}</td>
-                        <td>{{$permission->id}}</td>
-                        <td>{{$permission->name}}</td>
-                        <td>{{$permission->guard_name}}</td>
-                        <td>{{$permission->module['name']}}</td>
                         <td>
-                            @foreach($permission->roles as $roles)
-                            <p>
-                              {{$roles['name']}}
-                            </p>
-                            @endforeach
+                          @foreach($variation->timeline as $timeline)
+                            @if($timeline->type == 11)
+                              {{$timeline->text}}
+                            @endif
+                            <?php break; ?>
+                          @endforeach
                         </td>
-
+                        <td>{{$variation->contract['contract_no']}}</td>
+                        <td>{{$variation->contract['contractor']}}</td>
+                        <td>{{$variation->contract['currency']['code']}} {{number_format($variation->contract['amount'])}}</td>
+                        <td>{{date('d M Y',strtotime($variation->contract['date']. '+ '.$variation->contract['duration'].'days'))}}</td>
+                        <td>
+                          @if($variation->variation_amount != null)
+                              <p>
+                                Variation Amount:
+                                <font color = "#943126">
+                                    {{$variation->contract['currency']['code']}} {{number_format($variation->variation_amount)}}
+                                </font>
+                              </p>
+                          @endif
+                          @if($variation->variation_duration != null)
+                              <p>
+                                Variation Duration:
+                                <font color = "#943126">
+                                    {{number_format($variation->variation_duration)}} Days
+                                </font>
+                              </p>
+                          @endif
+                        </td>
+                        <td>
+                          <?php $status = "NA"; ?>
+                          @if($variation->status == 1)
+                            <?php $status = "Pending"; $col = "#B9770E"; ?>
+                          @endif
+                          <font color ="{{$col}}">
+                            {{$status}}
+                          </font>
+                        </td>
                         <td field-key='action'>
                           <div class="btn-group">
                             <button type="button" class="btn btn-info">Action</button>
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
 
                               <div class="dropdown-menu" role="menu">
-                                <a class="dropdown-item" href="" onclick ="location.href='/permissions/'+{{$permission->id}}+'/edit';">Edit</a>
+                                <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + 1;">Timeline</a>
+                                <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
+                                <a class="dropdown-item" href="">Upload Supporting Document</a>
                                 <div class="dropdown-divider"></div>
-                                  <a class="dropdown-item" href="" onclick ="location.href='/permissions/attach_role/'+{{$permission->id}};">Attach to a role</a>
+                                <a class="dropdown-item" href="">Approve</a>
                               </div>
                             </button>
                           </div>
                         </td>
-
                       </tr>
                   <?php $count++; ?>
                   @endforeach

@@ -29,8 +29,13 @@ class HomeController extends Controller
 
     public function users()
     {
-        $users = User::get();
-        // return $users;
+        $users = User::with('roles')->get();
+        // $users_permission = User::with('permissions')->get();
+
+
+        // $roles = $user->getRoleNames(); // Returns a collection of roles name assinged to user
+
+        // return $users_permission;
         return view('auth.users', compact('users'));
     }
 }

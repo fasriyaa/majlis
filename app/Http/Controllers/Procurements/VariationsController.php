@@ -27,7 +27,13 @@ class VariationsController extends Controller
      */
     public function index()
     {
-        //
+        $variations = Variations::select('id','contract_id','variation_amount','variation_duration','status')
+            ->with('contract:id,contract_no,date,name,amount,duration,contractor,currency as currency_id', 'contract.currency:id,code')
+            ->with('timeline:id,text,record_id,type')
+            ->get();
+
+        // return $variations;
+        return view('procurements.variations',compact('variations'));
     }
 
     /**

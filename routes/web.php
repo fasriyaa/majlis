@@ -151,7 +151,11 @@ Route::group(['middleware' => ['role:Admin'], 'middleware' => 'auth'], function 
           Route::get('/users', 'HomeController@users')->name('users');
           Route::resource('main_modules', '\App\Http\Controllers\Modules\MainModulesController');
           Route::resource('roles', '\App\Http\Controllers\Permissions\RolesController');
+          Route::get('/roles/attach_permission/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_permission')->name('roles.attach_permission');
+          Route::post('/roles/attach_permission)', '\App\Http\Controllers\Permissions\RolesController@attach_permission_store')->name('roles.attach_permission_store');
           Route::resource('permissions', '\App\Http\Controllers\Permissions\PermissionsController');
-          Route::get('assing_permission/{role}/{permission}','\App\Http\Controllers\Permissions\PermissionsController@assign_permission')->name('assing_permission');
-          Route::get('assing_role/{user}/{role}','\App\Http\Controllers\Permissions\PermissionsController@assign_role')->name('assing_role');
+          Route::get('/permissions/attach_role/{id}', '\App\Http\Controllers\Permissions\PermissionsController@attach_role') -> name('permissions.attach_role');
+          Route::post('/permissions/attach_role', '\App\Http\Controllers\Permissions\PermissionsController@attach_role_store') -> name('permissions.attach_role_store');
+          Route::get('assign_permission/{role}/{permission}','\App\Http\Controllers\Permissions\PermissionsController@assign_permission')->name('assing_permission');
+          Route::get('assign_role/{user}/{role}','\App\Http\Controllers\Permissions\PermissionsController@assign_role')->name('assing_role');
 });

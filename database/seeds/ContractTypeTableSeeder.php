@@ -13,10 +13,13 @@ class ContractTypeTableSeeder extends Seeder
     {
       DB::table('contract_types')->insert([
           ['id'=>1, 'name'=>'Dummy Contract', 'status'=>1],
-          ['id'=>2, 'name'=>'Consultancy', 'status'=>1],
-          ['id'=>3, 'name'=>'Goods', 'status'=>1],
-          ['id'=>4, 'name'=>'PFDS', 'status'=>1],
-          ['id'=>5, 'name'=>'PMU', 'status'=>1]
+          ['id'=>2, 'name'=>'Consultancy Service', 'status'=>1],
+          ['id'=>3, 'name'=>'Non-Consultancy Service', 'status'=>1],
+          ['id'=>4, 'name'=>'Goods', 'status'=>1],
+          ['id'=>5, 'name'=>'Training', 'status'=>1],
+          ['id'=>6, 'name'=>'Incremental Operating Cost', 'status'=>1],
+          ['id'=>7, 'name'=>'PFDS', 'status'=>1],
+          ['id'=>8, 'name'=>'PMU', 'status'=>1]
       ]);
 
     }

@@ -274,6 +274,12 @@
                                   <p>Contracts</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/variations" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Variatons</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <!-- End | Procurement -->
@@ -469,6 +475,12 @@
                             <a href="/roles" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Roles</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/permissions" class="nav-link">
+                                <i class="fa fa-circle-o nav-icon"></i>
+                                  <p>Permissions</p>
                             </a>
                         </li>
                         <li class="nav-item">

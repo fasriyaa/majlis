@@ -41,21 +41,33 @@
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['permissions.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'POST', 'route' => ['permissions.store'], 'files' => false]) !!}
                         <div class="card-body">
 
                           <div class="form-group">
                             <label for="name">Permission Name</label>
-                            {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Enter Permission Name']) !!}
+                            {!! Form::text('name', old('name'), ['class' => 'form-control', 'placeholder' => 'Enter Permission Name', 'required']) !!}
+                          </div>
+                          <div class="form-group">
+                            <label for="name">Module</label>
+                            <select id = "type" name="module_id" class="custom-select">
+                              @foreach($modules as $module)
+                                <option value="{{$module->id}}" >{{$module->name}}</option>
+                              @endforeach
+                            </select>
                           </div>
 
-
+                          @if(Session::has('message'))
+                              <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+                          @endif
 
                         </div>
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-                          <button type="submit" class="btn btn-info">Submit</button>
+                          <!-- can('Create Permission') -->
+                            <button type="submit" class="btn btn-info">Submit</button>
+                          <!-- endcan -->
                         </div>
                       </form>
                     </div>

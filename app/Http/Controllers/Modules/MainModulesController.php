@@ -21,6 +21,8 @@ class MainModulesController extends Controller
 
         // Getting the full list of main modules list
         $main_modules = MainModules::get();
+
+        // return $main_modules;
         // var_dump($main_modules);
         return view('modules.index', compact('main_modules'));
     }
@@ -44,7 +46,8 @@ class MainModulesController extends Controller
     public function store(StoreMainModulesRequest $request)
     {
         $main_modules = MainModules::create($request->all() + ['status' => 1]);
-        return view('modules.index');
+        return redirect()->route('main_modules.index');
+        // return route('modules.index');
 
     }
 
