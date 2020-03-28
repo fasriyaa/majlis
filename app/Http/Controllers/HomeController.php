@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Mail\NewUserWelcome;
+Use App\Events\NewUser;
 use app\User;
 use Auth;
+use Mail;
+
 
 class HomeController extends Controller
 {
@@ -41,5 +45,10 @@ class HomeController extends Controller
               return view($err_url);
       }
 
+    }
+
+    public function welcome()
+    {
+      event(new NewUser(Auth::user()));
     }
 }

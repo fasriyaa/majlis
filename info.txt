@@ -100,3 +100,20 @@ Or: Discard local changes for a specific file
 using git checkout filename
 
 return redirect()->route('route.name', [$param]);
+
+MAIL_DRIVER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=pfms.financemv@gmail.com
+MAIL_PASSWORD=samename@123
+MAIL_ENCRYPTION=tls
+
+
+mail: to create mail and link to mark down;
+php artisan make:mail NewUserWelcome --markdown=emails.user.new_user_welcome
+
+to generate events
+php artisan event:generate
+
+to run queue:work continiously
+nohup php artisan queue:work --daemon &

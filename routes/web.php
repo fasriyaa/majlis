@@ -110,6 +110,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
 
 
+
+
 });
 
 
@@ -133,11 +135,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard/v3', 'DashboardController@versionthree')->name('v3');
     Route::get('/critical', 'DashboardController@critical')->name('critical');
 
+
+
 });
 
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('/phpinfo', function () {return view('phpinfo');});
+Route::get('/welcome','HomeController@welcome')->name('mail.user.welcome');
+
 
 
 Auth::routes();

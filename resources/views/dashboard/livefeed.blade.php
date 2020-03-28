@@ -303,7 +303,7 @@ function time_difference($updated_at)
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-              <button type="button" class="btn btn-info float-right"><i class="fa fa-plus"></i> Add item</button>
+              <a href = "{{route('mail.user.welcome')}}"><button type="button" class="btn btn-info float-right"><i class="fa fa-plus"></i> Add item</button></a>
             </div>
           </div>
           <!-- /.card -->
