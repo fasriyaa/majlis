@@ -18,6 +18,9 @@ use App\models\budget\Allocation;
 use App\models\budget\budget;
 use App\User;
 
+use App\Mail\TaskAssignMail;
+use App\Events\AssignTask;
+
 use Auth;
 
 use Illuminate\Http\Request;
@@ -477,6 +480,15 @@ class PmuController extends Controller
         $text = "Assigned to ". $staff->name;
 
         $new_timeline = Timeline::create(['text' => $text, 'task' => $subtask_id, 'user' => $user_id, 'type'=>1]);
+
+        $task = Task::select('id','text','staff','start_date','duration')
+            ->where('id', $subtask_id)
+            ->with('user')
+            ->first();
+
+        //sending email to the assigned user
+        event(new AssignTask($task));
+
         return response()->json($new_timeline);
           }else {
             return view($err_url);

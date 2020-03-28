@@ -16,6 +16,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\NewUser' => [
             'App\Listeners\SendWelcomeEmail',
         ],
+
+        'App\Events\AssignTask' => [
+            'App\Listeners\SendTaskAssignEmail',
+        ],
     ];
 
     /**

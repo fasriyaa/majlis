@@ -190,12 +190,14 @@ $("#store_staff").click(function() {
            {
                 if(res)
                 {
-                  location.reload();
+                  // location.reload();
                 }
            }
 
+
         });
   }
+  location.reload();
 });
 
 //Marking the task complete

@@ -1,5 +1,5 @@
 @component('mail::message')
-# Welcome {{$user->name}}
+# Welcome {{$user->name}}!
 
 Thank you for registering in **PFM Portal**. The system admministrator will review and assign you appropirate role.
 

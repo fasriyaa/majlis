@@ -10,7 +10,7 @@ default -> role:admin
   2 : contracts
   3 : Require docs
 
-
+ssh root@206.189.144.125
 
   to display error messages;
   in controller
@@ -116,4 +116,10 @@ to generate events
 php artisan event:generate
 
 to run queue:work continiously
+php artisan config:cache
+php artisan queue:restart
 nohup php artisan queue:work --daemon &
+
+
+to restart apache server in ubutu
+sudo service apache2 restart
