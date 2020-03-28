@@ -1,14 +1,26 @@
 @extends('layouts.master')
 @section('content')
+<?php $col = "#176781"; ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+
   <!-- Content Header (Page header) -->
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">New Variation</h1>
+          <h1 class="m-0 text-dark">Variation</h1>
           <h8 class="m-0 text-dark">Contract Name: {{$contract['name']}}</h8>
+          <p>
+              <h9 class="m-0 text-dark">Variation Description: <font color = "{{$col}}">
+                @foreach($variation['timeline'] as $timeline)
+                  @if($timeline['type'] == 11)
+                    {{$timeline['text']}}
+                    <?php break; ?>
+                  @endif
+                @endforeach
+              </font></h9>
+          </p>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
@@ -16,7 +28,7 @@
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href = "/contracts">Contracts</a></li>
             <li class="breadcrumb-item"><a href = "">Variations</a></li>
-            <li class="breadcrumb-item active">New</li>
+            <li class="breadcrumb-item active">Edit</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -40,20 +52,20 @@
                     <!-- general form elements -->
                     <div class="card card-info">
                       <div class="card-header">
-                        <h3 class="card-title">New Variation Details</h3>
+                        <h3 class="card-title">Variation Details</h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['variations.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'PUT', 'route' => ['variations.update',$variation['id']], 'files' => false,]) !!}
                       <input type = "hidden" name = "contract_id" value = "{{$contract['id']}}">
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="name">Change Contract Amount <font color="#75320f">[{{$contract['currency']['code']}}]</font> to :</label>
-                            <input type = "number" step = ".01" class = "form-control" name = "amount" value = "{{$contract['amount']}}">
+                            <label for="name">Change Variation Amount <font color="#75320f">[{{$contract['currency']['code']}}]</font> to :</label>
+                            <input type = "number" step = ".01" class = "form-control" name = "variation_amount" value = "{{$variation['variation_amount']}}">
                           </div>
                           <div class="form-group">
-                            <label for="name">Change Contract Duration <font color="#75320f">[DAYS]</font> to:</label>
-                            <input type = "number" step = "1" class = "form-control" name = "duration" value = "{{$contract['duration']}}">
+                            <label for="name">Change Variation Duration <font color="#75320f">[DAYS]</font> to:</label>
+                            <input type = "number" step = "1" class = "form-control" name = "variation_duration" value = "{{$variation['variation_duration']}}">
                           </div>
 
                           @if(Session::has('message'))
@@ -64,7 +76,7 @@
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-                          <button type="submit" class="btn btn-info">Submit</button>
+                          <button type="submit" class="btn btn-info">Update</button>
                         </div>
                       <!-- </form> -->
                     </div>
@@ -94,7 +106,7 @@
                                   <td></td>
                                   <td>
                                       <font color = "green">
-                                        {{$base_currency['code']}} {{number_format($contract['task']['task_budget']['budget'])}}
+                                        {{$base_currency['code']}} {{number_format($contract['task']['budget']['budget'])}}
                                       </font>
                                   </td>
                                 </tr>
@@ -116,7 +128,7 @@
                                         <td></td>
                                         <td><font color = "red">({{$base_currency['code']}}{{number_format($other_contract->base_curr_eqv)}})</font></td>
                                     </tr>
-                                <?php $contract['task']['task_budget']['budget'] = $contract['task']['task_budget']['budget'] - $other_contract->base_curr_eqv; ?>
+                                <?php $contract['task']['budget']['budget'] = $contract['task']['budget']['budget'] - $other_contract->base_curr_eqv; ?>
                                   @if($other_contract->id == $contract['id'])
                                     <?php $xrate = $other_contract->currency['xrate']; ?>
                                   @endif
@@ -153,6 +165,7 @@
                                 <?php $total_variation = $total_variation + $variation->variation_amount/$variation->contract['currency']['xrate']; ?>
                                 @endforeach
 
+
                                 <tr>
                                     <td> - Total Committed Variations
                                         <font color = "grey">
@@ -182,13 +195,13 @@
                                     <td> Available Balance </td>
                                     <td> </td>
                                     <td>
-                                      @if($contract['task']['task_budget']['budget'] - $total_variation - $effective_variation_amount< 0)
+                                      @if($contract['task']['budget']['budget'] - $total_variation - $effective_variation_amount < 0)
                                         <?php $col = "red"; ?>
                                       @else
                                         <?php $col = "green"; ?>
                                       @endif
                                       <font color = "{{$col}}">
-                                            {{$base_currency['code']}} {{number_format($contract['task']['task_budget']['budget'] - $total_variation - $effective_variation_amount)}}
+                                            {{$base_currency['code']}} {{number_format($contract['task']['budget']['budget'] - $total_variation - $effective_variation_amount)}}
 
                                       </font>
                                     </td>
@@ -203,8 +216,9 @@
                         <div class="card-footer">
 
                         </div>
-                        <input type = "hidden" name = "balance" value = "{{$contract['task']['task_budget']['budget'] - $total_variation}}">
+                        <input type = "hidden" name = "balance" value = "{{$contract['task']['budget']['budget'] - $total_variation}}">
                         <input type = "hidden" name = "xrate" value = "{{$xrate}}">
+                        <input type = "hidden" name = "contract_name" value = "{{$contract['name']}}">
                       </form>
                     </div>
                     <!-- /.card -->

@@ -7,6 +7,8 @@ default -> role:admin
 
 //models;
   1 : variation table
+  2 : contracts
+  3 : Require docs
 
 
 
@@ -74,3 +76,27 @@ $("#selected").load("/selected/" + task_id);
 
     to call function in another model
     ->with('contract:id,currency as currency_id', 'contract.currency:id,xrate')
+
+
+    Commit the change using
+
+git commit -m "My message"
+Stash it.
+
+Stashing acts as a stack, where you can push changes, and you pop them in reverse order.
+
+To stash, type
+
+git stash
+Do the merge, and then pull the stash:
+git stash pop
+Discard the local changes
+
+using git reset --hard
+or git checkout -t -f remote/branch
+
+Or: Discard local changes for a specific file
+
+using git checkout filename
+
+return redirect()->route('route.name', [$param]);

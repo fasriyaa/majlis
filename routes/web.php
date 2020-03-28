@@ -97,8 +97,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
     Route::resource('variations', '\App\Http\Controllers\Procurements\VariationsController');
+    Route::get('/variations/timeline/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_timeline')->name('variation.timeline');
     Route::get('/variations/create/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_create')->name('variation.create');
     Route::get('/selected/{id}', '\App\Http\Controllers\Procurements\ContractsController@selected');
+    Route::post('/variation/reject', '\App\Http\Controllers\Procurements\VariationsController@reject')->name('variation.reject');
+    Route::post('/variation/verify', '\App\Http\Controllers\Procurements\VariationsController@verify')->name('variation.verify');
+    Route::post('/variation/approve', '\App\Http\Controllers\Procurements\VariationsController@approve')->name('variation.approve');
+    Route::post('/variation/authorize_variation', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation')->name('variation.authorize_variation');
     Route::post("task_link_budget", '\App\Http\Controllers\Procurements\ContractsController@task_link_budget');
 
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');

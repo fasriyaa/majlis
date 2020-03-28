@@ -56,6 +56,11 @@ class Task extends Model
     return $this->belongsTo('App\models\budget\budget','id','task_id');
   }
 
+  public function task_budget()
+  {
+    return $this->belongsTo('App\models\budget\budget','id','task_id');
+  }
+
   public function child_budget()
       {
           return $this->hasMany('App\models\gantt\Task','parent','id')->with('budget');

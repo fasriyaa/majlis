@@ -129,22 +129,28 @@
 
 
                     @if($contract_count < 1)
+                      @can('Create Contracts')
+                        <tr align = "left">
+                          <td></td>
+                          <td>Upload Contract <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_contract" data-id = "" onclick = ""></a>
+                          </td>
+                        </tr>
+                      @endcan
+                    @endif
+                    @can('Create Variations')
                       <tr align = "left">
                         <td></td>
-                        <td>Upload Contract <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_contract" data-id = "" onclick = ""></a>
-                        </td>
+                          <td onclick = "new_variation({{$contract['id']}},{{$contract['task_id']}});"> Request for Variation <a  class="fa fa-hand-point-right" id = ""></a>
+                          </td>
                       </tr>
-                    @endif
-                    <tr align = "left">
-                      <td></td>
-                      <td onclick = "new_variation({{$contract['id']}},{{$contract['task_id']}});"> Request for Variation <a  class="fa fa-hand-point-right" id = ""></a>
-                      </td>
-                    </tr>
-                    <tr align = "left">
-                      <td></td>
-                      <td> Upload contract amendment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_amendment" data-id = "" onclick = ""></a>
-                      </td>
-                    </tr>
+                    @endcan
+                    @can('Create Contracts')
+                        <tr align = "left">
+                          <td></td>
+                          <td> Upload contract amendment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_amendment" data-id = "" onclick = ""></a>
+                          </td>
+                        </tr>
+                    @endcan
                     <tr align = "left">
                       <td></td>
                       <td>View ledger <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#new_comment" data-id = "" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
@@ -187,7 +193,7 @@
                         @foreach($variations as $variation)
 
                             <tr>
-                              <td><a href = "{{ url('/variations', $variation->id) }}">{{$variation->id}}</a></td>
+                              <td><a href = "{{ url('/variations/timeline', $variation->id) }}">{{$variation->id}}</a></td>
                               <td>
                                 @foreach($variation->timeline as $tl)
                                     @if($tl->type == 11)
@@ -197,8 +203,36 @@
                                 @endforeach
                               </td>
                               <td>
+                                  <?php $break = 0; ?>
+                                  @if($variation->status == 0)
+                                      <?php $status = "Rejcted"; $col = "Red"; ?>
+                                  @endif
                                   @if($variation->status == 1)
-                                      <?php $status = "Pending"; $col = "orange"; ?>
+                                      @if($break == 0 and $variation['matrix']['varification_check'] ==1 and $variation['matrix']['varification_status'] == 1)
+                                        <?php $status = "Pending Varification"; $col = "orange";  $break = 1;?>
+                                      @endif
+                                      @if($break == 0 and  $variation['matrix']['approval_check'] ==1 and $variation['matrix']['approval_status'] == 1)
+                                        <?php $status = "Pending Approval"; $col = "orange";  $break = 2;?>
+                                      @endif
+                                      @if($break == 0 and  $variation['matrix']['authorize_check'] ==1 and $variation['matrix']['authorize_status'] == 1)
+                                        <?php $status = "Pending Authorization"; $col = "orange";  $break = 3;?>
+                                      @endif
+                                  @endif
+                                  @if($variation->status == 2)
+                                      @if($break == 0 and  $variation['matrix']['approval_check'] ==1 and $variation['matrix']['approval_status'] == 1)
+                                        <?php $status = "Pending Approval"; $col = "orange";  $break = 2;?>
+                                      @endif
+                                      @if($break == 0 and  $variation['matrix']['authorize_check'] ==1 and $variation['matrix']['authorize_status'] == 1)
+                                        <?php $status = "Pending Authorization"; $col = "orange";  $break = 3;?>
+                                      @endif
+                                  @endif
+                                  @if($variation->status == 3)
+                                      @if($break == 0 and  $variation['matrix']['authorize_check'] ==1 and $variation['matrix']['authorize_status'] == 1)
+                                        <?php $status = "Pending Authorization"; $col = "orange";  $break = 3;?>
+                                      @endif
+                                  @endif
+                                  @if($variation->status == 4)
+                                      <?php $status = "Effective"; $col = "green"; ?>
                                   @endif
                                   <font color = "{{$col}}"> {{$status}} </font>
                               </td>

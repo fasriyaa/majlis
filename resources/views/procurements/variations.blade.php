@@ -113,8 +113,20 @@
                         </td>
                         <td>
                           <?php $status = "NA"; ?>
+                          @if($variation->status == 0)
+                            <?php $status = "Rejected"; $col = "Red"; ?>
+                          @endif
                           @if($variation->status == 1)
                             <?php $status = "Pending"; $col = "#B9770E"; ?>
+                          @endif
+                          @if($variation->status == 2)
+                            <?php $status = "Verified"; $col = "blue"; ?>
+                          @endif
+                          @if($variation->status == 3)
+                            <?php $status = "Approved"; $col = "green"; ?>
+                          @endif
+                          @if($variation->status == 4)
+                            <?php $status = "Authorized"; $col = "green"; ?>
                           @endif
                           <font color ="{{$col}}">
                             {{$status}}
@@ -126,8 +138,12 @@
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
 
                               <div class="dropdown-menu" role="menu">
-                                <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + 1;">Timeline</a>
-                                <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
+                                <a class="dropdown-item" href="" onclick ="location.href='/variations/timeline/' + {{$variation->id}};">Timeline</a>
+                                @can('Edit Variations')
+                                  @if($variation->status == 1)
+                                    <a class="dropdown-item" href="" onclick ="location.href='/variations/' + {{$variation->id}} + '/edit';">Edit</a>
+                                  @endif
+                                @endcan
                                 <a class="dropdown-item" href="">Upload Supporting Document</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="">Approve</a>

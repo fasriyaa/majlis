@@ -22,4 +22,5 @@ class contracts extends Model
     {
       return $this->belongsTo('App\models\currency\Currency','currency_id');
     }
+    
 }

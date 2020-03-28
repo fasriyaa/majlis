@@ -18,4 +18,9 @@ class Variations extends Model
     {
         return $this->belongsTo('App\models\procurement\contracts','contract_id');
     }
+
+    public function matrix()
+    {
+      return $this->belongsTo('App\models\auth\ApprovalMatrix', 'id','model_id');
+    }
 }

@@ -268,18 +268,22 @@
                                   <p>Awarded</p>
                             </a>
                         </li>
+                        @can('View Contracts')
                         <li class="nav-item">
                             <a href="/contracts" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Contracts</p>
                             </a>
                         </li>
+                        @endcan
+                        @can('View Variations')
                         <li class="nav-item">
                             <a href="/variations" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
                                   <p>Variatons</p>
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </li>
                 <!-- End | Procurement -->
@@ -392,6 +396,7 @@
 
 
                 <!-- Start | Module Management -->
+                @can('View Modules')
                 <li class="nav-header">MODULE MANAGEMENT</li>
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
@@ -423,13 +428,13 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
                 <!-- End | Module Management -->
 
 
 
-
+                @can('View Users')
                 <li class="nav-header">USER MANAGEMENT</li>
-
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-user-friends"></i>
@@ -460,7 +465,9 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
 
+                @can('View Permission')
                 <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-unlock-alt"></i>
@@ -491,7 +498,7 @@
                         </li>
                     </ul>
                 </li>
-
+                @endcan
 
 
 

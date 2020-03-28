@@ -11,6 +11,7 @@ use App\models\docs\RequireDoc;
 use App\models\gantt\Task;
 use App\models\procurement\Variations;
 use App\models\currency\Currency;
+use App\models\auth\ApprovalMatrix;
 
 use Illuminate\Http\Request;
 
@@ -112,10 +113,12 @@ class ContractsController extends Controller
 
         //create timeline record
         $text = "New contract created. Contract name: ". $contract->name;
-        $task = $contract->id;
+        $contract_id = $contract->id;
         $type = 10;
         $url = "/contracts/timeline/". $contract->id;
-        $this->new_timeline($text, $task, $type, $url);
+        $model_id = 2;
+        $record_id = $contract->id;
+        $this->new_timeline($text, $contract_id, $type, $url,$model_id,$record_id);
 
         // return $contract;
         return redirect()->route('contracts.index');
@@ -182,8 +185,7 @@ class ContractsController extends Controller
 
         //retriving timeline records
         $timelines = Timeline::select('text','task','user as user_id','type','updated_at','record_id')
-            ->whereIn('type',[10,11])
-            ->where('task',$id)
+            ->where('contract_id',$id)
             ->with('user:id,name')
             ->orderBy('updated_at', 'DESC')
             ->get();
@@ -214,13 +216,16 @@ class ContractsController extends Controller
           //getting all tasks end
 
           //getting variations;
-          $variations = Variations::select('id', 'contract_id', 'status', 'id as record_id')
+          $variations = Variations::select('id', 'contract_id', 'status', 'id as record_id','id as model_id')
               ->where('contract_id', $id)
               ->with('timeline:record_id,id,text,type')
+              ->with('matrix')
               ->get();
 
         $doc_count = count($docs);
         $contract_count = count($docs);
+
+
 
 
         // return $variations;
@@ -250,16 +255,18 @@ class ContractsController extends Controller
         $doc_date = date('Y-m-d',strtotime($doc['date']));
         $alias_name = "Signed Contract";
 
-        $this->new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name);
+        $new_doc = $this->new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name);
 
 
         //create timeline record
         $contract_name = $doc['name'];
         $text = "Contract Uploaded for contract: ". $contract_name;
-        $task = $request->contract_id;
+        $contract_id = $request->contract_id;
         $type = 10;
         $url = "/files/". $doc_name;
-        $this->new_timeline($text, $task, $type, $url);
+        $model_id = 3;
+        $record_id =$new_doc->id;
+        $this->new_timeline($text, $contract_id, $type, $url, $model_id, $record_id);
 
         // return $doc;
         return redirect()->route('contracts.timeline', [$request->contract_id]);
@@ -288,16 +295,18 @@ class ContractsController extends Controller
         $doc_date = date('Y-m-d',strtotime($doc['date']));
         $alias_name = $request->amendment;
 
-        $this->new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name);
+        $new_doc = $this->new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name);
 
 
         //create timeline record
         $contract_name = $doc['name'];
         $text = "Contract amendment Uploaded for contract: ". $contract_name;
-        $task = $request->contract_id;
+        $contract_id = $request->contract_id;
         $type = 10;
         $url = "/files/". $doc_name;
-        $this->new_timeline($text, $task, $type, $url);
+        $model_id = 3;
+        $record_id = $new_doc->id;
+        $this->new_timeline($text, $contract_id, $type, $url, $model_id, $record_id);
 
 
         // return $request;
@@ -402,6 +411,7 @@ class ContractsController extends Controller
         $base_currency = $base_currency['code'];
 
 
+
         return view('Procurements.link_task', compact('tasks','contract','base_currency'));
           }else {
             return view($err_url);
@@ -409,17 +419,19 @@ class ContractsController extends Controller
     }
 
 
-    private function new_timeline($text, $task, $type, $url)
+    private function new_timeline($text, $contract_id, $type, $url, $model_id, $record_id)
     {
       $user_id = Auth::id();
 
       $new_timeline = new Timeline;
 
       $new_timeline->text = $text;
-      $new_timeline->task = $task ?? null;
+      $new_timeline->contract_id = $contract_id ?? null;
       $new_timeline->user = $user_id;
       $new_timeline->type = $type;
       $new_timeline->url = $url ?? null;
+      $new_timeline->model_id = $model_id;
+      $new_timeline->record_id = $record_id;
 
       $new_timeline->save();
 
@@ -439,6 +451,7 @@ class ContractsController extends Controller
       $up_doc->alias_name = $alias_name;
 
       $up_doc->save();
+      return $up_doc;
     }
 
 
@@ -480,6 +493,13 @@ class ContractsController extends Controller
           }else {
             return view($err_url);
       }
+    }
+    private function get_matrix($model,$id)
+    {
+      return ApprovalMatrix::where('model',$model)
+          ->where('model_id',$id)
+          ->first();
+
     }
 
 

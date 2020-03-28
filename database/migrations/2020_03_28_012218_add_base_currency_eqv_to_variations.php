@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddModuleToPermissionTable extends Migration
+class AddBaseCurrencyEqvToVariations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddModuleToPermissionTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('permissions', 'module')) {
-            Schema::table('permissions', function (Blueprint $table) {
-                $table->integer('module_id')->after('name')->->nullable();
+        if (!Schema::hasColumn('variations', 'base_curr_eqv')) {
+            Schema::table('variations', function (Blueprint $table) {
+                $table->double('base_curr_eqv')->after('variation_amount')->nullable();
             });
         }
     }
@@ -27,8 +27,8 @@ class AddModuleToPermissionTable extends Migration
      */
     public function down()
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->dropColumn('module');
+        Schema::table('variations', function (Blueprint $table) {
+            $table->dropColumn('variation_amount');
         });
     }
 }

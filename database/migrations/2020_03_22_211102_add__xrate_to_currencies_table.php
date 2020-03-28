@@ -15,7 +15,7 @@ class AddXrateToCurrenciesTable extends Migration
     {
         if (!Schema::hasColumn('currencies', 'xrate')) {
             Schema::table('currencies', function (Blueprint $table) {
-                $table->double('xrate')->after('name')->nullabe();
+                $table->double('xrate')->after('name')->->nullable();
             });
         }
     }

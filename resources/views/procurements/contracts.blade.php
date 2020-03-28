@@ -25,7 +25,9 @@
 
       <div class="row mb-2">
         <div class="col-sm-1">
+            @can('Create Contracts')
             <a href = "{{route('contracts.create')}}"><button type="button" class="btn btn-info">New Contract</button></a>
+            @endcan
         </div>
       </div>
     </div>
@@ -112,7 +114,9 @@
                               <div class="dropdown-menu" role="menu">
                                 <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + {{$contract->id}};">Timeline</a>
                                 <a class="dropdown-item" href="">Ledger</a>
-                                <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
+                                @can('Edit Contracts')
+                                  <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
+                                @endcan
                                 <a class="dropdown-item" href="">Terminate</a>
                                 <a class="dropdown-item" href="">Upload Contract</a>
                                 <a class="dropdown-item" href="">Variations</a>
