@@ -144,6 +144,6 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('/phpinfo', function () {return view('phpinfo');});
 Route::get('/welcome','HomeController@welcome')->name('mail.user.welcome');
 
-// Route::get('/test/{task_id}/{staff_id}', 'PMU\PmuController@assign_staff');
+Route::get('/test/{task_id}/{staff_id}', 'PMU\PmuController@assign_staff');
 
 Auth::routes();
