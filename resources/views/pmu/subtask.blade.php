@@ -222,7 +222,10 @@ function update_progress(object)
                     location.reload();
                     // alert("ok");
                   }
-             }
+             },
+                error: function(xhr, status, error) {
+                alert(xhr.responseText);
+              }
 
 
           });
