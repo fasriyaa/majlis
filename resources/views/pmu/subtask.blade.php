@@ -190,14 +190,17 @@ $("#store_staff").click(function() {
            {
                 if(res)
                 {
-                  // location.reload();
+                  location.reload();
                 }
-           }
+           },
+              error: function(xhr, status, error) {
+              alert(xhr.responseText);
+            }
 
 
         });
   }
-  location.reload();
+
 });
 
 //Marking the task complete
@@ -224,7 +227,7 @@ function update_progress(object)
                   }
              },
                 error: function(xhr, status, error) {
-                alert(xhr.responseText);
+                // alert(xhr.responseText);
               }
 
 
