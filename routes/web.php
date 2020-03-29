@@ -103,7 +103,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/variation/reject', '\App\Http\Controllers\Procurements\VariationsController@reject')->name('variation.reject');
     Route::post('/variation/verify', '\App\Http\Controllers\Procurements\VariationsController@verify')->name('variation.verify');
     Route::post('/variation/approve', '\App\Http\Controllers\Procurements\VariationsController@approve')->name('variation.approve');
+    Route::post('/variation/approve/otp', '\App\Http\Controllers\Procurements\VariationsController@approve_otp')->name('variation.approve_otp');
     Route::post('/variation/authorize_variation', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation')->name('variation.authorize_variation');
+    Route::post('/variation/authorize_variation/otp', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation_otp')->name('variation.authorize_variation_otp');
     Route::post("task_link_budget", '\App\Http\Controllers\Procurements\ContractsController@task_link_budget');
 
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
@@ -144,6 +146,6 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('/phpinfo', function () {return view('phpinfo');});
 Route::get('/welcome','HomeController@welcome')->name('mail.user.welcome');
 
-Route::get('/test/{task_id}/{staff_id}', 'PMU\PmuController@assign_staff');
+// Route::post('/otp/request', 'Procurements\VariationsController@generate_otp');
 
 Auth::routes();

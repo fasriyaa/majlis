@@ -15,10 +15,18 @@ use App\models\currency\Currency;
 use App\models\auth\ApprovalComments;
 use App\User;
 
+use App\Mail\OtpTokenMail;
+Use App\Events\OtpToken;
+use Mail;
+
+use Tzsk\Otp\Facades\Otp;
+
 
 use Illuminate\Http\Request;
 
 use Auth;
+use Redirect;
+use Hash;
 
 class VariationsController extends Controller
 {
@@ -120,7 +128,6 @@ class VariationsController extends Controller
                   $variation->save();
 
                     //recording in approval matrix
-
                       $model = 1;
                       $model_id = $variation->id;
 
@@ -296,6 +303,7 @@ class VariationsController extends Controller
             $other_contracts = $this->other_contracts($contract['task_id']);
             $contracts_id = $this->id_to_array($other_contracts);
             $variations = $this->get_variations($contracts_id);
+            $variation_otp = env('variation_otp');
             $effective_variation_amount = Variations::select('id','base_curr_eqv','status')
                 ->whereIn('contract_id',$contracts_id)
                 ->where('status',4)
@@ -309,7 +317,8 @@ class VariationsController extends Controller
                 'base_currency',
                 'other_contracts',
                 'variations',
-                'effective_variation_amount'
+                'effective_variation_amount',
+                'variation_otp'
               ));
     }
 
@@ -322,18 +331,19 @@ class VariationsController extends Controller
       }
 
       //getting contrat ID
-      $variation = Variations::with('timeline')
+      $this_variation = Variations::with('timeline')
         ->with('contract:id,task_id','contract.task:id,text','contract.task.budget:id,task_id,budget')
         ->with('contract:id,currency as currency_id,task_id,name,duration','contract.currency:id,code')
         ->find($id);
 
-      $contract = $variation['contract'];
+      $contract = $this_variation['contract'];
       $base_currency = $this->base_currency();
       $other_contracts = $this->other_contracts($contract['task_id']);
       $contracts_id = $this->id_to_array($other_contracts);
       $variations = $this->get_variations($contracts_id);
       $timelines = $this->get_timeline_by_variation_id($id);
       $matrix = $this->get_matrix(1,$id);
+      $variation_otp = env('variation_otp');
 
       $reject_comments = ApprovalComments::select('id','comment','type_id','level_id')
           ->where('matrix_id',$matrix['id'])
@@ -343,13 +353,14 @@ class VariationsController extends Controller
       return view('procurements.variation_timeline', compact
         (
             'contract',
-            'variation',
+            'this_variation',
             'base_currency',
             'other_contracts',
             'variations',
             'timelines',
             'matrix',
-            'reject_comments'
+            'reject_comments',
+            'variation_otp'
           ));
     }
 
@@ -389,7 +400,7 @@ class VariationsController extends Controller
 
                   $variation->status = 0;
                   $variation->save();
-                  return redirect()->route('variation.timeline', [$variation->id]);
+                  return redirect()->route('variation.timeline', [$variation->id])->with(['message' => "Reject Successful", 'label' => "success"]);
                 break;
 
                 case 2:
@@ -418,7 +429,7 @@ class VariationsController extends Controller
                   $variation->status = 0;
                   $variation->save();
 
-                  return redirect()->route('variation.timeline', [$variation->id]);
+                  return redirect()->route('variation.timeline', [$variation->id])->with(['message' => "Reject Successful", 'label' => "success"]);
                   break;
                 case 3:
                   $permission = "Authorize Variations";
@@ -445,7 +456,7 @@ class VariationsController extends Controller
                   $variation->status = 0;
                   $variation->save();
 
-                  return redirect()->route('variation.timeline', [$variation->id]);
+                  return redirect()->route('variation.timeline', [$variation->id])->with(['message' => "Reject Successful", 'label' => "success"]);
                   break;
       }
 
@@ -493,8 +504,27 @@ class VariationsController extends Controller
 
 
         // return $variation;
-        return redirect()->route('variation.timeline', [$variation->id]);
+        return redirect()->route('variation.timeline', [$variation->id])->with(['message' => "Verified", 'label' => "success"]);
     }
+    public function approve_otp(Request $request)
+    {
+      //get exising otp
+      $variation_id = $request->id;
+      $current_otp = Auth::user()->otp;
+
+      $otp = Otp::expiry(5)->generate(Auth::user()->id . "approve" . $request->id);
+      // $otp = Hash::make('$otp');
+      if($current_otp != $otp)
+      {
+            Auth::user()->otp = $otp;
+            Auth::user()->save();
+            event(new OtpToken(Auth::user()));
+            }else {
+                    return view('procurements.approve_variation', compact('variation_id'))->with(['message' => "OTP Token Mismach", 'label' => "danger"]);;
+      }
+      return view('procurements.approve_variation', compact('variation_id'));
+    }
+
     public function approve(Request $request)
     {
         $permission = "Approve Variations";
@@ -503,38 +533,72 @@ class VariationsController extends Controller
           abort(403);
         }
 
-        $matrix = $this->get_matrix(1,$request->id);
-        $variation = Variations::select('id','contract_id','variation_amount')
-            ->where('id',$request->id)
-            ->with('contract:id,name,currency as currency_id','contract.currency:id,xrate')
-            ->first();
-
-        $matrix->approval_status = 2;
-        $matrix->approval_id = Auth::id();
-        $matrix->status = 3;
-        $matrix->save();
-
-        $text = "Variation for contract: ". $variation['contract']['name']. " approved";
-        $variation_id = $request->id;
-        $type = 11;
-        $url = "/variations/" . $request->id;
-        $record_id = null;
-        $model_id = null;
-        $contract_id = $variation['contract']['id'];
-        $timeline = $this->new_timeline($text, $variation_id, $type, $url, $record_id, $model_id, $contract_id);
-
-        if($matrix['authorize_check']==0)
+        $variation_otp = env('variation_otp');
+        if($variation_otp == 1)
         {
-              $variation->status = 4;
-              $variation->base_curr_eqv = round($variation->variation_amount/$variation['contract']['currency']['xrate'],2) ?? 0;
-              }else {
-                $variation->status = 3;
+            $valid = Otp::expiry(5)->match($request->otp, Auth::user()->id . "approve" . $request->id);
+            }else {
+              $valid = true;
         }
-        $variation->save();
 
+        if($variation_otp == 0 or ($variation_otp == 1 and $valid == true))
+        {
+                $matrix = $this->get_matrix(1,$request->id);
+                $variation = Variations::select('id','contract_id','variation_amount')
+                    ->where('id',$request->id)
+                    ->with('contract:id,name,currency as currency_id','contract.currency:id,xrate')
+                    ->first();
+
+                $matrix->approval_status = 2;
+                $matrix->approval_id = Auth::id();
+                $matrix->status = 3;
+                $matrix->save();
+
+                $text = "Variation for contract: ". $variation['contract']['name']. " approved";
+                $variation_id = $request->id;
+                $type = 11;
+                $url = "/variations/" . $request->id;
+                $record_id = null;
+                $model_id = null;
+                $contract_id = $variation['contract']['id'];
+                $timeline = $this->new_timeline($text, $variation_id, $type, $url, $record_id, $model_id, $contract_id);
+
+                if($matrix['authorize_check']==0)
+                {
+                      $variation->status = 4;
+                      $variation->base_curr_eqv = round($variation->variation_amount/$variation['contract']['currency']['xrate'],2) ?? 0;
+                      }else {
+                        $variation->status = 3;
+                }
+                $variation->save();
+          }
 
         // return $matrix;
-        return redirect()->route('variation.timeline', [$variation->id]);
+        if($valid == false)
+        {
+            return redirect()->route('variation.timeline', [$request->id])->with(['message' => "OTP Token Mismach", 'label' => "danger"]);
+            }else {
+                    return redirect()->route('variation.timeline', [$request->id])->with(['message' => "Approved", 'label' => "success"]);
+        }
+
+    }
+    public function authorize_variation_otp(Request $request)
+    {
+      //get exising otp
+      $variation_id = $request->id;
+      $current_otp = Auth::user()->otp;
+
+      $otp = Otp::expiry(5)->generate(Auth::user()->id . "authorize"  . $request->id);
+      // $otp = Hash::make('$otp');
+      if($current_otp != $otp)
+      {
+            Auth::user()->otp = $otp;
+            Auth::user()->save();
+            event(new OtpToken(Auth::user()));
+            }else {
+                    return view('procurements.authorize_variation', compact('variation_id'))->with(['message' => "OTP Token Mismach", 'label' => "danger"]);;
+      }
+      return view('procurements.authorize_variation', compact('variation_id'));
     }
 
     public function authorize_variation(Request $request)
@@ -545,31 +609,49 @@ class VariationsController extends Controller
           abort(403);
         }
 
-        $matrix = $this->get_matrix(1,$request->id);
-        $variation = Variations::select('id','contract_id','variation_amount')
-            ->where('id',$request->id)
-            ->with('contract:id,name,currency as currency_id','contract.currency:id,xrate')
-            ->first();
+        $variation_otp = env('variation_otp');
+        if($variation_otp == 1)
+        {
+            $valid = Otp::expiry(5)->match($request->otp, Auth::user()->id . "authorize" . $request->id);
+            }else {
+              $valid = true;
+        }
 
-        $matrix->authorize_status = 2;
-        $matrix->authorize_id = Auth::id();
-        $matrix->status = 4;
-        $matrix->save();
+        if($variation_otp == 0 or ($variation_otp == 1 and $valid == true))
+        {
 
-        $text = "Variation for contract: ". $variation['contract']['name']. " authorized";
-        $variation_id = $request->id;
-        $type = 11;
-        $url = "/variations/" . $request->id;
-        $record_id = null;
-        $model_id = null;
-        $contract_id = $variation['contract']['id'];
-        $timeline = $this->new_timeline($text, $variation_id, $type, $url, $record_id, $model_id, $contract_id);
+              $matrix = $this->get_matrix(1,$request->id);
+              $variation = Variations::select('id','contract_id','variation_amount')
+                  ->where('id',$request->id)
+                  ->with('contract:id,name,currency as currency_id','contract.currency:id,xrate')
+                  ->first();
 
-        $variation->status = 4;
-        $variation->base_curr_eqv = round($variation->variation_amount/$variation['contract']['currency']['xrate'],2) ?? 0;
-        $variation->save();
-        // return $matrix;
-        return redirect()->route('variation.timeline', [$variation->id]);
+              $matrix->authorize_status = 2;
+              $matrix->authorize_id = Auth::id();
+              $matrix->status = 4;
+              $matrix->save();
+
+              $text = "Variation for contract: ". $variation['contract']['name']. " authorized";
+              $variation_id = $request->id;
+              $type = 11;
+              $url = "/variations/" . $request->id;
+              $record_id = null;
+              $model_id = null;
+              $contract_id = $variation['contract']['id'];
+              $timeline = $this->new_timeline($text, $variation_id, $type, $url, $record_id, $model_id, $contract_id);
+
+              $variation->status = 4;
+              $variation->base_curr_eqv = round($variation->variation_amount/$variation['contract']['currency']['xrate'],2) ?? 0;
+              $variation->save();
+              // return $matrix;
+        }
+
+        if($valid == false)
+        {
+            return redirect()->route('variation.timeline', [$request->id])->with(['message' => "OTP Token Mismach", 'label' => "danger"]);
+            }else {
+                    return redirect()->route('variation.timeline', [$request->id])->with(['message' => "Authorized", 'label' => "success"]);
+        }
     }
 
 

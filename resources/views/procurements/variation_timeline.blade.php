@@ -9,7 +9,7 @@
       <div class="row mb-2">
         <div class="col-sm-6">
           <h1 class="m-0 text-dark">Timeline of:</h1>
-          @foreach($variation['timeline'] as $timeline)
+          @foreach($this_variation['timeline'] as $timeline)
             @if($timeline['type'] == 11)
               <p>Variation :
                 <font color = "{{$col1}}">
@@ -85,6 +85,12 @@
           <!-- Right Col -->
           <div class="col-sm-6">
 
+                @if(Session::has('message'))
+                <div class = "col-sm-12">
+                    <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+                </div>
+                @endif
+
             <!-- This variation details -->
                 <div class = "col-sm-12">
                   <div class="card card">
@@ -95,23 +101,23 @@
 
                     <div class="card-body table-responsive p-0">
                       <table class="table table-hover">
-                            @if($variation['variation_amount'] != null)
+                            @if($this_variation['variation_amount'] != null)
                                 <tr>
                                   <td>
                                       Variation Amount:
                                   </td>
                                   <td>
-                                      {{$contract['currency']['code']}} {{number_format($variation['variation_amount'])}}
+                                      {{$contract['currency']['code']}} {{number_format($this_variation['variation_amount'])}}
                                   </td>
                                 </tr>
                             @endif
-                            @if($variation['variation_duration'] != null)
+                            @if($this_variation['variation_duration'] != null)
                                 <tr>
                                   <td>
                                       Variation Duration:
                                   </td>
                                   <td>
-                                      {{number_format($variation['variation_duration'])}} Days
+                                      {{number_format($this_variation['variation_duration'])}} Days
                                   </td>
                                 </tr>
                             @endif
@@ -121,10 +127,10 @@
                               </td>
                               <td>
                                 <?php $break = 0; ?>
-                                  @if($variation['status'] == 0)
+                                  @if($this_variation['status'] == 0)
                                       <?php $status = "Rejected"; $col = "Red"; ?>
                                   @endif
-                                  @if($variation['status'] == 1)
+                                  @if($this_variation['status'] == 1)
                                       @if($matrix['varification_check'] ==1 and $matrix['varification_status'] == 1)
                                         <?php $status = "Pending Varification"; $col = "orange";  $break = 1;?>
                                       @endif
@@ -136,7 +142,7 @@
                                       @endif
 
                                   @endif
-                                  @if($variation['status'] == 2)
+                                  @if($this_variation['status'] == 2)
                                       @if($break == 0 and $matrix['approval_check'] ==1 and $matrix['approval_status'] == 1)
                                         <?php $status = "Pending Approval"; $col = "orange"; $break = 2; ?>
                                       @endif
@@ -144,12 +150,12 @@
                                         <?php $status = "Pending Authorize"; $col = "orange"; $break = 3; ?>
                                       @endif
                                   @endif
-                                  @if($variation['status'] == 3)
+                                  @if($this_variation['status'] == 3)
                                       @if($break == 0 and $matrix['authorize_check'] ==1 and $matrix['authorize_status'] == 1)
                                         <?php $status = "Pending Authorize"; $col = "orange"; $break = 3; ?>
                                       @endif
                                   @endif
-                                  @if($variation['status'] == 4)
+                                  @if($this_variation['status'] == 4)
                                       <?php $status = "Effective"; $col = "Green"; ?>
                                   @endif
                                     <font color = "{{$col}}">
@@ -157,7 +163,7 @@
                                     </font>
                               </td>
                             </tr>
-                            @if($variation['status']==0)
+                            @if($this_variation['status']==0)
                                 <tr>
                                   <td>
                                       Rejection Comment:
@@ -176,9 +182,9 @@
                                 <td></td>
                                   <td field-key='action'>
                                     <?php $check_break = 0; ?>
-                                    @if($variation['status'] > 0)
+                                    @if($this_variation['status'] > 0)
                                         @canany(['Verify Variations', 'Approve Variations', 'Authorize Variations'])
-                                          @if($variation['status']!= 4)
+                                          @if($this_variation['status']!= 4)
                                             <div class="btn-group">
                                               <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_variation">Reject</button>
                                             </div>
@@ -494,7 +500,7 @@
       <div class="modal-body">
         {!! Form::open(['method' => 'POST', 'route' => ['variation.reject'], 'files' => false,]) !!}
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$variation['id']}}">
+          <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
           <input type="hidden" name = "level" value = "{{$check_break}}">
           <label for="name">Reason for rejecting the variation*</label>
           <textarea name = "comment" class="form-control" rows="3" value = "" required></textarea>
@@ -527,17 +533,42 @@
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST', 'route' => ['variation.approve'], 'files' => false,]) !!}
+        @if($variation_otp == 0)
+          {!! Form::open(['method' => 'POST', 'route' => ['variation.approve'], 'files' => false,]) !!}
+        @endif
+        @if($variation_otp == 1)
+          {!! Form::open(['method' => 'POST', 'route' => ['variation.approve_otp'], 'files' => false,]) !!}
+        @endif
+
+        <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
+
+        @if($variation_otp == 0)
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$variation['id']}}">
-          <label for="name">Are you sure you want to approve the variation</label>
+          <label for="name">Are you sure you want to approve this variation</label>
         </div>
+        @endif
+
+        @if($variation_otp==1)
+        <div class="form-group">
+          <label for="name">How would you like to send OTP Token</label>
+          <select id = "otp_type" name="otp_type" class="custom-select">
+              <option value="1" >E-Mail</option>
+              <!-- <option value="2" >Mobile Number</option> -->
+          </select>
+        </div>
+        @endif
       </div>
+
       <!-- /. link to a task Modal body -->
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="submit" class="btn btn-info">Approve</button>
+        @if($variation_otp == 0)
+          <button type="submit" class="btn btn-info">Approve</button>
+        @endif
+        @if($variation_otp == 1)
+          <button type="submit" class="btn btn-info">Send OTP</button>
+        @endif
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 
       </div>
@@ -560,9 +591,9 @@
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST', 'route' => ['variation.verify'], 'files' => false,]) !!}
+          {!! Form::open(['method' => 'POST', 'route' => ['variation.verify'], 'files' => false,]) !!}
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$variation['id']}}">
+          <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
           <label for="name">Are you sure you want to verify the variation</label>
         </div>
       </div>
@@ -570,7 +601,7 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="submit" class="btn btn-info">Save</button>
+          <button type="submit" class="btn btn-info">Verify</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 
       </div>
@@ -594,17 +625,42 @@
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST', 'route' => ['variation.authorize_variation'], 'files' => false,]) !!}
+        @if($variation_otp == 0)
+          {!! Form::open(['method' => 'POST', 'route' => ['variation.authorize_variation'], 'files' => false,]) !!}
+        @endif
+        @if($variation_otp == 1)
+          {!! Form::open(['method' => 'POST', 'route' => ['variation.authorize_variation_otp'], 'files' => false,]) !!}
+        @endif
+
+        <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
+
+        @if($variation_otp == 0)
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$variation['id']}}">
-          <label for="name">Are you sure you want to authorize the variation</label>
+          <label for="name">Are you sure you want to Authorize this variation</label>
         </div>
+        @endif
+
+        @if($variation_otp==1)
+        <div class="form-group">
+          <label for="name">How would you like to send OTP Token</label>
+          <select id = "otp_type" name="otp_type" class="custom-select">
+              <option value="1" >E-Mail</option>
+              <!-- <option value="2" >Mobile Number</option> -->
+          </select>
+        </div>
+        @endif
       </div>
+
       <!-- /. link to a task Modal body -->
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="submit" class="btn btn-info">Authorize</button>
+        @if($variation_otp == 0)
+          <button type="submit" class="btn btn-info">Authorize</button>
+        @endif
+        @if($variation_otp == 1)
+          <button type="submit" class="btn btn-info">Send OTP</button>
+        @endif
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 
       </div>
@@ -612,7 +668,7 @@
     </div>
   </div>
 </div>
-<!-- /.verifty Variation Modal -->
+<!-- /.authorize Variation Modal -->
 
 @section('javascript')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -639,6 +695,27 @@ function reject_variation(id)
                   }
       });
 }
+
+// function request_token(id)
+// {
+//
+//       $.ajax({
+//       method: "POST",
+//       url: '/otp/request',
+//       data: {
+//               "_token": "{{ csrf_token() }}",
+//               "id": id
+//               },
+//                 success: function (response) {
+//                     // $('.collapse').collapse('show');
+//                     // $('#task_link_budget').html(response)
+//                     // alert(response);
+//                 },
+//                 error: function (request, status, error) {
+//                     // alert(request.responseText);
+//                   }
+//       });
+// }
 
 
 

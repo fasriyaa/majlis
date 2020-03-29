@@ -20,6 +20,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\AssignTask' => [
             'App\Listeners\SendTaskAssignEmail',
         ],
+
+        'App\Events\OtpToken' => [
+            'App\Listeners\SendOtpEmail',
+        ],
     ];
 
     /**
