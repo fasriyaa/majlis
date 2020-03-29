@@ -487,7 +487,7 @@ class PmuController extends Controller
             ->first();
 
         //sending email to the assigned user
-        event(new AssignTask($task));
+        // event(new AssignTask($task));
 
         return response()->json($new_timeline);
           }else {
