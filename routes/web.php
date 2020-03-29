@@ -93,6 +93,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/contracts/upload_contract', '\App\Http\Controllers\Procurements\ContractsController@upload_contracts')->name('contracts.upload');
     Route::post('/contracts/upload_amendment', '\App\Http\Controllers\Procurements\ContractsController@upload_amendment')->name('amendment.upload');
     Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
+    Route::post('/contracts/new_type', '\App\Http\Controllers\Procurements\ContractsController@new_type')->name('contracts.new_type');
     Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');

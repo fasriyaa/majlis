@@ -494,6 +494,25 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
+
+    public function new_type(Request $request)
+    {
+      $check_for_existing = ContractTypes::select('name')
+          ->where('name',$request->contract_type)
+          ->first();
+
+      if($check_for_existing)
+      {
+        return back()->with(['message' => "Contract Type exist", 'label' => "danger"]);
+        }else {
+          $contract_type = new ContractTypes;
+          $contract_type->name = $request->contract_type;
+          $contract_type->status = 1;
+          $contract_type->save();
+          return redirect()->route('contracts.create')->with(['message' => "Contract type Create", 'label' => "success"]);
+        }
+    }
+
     private function get_matrix($model,$id)
     {
       return ApprovalMatrix::where('model',$model)

@@ -99,6 +99,39 @@
                   </div>
         <!-- /. left coloumn -->
 
+        <!-- Right Coloumn -->
+        @can('Create Contract Type')
+        <div class="col-sm-6">
+          
+          @if(Session::has('message'))
+          <div class = "col-sm-12">
+              <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+          </div>
+          @endif
+
+            <div class = "col-sm-12">
+              <div class="card card">
+                <div class="card-header">
+                  <h3 class="card-title">Task Actions</a></h3>
+                </div>
+                <!-- /. card header -->
+
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
+
+                    <tr align = "left">
+                      <td></td>
+                      <td data-toggle="modal" data-target="#create_contract_type">Create New Contract</td>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </div>
+        @endcan
+        <!-- /.right coloumn -->
+
 
 
 
@@ -112,6 +145,39 @@
 </div>
 <!-- /.content-wrapper -->
 @endsection
+
+<!-- Create Contract Type Modal -->
+<div class="modal fade" id="create_contract_type">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Create New Contract Type</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST',  'route' => ['contracts.new_type'], 'files' => false,]) !!}
+        <div class="form-group">
+          <label for="comment_label">Contract Type*</label>
+          <input type = "text" class="form-control" name ="contract_type" placeholder="" required>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "approve" type="submit" class="btn btn-info">Create</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Create Contract Type -->
 
 @section('javascript')
 <!-- jQuery -->
