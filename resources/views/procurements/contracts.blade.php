@@ -90,19 +90,16 @@
                         <td>{{date('d-M-Y', strtotime($contract->date))}}</td>
                         <td>{{$contract->duration}} Days | {{date('d-M-Y',strtotime($contract->date))}}</td>
                         <td>
-                          @if($contract->currency==1)
-                            <?php $currency = "MVR"; ?>
-                          @endif
-                          @if($contract->currency==2)
-                            <?php $currency = "USD"; ?>
-                          @endif
-                          {{$currency}} {{number_format($contract->amount)}}
+                          {{$contract['currency']['code']}} {{number_format($contract->amount)}}
                         </td>
                         <td>xxx</td>
                         <td>xxxx</td>
                         <td>
                           @if($contract->status == 1)
-                            <?php $status = "Ongoin"; $col = "green"; ?>
+                            <?php $status = "Hangin"; $col = "orange"; ?>
+                          @endif
+                          @if($contract->status == 2)
+                            <?php $status = "Ongoin"; $col = "Green"; ?>
                           @endif
                           <font color = "{{$col}}">{{$status}}</font>
                         </td>
@@ -122,7 +119,11 @@
                                 <a class="dropdown-item" href="">Variations</a>
                                 <a class="dropdown-item" href="">Link to a task</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="">Record a payment</a>
+                                @if($contract->status == 2)
+                                  @can('Record Payments')
+                                    <a class="dropdown-item" href="" onclick ="location.href='/invoice/create/' + {{$contract->id}};">Record a payment</a>
+                                  @endcan
+                                @endif
                               </div>
                             </button>
                           </div>

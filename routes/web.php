@@ -94,6 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/contracts/upload_amendment', '\App\Http\Controllers\Procurements\ContractsController@upload_amendment')->name('amendment.upload');
     Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
     Route::post('/contracts/new_type', '\App\Http\Controllers\Procurements\ContractsController@new_type')->name('contracts.new_type');
+    Route::post('/contracts/new_currency', '\App\Http\Controllers\Procurements\ContractsController@new_currency')->name('contracts.new_currency');
     Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
@@ -108,6 +109,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/variation/authorize_variation', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation')->name('variation.authorize_variation');
     Route::post('/variation/authorize_variation/otp', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation_otp')->name('variation.authorize_variation_otp');
     Route::post("task_link_budget", '\App\Http\Controllers\Procurements\ContractsController@task_link_budget');
+
+    Route::resource('invoice', 'Budget\InvoiceController');
+    Route::get('invoice/create/{id}', 'Budget\InvoiceController@create_invoice')->name('invoice_create');
 
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');

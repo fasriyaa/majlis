@@ -33,19 +33,18 @@ class ContractsController extends Controller
     public function index()
     {
       $permission = "View Contracts";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
+      if(auth()->user()->can($permission) == false)
       {
+          abort(403);
+      }
         //get all contracts
-        $contracts = contracts::select('id','name','type as type_id','contract_no','task_id','currency','amount','contractor','date','duration','status')
+        $contracts = contracts::select('id','name','type as type_id','contract_no','task_id','currency as currency_id','amount','contractor','date','duration','status')
             ->with('type:id,name as type_name')
+            ->with('currency:id,code')
             ->get();
 
         // return $contracts;
         return view('procurements.contracts',compact('contracts'));
-            }else {
-              return view($err_url);
-      }
     }
 
     /**
@@ -64,7 +63,12 @@ class ContractsController extends Controller
             ->where('status',1)
             ->get();
 
-        return view('procurements.create_contract',compact('contract_types'));
+        //getting currencies
+        $currencies = Currency::select('id','code','status')
+                ->where('status',1)
+                ->get();
+
+        return view('procurements.create_contract',compact('contract_types','currencies'));
           }else {
             return view($err_url);
       }
@@ -360,6 +364,7 @@ class ContractsController extends Controller
           return back()-> with(["message" => "No sufficient budget", "label" =>"danger"]);
         }else {
               $contract->task_id = $request->task_id;
+              $contract->status = 2;
               $contract->save();
         }
 
@@ -510,6 +515,26 @@ class ContractsController extends Controller
           $contract_type->status = 1;
           $contract_type->save();
           return redirect()->route('contracts.create')->with(['message' => "Contract type Create", 'label' => "success"]);
+        }
+    }
+
+    public function new_currency(Request $request)
+    {
+      $check_for_existing = Currency::select('code')
+          ->where('code',$request->code)
+          ->first();
+
+      if($check_for_existing)
+      {
+        return back()->with(['message' => "Currency exist", 'label' => "danger"]);
+        }else {
+          $new_currency= new Currency;
+          $new_currency->code = $request->code;
+          $new_currency->name = $request->name;
+          $new_currency->xrate = $request->xrate;
+          $new_currency->status = 1;
+          $new_currency->save();
+          return redirect()->route('contracts.create')->with(['message' => "Currency Saved", 'label' => "success"]);
         }
     }
 

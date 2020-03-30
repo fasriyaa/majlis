@@ -64,8 +64,9 @@
                           <div class="form-group">
                             <label for="name">Contract Currency</label>
                             <select id = "currency" name="currency" class="custom-select">
-                                <option value="1" >MVR</option>
-                                <option value="2" >USD</option>
+                                @foreach($currencies as $currency)
+                                <option value="{{$currency->id}}" >{{$currency->code}}</option>
+                                @endforeach
                             </select>
                           </div>
                           <div class="form-group">
@@ -100,9 +101,9 @@
         <!-- /. left coloumn -->
 
         <!-- Right Coloumn -->
-        @can('Create Contract Type')
+        @canany('Create Contract Type','Create Currency')
         <div class="col-sm-6">
-          
+
           @if(Session::has('message'))
           <div class = "col-sm-12">
               <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
@@ -118,18 +119,26 @@
 
                 <div class="card-body table-responsive p-0">
                   <table class="table table-hover">
-
+                    @can('Create Contract Type')
                     <tr align = "left">
                       <td></td>
                       <td data-toggle="modal" data-target="#create_contract_type">Create New Contract</td>
                       </td>
                     </tr>
+                    @endcan
+                    @can('Create Currency')
+                    <tr align = "left">
+                      <td></td>
+                      <td data-toggle="modal" data-target="#create_currency">Create New Currency</td>
+                      </td>
+                    </tr>
+                    @endcan
                   </table>
                 </div>
               </div>
             </div>
         </div>
-        @endcan
+        @endcanany
         <!-- /.right coloumn -->
 
 
@@ -163,6 +172,47 @@
         <div class="form-group">
           <label for="comment_label">Contract Type*</label>
           <input type = "text" class="form-control" name ="contract_type" placeholder="" required>
+        </div>
+      </div>
+      <!-- /. Address Modal body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button id = "approve" type="submit" class="btn btn-info">Create</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+
+      </div>
+        {!! Form::close() !!}
+    </div>
+  </div>
+</div>
+<!-- /. Create Contract Type -->
+
+<!-- Create Contract Type Modal -->
+<div class="modal fade" id="create_currency">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Create New Currency</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Address Modal body -->
+      <div class="modal-body">
+        {!! Form::open(['method' => 'POST',  'route' => ['contracts.new_currency'], 'files' => false,]) !!}
+        <div class="form-group">
+          <label for="comment_label">Currency Code*</label>
+          <input type = "text" class="form-control" name ="code" placeholder="" required>
+        </div>
+        <div class="form-group">
+          <label for="comment_label">Currency Name*</label>
+          <input type = "text" class="form-control" name ="name" placeholder="" required>
+        </div>
+        <div class="form-group">
+          <label for="comment_label">Exchange Rate to Base Currency*</label>
+          <input type = "number" step = ".01" class="form-control" name ="xrate" placeholder="" required>
         </div>
       </div>
       <!-- /. Address Modal body -->
