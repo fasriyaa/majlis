@@ -23,6 +23,11 @@ class contracts extends Model
       return $this->belongsTo('App\models\currency\Currency','currency_id');
     }
 
+    public function currencies()
+    {
+      return $this->belongsTo('App\models\currency\Currency','currency', 'id');
+    }
+
     public function variations()
     {
       return $this->hasMany('App\models\procurement\Variations', 'contract_id');

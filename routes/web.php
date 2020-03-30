@@ -112,6 +112,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('invoice', 'Budget\InvoiceController');
     Route::get('invoice/create/{id}', 'Budget\InvoiceController@create_invoice')->name('invoice_create');
+    Route::get('invoice/timeline/{id}', 'Budget\InvoiceController@timeline')->name('invoice.timeline');
+    Route::post('/invoice/reject', '\App\Http\Controllers\Budget\InvoiceController@reject')->name('invoice.reject');
+    Route::post('/invoice/verify', '\App\Http\Controllers\Budget\InvoiceController@verify')->name('invoice.verify');
+    Route::post('/invoice/approve', '\App\Http\Controllers\Budget\InvoiceController@approve')->name('invoice.approve');
+    Route::post('/invoice/approve/otp', '\App\Http\Controllers\Budget\InvoiceController@approve_otp')->name('invoice.approve_otp');
+    Route::post('/invoice/authorize_invoice', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice')->name('invoice.authorize_invoice');
+    Route::post('/invoice/authorize_invoice/otp', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice_otp')->name('invoice.authorize_invoice_otp');
 
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');

@@ -751,7 +751,7 @@ class VariationsController extends Controller
     private function get_timeline_by_variation_id($id)
     {
       return Timeline::select('text','task','user as user_id','type','updated_at','record_id')
-          ->whereIn('type',[11,12])
+          ->whereIn('type',[11])
           ->where('variation_id',$id)
           ->with('user:id,name')
           ->orderBy('updated_at', 'DESC')

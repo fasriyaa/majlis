@@ -8,20 +8,15 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Timeline of:</h1>
-          @foreach($this_variation['timeline'] as $timeline)
-            @if($timeline['type'] == 11)
-              <p>Variation :
-                <font color = "{{$col1}}">
-                    {{$timeline['text']}}
-                </font>
-              </p>
-              <?php break; ?>
-            @endif
-          @endforeach
-          <p>contract :
+          <h1 class="m-0 text-dark">Invoice Timeline</h1>
+          <p>Invoice No.
             <font color = "{{$col1}}">
-              {{$contract['name']}}
+                {{$this_invoice->invoice_no}}
+            </font>
+          </p>
+          <p>Contractor :
+            <font color = "{{$col1}}">
+                {{$contract->contractor}}
             </font>
           </p>
         </div>
@@ -29,7 +24,7 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/variations">variations</a></li>
+            <li class="breadcrumb-item"><a href = "/invoice">Invoices</a></li>
             <li class="breadcrumb-item active">Timeline</li>
           </ol>
         </div>
@@ -91,46 +86,37 @@
                 </div>
                 @endif
 
-            <!-- This variation details -->
+            <!-- This this invoice details -->
                 <div class = "col-sm-12">
                   <div class="card card">
                     <div class="card-header">
-                      <h3 class="card-title">This Variation</h3>
+                      <h3 class="card-title">This Invoice | <font color = "${{$col1}}"> Invoice No. {{$this_invoice->invoice_no}}</font></h3>
                     </div>
                     <!-- /. card header -->
 
                     <div class="card-body table-responsive p-0">
                       <table class="table table-hover">
-                            @if($this_variation['variation_amount'] != null)
+
+                            @if($this_invoice['amount'] != null)
                                 <tr>
                                   <td>
-                                      Variation Amount:
+                                       Payable Amount:
                                   </td>
                                   <td>
-                                      {{$contract['currency']['code']}} {{number_format($this_variation['variation_amount'])}}
-                                  </td>
-                                </tr>
-                            @endif
-                            @if($this_variation['variation_duration'] != null)
-                                <tr>
-                                  <td>
-                                      Variation Duration:
-                                  </td>
-                                  <td>
-                                      {{number_format($this_variation['variation_duration'])}} Days
+                                      {{$contract->currency->code}} {{number_format($this_invoice['amount'])}}
                                   </td>
                                 </tr>
                             @endif
                             <tr>
                               <td>
-                                  Variation Status:
+                                  Invoice Status:
                               </td>
                               <td>
                                 <?php $break = 0; ?>
-                                  @if($this_variation['status'] == 0)
+                                  @if($this_invoice['status'] == 0)
                                       <?php $status = "Rejected"; $col = "Red"; ?>
                                   @endif
-                                  @if($this_variation['status'] == 1)
+                                  @if($this_invoice['status'] == 1)
                                       @if($matrix['varification_check'] ==1 and $matrix['varification_status'] == 1)
                                         <?php $status = "Pending Varification"; $col = "orange";  $break = 1;?>
                                       @endif
@@ -142,7 +128,7 @@
                                       @endif
 
                                   @endif
-                                  @if($this_variation['status'] == 2)
+                                  @if($this_invoice['status'] == 2)
                                       @if($break == 0 and $matrix['approval_check'] ==1 and $matrix['approval_status'] == 1)
                                         <?php $status = "Pending Approval"; $col = "orange"; $break = 2; ?>
                                       @endif
@@ -150,20 +136,23 @@
                                         <?php $status = "Pending Authorize"; $col = "orange"; $break = 3; ?>
                                       @endif
                                   @endif
-                                  @if($this_variation['status'] == 3)
+                                  @if($this_invoice['status'] == 3)
                                       @if($break == 0 and $matrix['authorize_check'] ==1 and $matrix['authorize_status'] == 1)
                                         <?php $status = "Pending Authorize"; $col = "orange"; $break = 3; ?>
                                       @endif
                                   @endif
-                                  @if($this_variation['status'] == 4)
-                                      <?php $status = "Effective"; $col = "Green"; ?>
+                                  @if($this_invoice['status'] == 4)
+                                      <?php $status = "Settlement Pending"; $col = "orange"; ?>
+                                  @endif
+                                  @if($this_invoice['status'] == 5)
+                                      <?php $status = "Setteled"; $col = "Green"; ?>
                                   @endif
                                     <font color = "{{$col}}">
                                       {{$status}}
                                     </font>
                               </td>
                             </tr>
-                            @if($this_variation['status']==0)
+                            @if($this_invoice['status']==0)
                                 <tr>
                                   <td>
                                       Rejection Comment:
@@ -182,39 +171,39 @@
                                 <td></td>
                                   <td field-key='action'>
                                     <?php $check_break = 0; ?>
-                                    @if($this_variation['status'] > 0)
+                                    @if($this_invoice['status'] > 0)
 
                                         @if($matrix['varification_check']!=0 and $matrix['varification_status']==1)
-                                          @can('Verify Variations')
-                                          <div class="btn-group">
-                                            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_variation">Reject</button>
-                                          </div>
+                                          @can('Verify Invoice')
                                             <div class="btn-group">
-                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verify_variation">Verify</button>
+                                              <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_invoice">Reject</button>
+                                            </div>
+                                            <div class="btn-group">
+                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#verify_invoice">Verify</button>
                                             </div>
                                           @endcan
                                           <?php $check_break = 1; ?>
                                         @endif
 
                                         @if($check_break == 0 and $matrix['approval_check']!=0 and $matrix['approval_status']==1)
-                                          @can('Approve Variations')
+                                          @can('Approve Invoice')
                                           <div class="btn-group">
-                                            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_variation">Reject</button>
+                                            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_invoice">Reject</button>
                                           </div>
                                             <div class="btn-group">
-                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#approve_variation">Approve</button>
+                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#approve_invoice">Approve</button>
                                             </div>
                                           @endcan
                                           <?php $check_break = 2; ?>
                                         @endif
 
                                         @if($check_break == 0 and $matrix['authorize_check']!=0 and $matrix['authorize_status']==1)
-                                          @can('Authorize Variations')
+                                          @can('Authorize Invoice')
                                           <div class="btn-group">
-                                            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_variation">Reject</button>
+                                            <button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#reject_invoice">Reject</button>
                                           </div>
                                             <div class="btn-group">
-                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#authorize_variation">Authorize</button>
+                                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#authorize_invoice">Authorize</button>
                                             </div>
                                           @endcan
                                           <?php $check_break = 3; ?>
@@ -228,117 +217,127 @@
                     </div>
                   </div>
                 </div>
-            <!-- /. this variation detials -->
+            <!-- /. this invoice detials -->
 
             <!-- variation & Bud detials -->
             <div class="col-md-12">
               <!-- general form elements -->
               <div class="card card">
                 <div class="card-header">
-                  <h3 class="card-title"><font color = "#176781"> Contract & Budget Details</font></h3>
+                  <h3 class="card-title"><font color = "#176781"> Contract Detials</font></h3>
                 </div>
                 <!-- /.card-header -->
 
                   <div class="card-body">
                     <div class="form-group">
-                        <?php if($contract['currency_id'] == 1){$currency = "MVR";}else{$currency = "USD";} ?>
-                        <p>Task : <font color = "#176781"> {{$contract['task']['text']}}</font></p>
-                        <p>Contract Name : <font color = "#176781">{{$contract['name']}}</font></p>
-                        <p>Contract Currency : <font color = "#176781">{{$contract['currency']['code']}}</font></p>
-                        <p>Contract Expiry : <font color = "#176781">{{date('d F Y',strtotime($contract['date']. '+ '.$contract['duration'].'days'))}}</font></p>
+                        <p>Contract Name : <font color = "#176781">{{$contract->name}}</font></p>
+                        <p>Contract Currency : <font color = "#176781">{{$contract->currency->code}}</font></p>
+                        <p>Contract Expiry : <font color = "#176781">{{date('d F Y', strtotime($contract->date . ' + '. $contract->duration . ' days'))}}</font></p>
                         <table class="table table-condensed">
                           <tr>
-                            <td>Budget: </td>
-                            <td></td>
-                            <td>
-                                <font color = "green">
-                                  {{$base_currency['code']}} {{number_format($contract['task']['budget']['budget'])}}
-                                </font>
-                            </td>
-                          </tr>
-
-
-                          @foreach($other_contracts as $other_contract)
-                              <tr>
-                                  <td>
-                                      @if($base_currency['id']==$other_contract->currency_id)
-                                        - Contract: {{$other_contract->name}}:
-                                      @else
-
-                                        - Contract: {{$other_contract->name}}:
-                                          <font color = "grey">
-                                            ~approximated
-                                          </font>
-                                      @endif
-                                  </td>
-                                  <td></td>
-                                  <td><font color = "red">({{$base_currency['code']}}{{number_format($other_contract->base_curr_eqv)}})</font></td>
-                              </tr>
-                          <?php $contract['task']['budget']['budget'] = $contract['task']['budget']['budget'] - $other_contract->base_curr_eqv; ?>
-                            @if($other_contract->id == $contract['id'])
-                              <?php $xrate = $other_contract->currency['xrate']; ?>
-                            @endif
-                          @endforeach
-
-                          <?php $total_variation = 0; ?>
-                          @foreach($variations as $variation)
-                              <tr>
-                                  <td>
-                                      @foreach($variation->timeline as $timelines)
-                                        @if($timelines['type'] == 11)
-                                              @if($base_currency['id']==$variation->contract['currency']['code'])
-                                                - Variation: {{$timelines['text']}}:
-                                              @else
-
-                                                  - Variation: {{$timelines['text']}}:
-                                                  <font color = "grey">
-                                                    ~approximated
-                                                  </font>
-                                              @endif
-                                              <?php break; ?>
-                                          @endif
-                                      @endforeach
-                                  </td>
-                                  <td>
-                                    <font color = "red">
-                                      {{$base_currency['code']}} {{number_format($variation->variation_amount/$variation->contract['currency']['xrate'])}}
-                                    </font>
-                                  </td>
-                                  <td>
-
-                                  </td>
-                              </tr>
-                          <?php $total_variation = $total_variation + $variation->variation_amount/$variation->contract['currency']['xrate']; ?>
-                          @endforeach
-
-
-
-                          <tr>
-                              <td> - Total Pending Variations </td>
+                              <td>
+                                A. Contract Amount {{$contract['currency']['code']}}
+                              </td>
                               <td> </td>
                               <td>
-                                <?php if($total_variation == 0){$col = "grey";}else{$col="red";} ?>
-                                <font color = "{{$col}}">
-                                  ({{$base_currency['code']}} {{number_format($total_variation)}})
+                                <font color = "green">
+                                  {{number_format($contract['amount'])}}
                                 </font>
                               </td>
                           </tr>
+
                           <tr>
-                              <td> Available Balance </td>
-                              <td> </td>
                               <td>
-                                @if($contract['task']['budget']['budget'] - $total_variation < 0)
-                                  <?php $col = "red"; ?>
-                                @else
-                                  <?php $col = "green"; ?>
+                                B. Effective Variations {{$contract['currency']['code']}}
+                              </td>
+                              <td>
+                                <?php $total_variation = 0; ?>
+                                @foreach($contract->variations as $variation)
+                                  @if($variation->status == 4)
+                                    <?php $total_variation = $total_variation + $variation['variation_amount']; ?>
+                                  @endif
+                                @endforeach
+                                @if($total_variation < 0)
+                                    <?php $col = "red"; ?>
+                                    @else
+                                      <?php $col = "green"; ?>
                                 @endif
                                 <font color = "{{$col}}">
-                                      {{$base_currency['code']}} {{number_format($contract['task']['budget']['budget'] - $total_variation)}}
+                                  {{number_format($total_variation)}}
+                                </font>
+                              </td>
+                              <td>
 
+                              </td>
+                          </tr>
+
+                          <tr>
+                              <td>
+                                C. Paid Amount {{$contract['currency']['code']}}
+                              </td>
+                              <td>
+                                <?php $total_paid = 0; ?>
+                                @foreach($contract->invoices as $invoice)
+                                  @if($invoice['status'] == 5)
+                                    <?php $total_paid = $total_paid + $invoice['amount']; ?>
+                                  @endif
+                                @endforeach
+                                <font color ="red">
+                                    {{number_format($total_paid)}}
+                                </font>
+                              </td>
+                              <td>
+
+                              </td>
+                          </tr>
+
+                          <tr>
+                              <td>
+                                D. Pending Invoices {{$contract['currency']['code']}}
+                              </td>
+                              <td>
+                                <?php $total_pending = 0; ?>
+                                @foreach($contract->invoices as $invoice)
+                                  @if($invoice['status'] > 1 and $invoice['status'] < 5)
+                                    <?php $total_pending = $total_pending + $invoice['amount']; ?>
+                                  @endif
+                                @endforeach
+                                <font color ="red">
+                                    {{number_format($total_pending)}}
+                                </font>
+                              </td>
+                              <td>
+
+                              </td>
+                          </tr>
+
+                          <tr>
+                              <td>
+                                Net (E = B - C - D) {{$contract['currency']['code']}}
+                              </td>
+                              <td>
+
+                              </td>
+                              <td>
+                                <font color ="red">
+                                    {{number_format($total_variation - $total_paid + $total_pending)}}
                                 </font>
                               </td>
                           </tr>
 
+                          <tr>
+                              <td>
+                                F. Balance (F = A - E) {{$contract['currency']['code']}}
+                              </td>
+                              <td>
+
+                              </td>
+                              <td>
+                                <font color ="green">
+                                    {{number_format($contract['amount']+ $total_variation - $total_paid - $total_pending)}}
+                                </font>
+                              </td>
+                          </tr>
 
                         </table>
                     </div>
@@ -348,9 +347,9 @@
                   <div class="card-footer">
 
                   </div>
-                  <input type = "hidden" name = "balance" value = "{{$contract['task']['budget']['budget'] - $total_variation}}">
-                  <input type = "hidden" name = "xrate" value = "{{$xrate}}">
-                  <input type = "hidden" name = "contract_name" value = "{{$contract['name']}}">
+                  <input type = "hidden" name = "balance" value = "{{$contract['amount']+ $total_variation - $total_paid - $total_pending}}">
+                  <input type = "hidden" name = "xrate" value = "">
+                  <input type = "hidden" name = "contract_name" value = "">
                 </form>
               </div>
               <!-- /.card -->
@@ -451,7 +450,7 @@
 @endsection
 
 <!-- Upload file Modal -->
-<div class="modal fade" id="upload_contract">
+<div class="modal fade" id="upload_invoice">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
@@ -487,22 +486,23 @@
   </div>
 </div>
 <!-- /. upload file modal -->
+
 <!-- Reject Variation modal -->
-<div class="modal fade" id="reject_variation">
+<div class="modal fade" id="reject_invoice">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Reject Variation</h4>
+        <h4 class="modal-title">Reject Invoice</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        {!! Form::open(['method' => 'POST', 'route' => ['variation.reject'], 'files' => false,]) !!}
+        {!! Form::open(['method' => 'POST', 'route' => ['invoice.reject'], 'files' => false,]) !!}
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
+          <input type="hidden" name = "id" value = "{{$this_invoice['id']}}">
           <input type="hidden" name = "level" value = "{{$check_break}}">
           <label for="name">Reason for rejecting the variation*</label>
           <textarea name = "comment" class="form-control" rows="3" value = "" required></textarea>
@@ -512,7 +512,7 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        <button type="submit" class="btn btn-info">Save</button>
+        <button type="submit" class="btn btn-info">Reject</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
 
       </div>
@@ -523,34 +523,34 @@
 <!-- /.Reject Variation Modal -->
 
 <!-- Approve Variation modal -->
-<div class="modal fade" id="approve_variation">
+<div class="modal fade" id="approve_invoice">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Approve Variation</h4>
+        <h4 class="modal-title">Approve Invoice</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        @if($variation_otp == 0)
-          {!! Form::open(['method' => 'POST', 'route' => ['variation.approve'], 'files' => false,]) !!}
+        @if($invoice_otp == 0)
+          {!! Form::open(['method' => 'POST', 'route' => ['invoice.approve'], 'files' => false,]) !!}
         @endif
-        @if($variation_otp == 1)
-          {!! Form::open(['method' => 'POST', 'route' => ['variation.approve_otp'], 'files' => false,]) !!}
+        @if($invoice_otp == 1)
+          {!! Form::open(['method' => 'POST', 'route' => ['invoice.approve_otp'], 'files' => false,]) !!}
         @endif
 
-        <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
+        <input type="hidden" name = "id" value = "{{$this_invoice['id']}}">
 
-        @if($variation_otp == 0)
+        @if($invoice_otp == 0)
         <div class="form-group">
-          <label for="name">Are you sure you want to approve this variation</label>
+          <label for="name">Are you sure you want to approve this invoice</label>
         </div>
         @endif
 
-        @if($variation_otp==1)
+        @if($invoice_otp==1)
         <div class="form-group">
           <label for="name">How would you like to send OTP Token</label>
           <select id = "otp_type" name="otp_type" class="custom-select">
@@ -565,10 +565,10 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        @if($variation_otp == 0)
+        @if($invoice_otp == 0)
           <button type="submit" class="btn btn-info">Approve</button>
         @endif
-        @if($variation_otp == 1)
+        @if($invoice_otp == 1)
           <button type="submit" class="btn btn-info">Send OTP</button>
         @endif
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
@@ -581,22 +581,22 @@
 <!-- /.verifty Variation Modal -->
 
 <!-- Verify Variation modal -->
-<div class="modal fade" id="verify_variation">
+<div class="modal fade" id="verify_invoice">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Verification of Variation</h4>
+        <h4 class="modal-title">Verification of Invoice</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Address Modal body -->
       <div class="modal-body">
-          {!! Form::open(['method' => 'POST', 'route' => ['variation.verify'], 'files' => false,]) !!}
+          {!! Form::open(['method' => 'POST', 'route' => ['invoice.verify'], 'files' => false,]) !!}
         <div class="form-group">
-          <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
-          <label for="name">Are you sure you want to verify the variation</label>
+          <input type="hidden" name = "id" value = "{{$this_invoice['id']}}">
+          <label for="name">Are you sure you want to verify the invoice</label>
         </div>
       </div>
       <!-- /. link to a task Modal body -->
@@ -615,34 +615,34 @@
 
 
 <!-- Approve Variation modal -->
-<div class="modal fade" id="authorize_variation">
+<div class="modal fade" id="authorize_invoice">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Authorize Variation</h4>
+        <h4 class="modal-title">Authorize Invoice</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Address Modal body -->
       <div class="modal-body">
-        @if($variation_otp == 0)
-          {!! Form::open(['method' => 'POST', 'route' => ['variation.authorize_variation'], 'files' => false,]) !!}
+        @if($invoice_otp == 0)
+          {!! Form::open(['method' => 'POST', 'route' => ['invoice.authorize_invoice'], 'files' => false,]) !!}
         @endif
-        @if($variation_otp == 1)
-          {!! Form::open(['method' => 'POST', 'route' => ['variation.authorize_variation_otp'], 'files' => false,]) !!}
+        @if($invoice_otp == 1)
+          {!! Form::open(['method' => 'POST', 'route' => ['invoice.authorize_invoice_otp'], 'files' => false,]) !!}
         @endif
 
-        <input type="hidden" name = "id" value = "{{$this_variation['id']}}">
+        <input type="hidden" name = "id" value = "{{$this_invoice['id']}}">
 
-        @if($variation_otp == 0)
+        @if($invoice_otp == 0)
         <div class="form-group">
-          <label for="name">Are you sure you want to Authorize this variation</label>
+          <label for="name">Are you sure you want to Authorize this invoice</label>
         </div>
         @endif
 
-        @if($variation_otp==1)
+        @if($invoice_otp==1)
         <div class="form-group">
           <label for="name">How would you like to send OTP Token</label>
           <select id = "otp_type" name="otp_type" class="custom-select">
@@ -657,10 +657,10 @@
 
       <!-- Modal footer -->
       <div class="modal-footer">
-        @if($variation_otp == 0)
+        @if($invoice_otp == 0)
           <button type="submit" class="btn btn-info">Authorize</button>
         @endif
-        @if($variation_otp == 1)
+        @if($invoice_otp == 1)
           <button type="submit" class="btn btn-info">Send OTP</button>
         @endif
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>

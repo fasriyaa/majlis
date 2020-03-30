@@ -23,6 +23,7 @@ class TimelineTypeTableSeeder extends Seeder
           ['id'=>9, 'name'=>'Budget'],
           ['id'=>10, 'name'=>'Contracts'],
           ['id'=>11, 'name'=>'Variations'],
+          ['id'=>12, 'name'=>'invoices']
 
 
       ]);

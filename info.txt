@@ -9,6 +9,7 @@ default -> role:admin
   1 : variation table
   2 : contracts
   3 : Require docs
+  4 : invoices
 
 ssh root@206.189.144.125
 
@@ -123,3 +124,6 @@ nohup php artisan queue:work --daemon &
 
 to restart apache server in ubutu
 sudo service apache2 restart
+
+abc@123
+'$2y$10$umxPBoOV4W20714o3ZYmv.tnofvctmmA6t6Inn4C6THRSXFM61qd2'

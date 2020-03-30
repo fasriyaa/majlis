@@ -99,7 +99,7 @@
                         <div class="card-footer">
                           <button type="submit" class="btn btn-info">Submit</button>
                         </div>
-                      </form>
+
                     </div>
                     <!-- /.card -->
                   </div>
@@ -222,7 +222,7 @@
                           <td>
                             <?php $total_pending = 0; ?>
                             @foreach($contract->invoices as $invoice)
-                              @if($invoice['status'] == 1)
+                              @if($invoice['status'] > 0 and $invoice['status'] < 5)
                                 <?php $total_pending = $total_pending + $invoice['amount']; ?>
                               @endif
                             @endforeach
@@ -273,7 +273,8 @@
               </div>
           </div>
           <!-- /.card -->
-
+          <input type = "hidden" name = "balance" value = "{{$contract['amount']+ $total_variation - $total_paid - $total_pending}}">
+          </form>
         </div>
     <!-- /.right coloumn -->
 
@@ -283,6 +284,7 @@
       </div>
       <!-- /.row (main row) -->
     </div>
+
     <!-- /.container-fluid -->
   </section>
   <!-- /.content -->

@@ -299,6 +299,14 @@
                     </a>
 
                     <ul class="nav nav-treeview">
+                      @can('View Invoice')
+                          <li class="nav-item">
+                              <a href="/invoice" class="nav-link">
+                                  <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>Invoices</p>
+                              </a>
+                          </li>
+                      @endcan
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>
