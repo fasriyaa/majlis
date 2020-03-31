@@ -130,6 +130,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
+
+
 });
 
 
@@ -142,6 +144,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('profile', '\App\Http\Controllers\Auth\ProfileController');
     Route::post('/profile_pic', '\App\Http\Controllers\Auth\ProfileController@upload_profile_pic') -> name('profile.upload_pic');
     Route::post('/update_profile', '\App\Http\Controllers\Auth\ProfileController@update_profile') -> name('profile.update');
+    Route::post('/profile/change_password', 'Auth\ProfileController@change_password')->name('profile.change_password');
+    Route::get('/profile/reset_pws/{id}', 'Auth\ProfileController@reset_password')->name('profile.reset_pws');
+    Route::post('/profile/reset_pws', 'Auth\ProfileController@store_password')->name('profile.store_pws');
 
     Route::get('/resultframework/pdo', function () {return view('resultframework.pdo');});
     Route::get('/resultframework/intermediate', function () {return view('resultframework.intermediate');});

@@ -51,8 +51,16 @@
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
+            @if(Session::has('message'))
+                <p class="alert alert-{{Session::get('label')}}">{{ Session::get('message') }}</p>
+            @endif
+                <!-- <a href="" class="btn btn-default btn-block" data-toggle="modal" data-target="#profile_pic"><b>Change Password</b></a> -->
+
+
           </div>
           <!-- /.col -->
+
+
 
 
           <div class="col-md-9">
@@ -61,6 +69,7 @@
                 <ul class="nav">
                   <li class="nav-item"><a class="nav-link active" href="#settings" data-toggle="tab">User Information</a></li>
                   <li class="nav-item"><a class="nav-link" href="#edit" data-toggle="tab">Edit</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#change_password" data-toggle="tab">Change Password</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
@@ -126,6 +135,41 @@
                       </div>
                     </form>
                   </div>
+                  <!-- Change password -->
+                  <div class="tab-pane" id="change_password">
+                    <!-- <form class="form-horizontal"> -->
+                    {!! Form::open(['method' => 'POST', 'route' => ['profile.change_password'], 'files' => false,]) !!}
+                    @csrf
+                      <div class="form-group row">
+                        <label for="organization" class="col-sm-3 col-form-label">Current Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" name = "current_password" id="current_password" placeholder="" value = "" required>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label for="designation" class="col-sm-3 col-form-label">New Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" name = "password" id="password" placeholder="" value = "" required>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label for="designation" class="col-sm-3 col-form-label">Confirm Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" name = "confirm_password" id="confirm_password" placeholder="" value = "" required>
+                        </div>
+                      </div>
+
+
+                      <div class="form-group row">
+                        <div class="offset-sm-3 col-sm-9">
+                          <button type="submit" class="btn btn-default">Change</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- /.change password -->
                   <!-- /.tab-pane -->
 
 

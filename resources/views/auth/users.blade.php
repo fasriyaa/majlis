@@ -76,6 +76,9 @@
                       <a href="{{ route('main_modules.show',[$user->id]) }}" class="btn btn-sm btn-info">Show</a>
                       <a href="{{ route('roles.attach_user',[$user->id]) }}" class="btn btn-sm btn-warning">Assign Role</a>
                       <a href="{{ route('main_modules.edit',[$user->id]) }}" class="btn btn-sm btn-danger">Reject</a>
+                      @can('Reset Password')
+                        <a href="{{ route('profile.reset_pws',[$user->id]) }}" class="btn btn-sm btn-danger">Reset Password</a>
+                      @endcan
                   </td>
                 </tr>
               @endforeach
