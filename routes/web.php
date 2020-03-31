@@ -124,6 +124,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
 
     Route::resource('pv', 'Budget\PVController');
+    Route::get('/reports', 'Reports\ReportsController@index')->name('reports.index');
+    Route::get('/reports/{id}', 'Reports\ReportsController@reports')->name('reports.reports');
 
 
 

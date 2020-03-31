@@ -71,5 +71,10 @@ class Task extends Model
           return $this->hasMany('App\models\procurement\contracts','task_id');
       }
 
+      public function parent_pv()
+          {
+              return $this->belongsTo('App\models\gantt\Task','parent','id');
+          }
+
 
 }
