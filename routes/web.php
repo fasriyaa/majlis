@@ -123,6 +123,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
 
+    Route::resource('pv', 'Budget\PVController');
+
 
 
 

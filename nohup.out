@@ -668,3 +668,5 @@
 [2020-03-30 20:10:34][592] Processed:  App\Listeners\SendOtpEmail
 [2020-03-30 20:20:41][593] Processing: App\Listeners\SendOtpEmail
 [2020-03-30 20:20:44][593] Processed:  App\Listeners\SendOtpEmail
+[2020-03-30 23:30:24][594] Processing: App\Listeners\SendOtpEmail
+[2020-03-30 23:30:33][594] Processed:  App\Listeners\SendOtpEmail

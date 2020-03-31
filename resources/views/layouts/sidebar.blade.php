@@ -307,6 +307,16 @@
                               </a>
                           </li>
                       @endcan
+
+                      @can('View PV')
+                          <li class="nav-item">
+                              <a href="/pv" class="nav-link">
+                                  <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>Payment Vouchers</p>
+                              </a>
+                          </li>
+                      @endcan
+
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fa fa-circle-o nav-icon"></i>

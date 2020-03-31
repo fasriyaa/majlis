@@ -389,7 +389,7 @@ class InvoiceController extends Controller
 
       $current_otp = Auth::user()->otp;
 
-      $otp = Otp::expiry(5)->generate(Auth::user()->id . "approve" . $request->id . $model_id);
+      $otp = Otp::expiry(5)->generate(Auth::user()->id . "authorize" . $request->id . $model_id);
       // $otp = Hash::make('$otp');
       if($current_otp != $otp)
       {
@@ -420,7 +420,7 @@ class InvoiceController extends Controller
         $invoice_otp = env('invoice_otp');
         if($invoice_otp == 1)
         {
-            $valid = Otp::expiry(5)->match($request->otp, Auth::user()->id . "approve" . $request->id . $model_id);
+            $valid = Otp::expiry(5)->match($request->otp, Auth::user()->id . "authorize" . $request->id . $model_id);
             }else {
               $valid = true;
         }
