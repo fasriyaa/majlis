@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\models\budget\PV;
-use App\models\Gantt\Task;
+use App\models\gantt\Task;
 
 class ReportsController extends Controller
 {
