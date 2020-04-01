@@ -122,7 +122,7 @@
 
                               <div class="dropdown-menu" role="menu">
                                 <a class="dropdown-item" href="" onclick ="location.href='/invoice/timeline/' + {{$invoice->id}};">Timeline</a>
-                                <a class="dropdown-item" href="">Ledger</a>
+                                <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + {{$invoice->contract->id}};">View Contract</a>
                                 @can('Edit Invoice')
                                   <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
                                 @endcan

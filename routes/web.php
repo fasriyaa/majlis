@@ -95,9 +95,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
     Route::post('/contracts/new_type', '\App\Http\Controllers\Procurements\ContractsController@new_type')->name('contracts.new_type');
     Route::post('/contracts/new_currency', '\App\Http\Controllers\Procurements\ContractsController@new_currency')->name('contracts.new_currency');
+    Route::get('/contracts/ledger/{id}', 'Procurements\ContractsController@ledger')->name('contracts.ledger');
+
     Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
     Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
     Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
+
     Route::resource('variations', '\App\Http\Controllers\Procurements\VariationsController');
     Route::get('/variations/timeline/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_timeline')->name('variation.timeline');
     Route::get('/variations/create/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_create')->name('variation.create');
@@ -119,6 +122,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/invoice/approve/otp', '\App\Http\Controllers\Budget\InvoiceController@approve_otp')->name('invoice.approve_otp');
     Route::post('/invoice/authorize_invoice', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice')->name('invoice.authorize_invoice');
     Route::post('/invoice/authorize_invoice/otp', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice_otp')->name('invoice.authorize_invoice_otp');
+    Route::get('invoice/pending/{id}', 'Budget\InvoiceController@invoice_pending')->name('invoice_pending');
+    Route::get('invoice/all/{id}', 'Budget\InvoiceController@invoice_all')->name('invoice_all');
 
     Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
     Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
@@ -126,6 +131,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('pv', 'Budget\PVController');
     Route::get('/reports', 'Reports\ReportsController@index')->name('reports.index');
     Route::get('/reports/{id}', 'Reports\ReportsController@reports')->name('reports.reports');
+
+    Route::resource('timebased_planed', 'Budget\TimeBasedPlanedController');
+    Route::get('timebased_planed/new_timebaseplaned/{id}', 'Budget\TimeBasedPlanedController@new_timebased_planed')->name('timebaseplaned.new');
+    Route::get('timebased/sheet/{id}', 'Budget\TimeBasedPlanedController@sheet')->name('timebaseplaned.sheet');
+
 
 
 

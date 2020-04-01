@@ -38,4 +38,14 @@ class contracts extends Model
       return $this->hasMany('App\models\budget\Invoice', 'contract_id');
     }
 
+    public function invoices_total ()
+    {
+      return $this->hasMany('App\models\budget\Invoice', 'contract_id')->sum('amount');
+    }
+
+    public function timebaseplan()
+    {
+      return $this->belongsTo('App\models\budget\TimeBasedPlaned', 'id', 'contract_id');
+    }
+
 }

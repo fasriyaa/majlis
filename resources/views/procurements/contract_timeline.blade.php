@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Timeline of:</h1>
+          <h1 class="m-0 text-dark">Contract Timeline</h1>
           <p>{{$contract['contract_no']}} | {{$contract['name']}}</p>
         </div>
         <!-- /.col -->
@@ -132,40 +132,88 @@
                       @can('Create Contracts')
                         <tr align = "left">
                           <td></td>
-                          <td>Upload Contract <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_contract" data-id = "" onclick = ""></a>
+                          <td data-toggle="modal" data-target="#upload_contract" data-id = "" onclick = "">
+                            <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                            Upload Contract
                           </td>
                         </tr>
                       @endcan
                     @endif
+                    @if($contract->type == 2)
+                        @can('Edit Contracts')
+                          <tr align = "left">
+                            <td></td>
+                            @if($contract->timebaseplan == null)
+                              <td onclick = "location.href='/timebased_planed/new_timebaseplaned/' + {{$contract->id}};">
+                                <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                                Enter Timebase Plan
+                              </td>
+                            @else
+                                <td onclick = "location.href='/timebased/sheet/' + {{$contract->id}};">
+                                  <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                                  View Timebase Sheet
+                                </td>
+                            @endif
+                          </tr>
+                        @endcan
+                    @endif
                     @can('Create Variations')
                       <tr align = "left">
                         <td></td>
-                          <td onclick = "new_variation({{$contract['id']}},{{$contract['task_id']}});"> Request for Variation <a  class="fa fa-hand-point-right" id = ""></a>
+                          <td onclick = "new_variation({{$contract['id']}},{{$contract['task_id']}});">
+                                  <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                                 Request for Variation
+                          </td>
+                      </tr>
+                    @endcan
+                    @can('View Invoice')
+                      <tr align = "left">
+                        <td></td>
+                          <td onclick = "location.href='/invoice/pending/' + {{$contract->id}};">
+                            <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                             Pending Invoices
+                          </td>
+                      </tr>
+                    @endcan
+                    @can('View Invoice')
+                      <tr align = "left">
+                        <td></td>
+                          <td onclick = "location.href='/invoice/all/' + {{$contract->id}};">
+                            <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                             All Invoices
                           </td>
                       </tr>
                     @endcan
                     @can('Create Contracts')
                         <tr align = "left">
                           <td></td>
-                          <td> Upload contract amendment <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#upload_amendment" data-id = "" onclick = ""></a>
+                          <td data-toggle="modal" data-target="#upload_amendment" data-id = "" onclick = "">
+                              <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                              Upload contract amendment
                           </td>
                         </tr>
                     @endcan
                     <tr align = "left">
                       <td></td>
-                      <td>View ledger <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#new_comment" data-id = "" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
+                      <td onclick = "location.href='/contracts/ledger/' + {{$contract->id}};">
+                        <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                        View ledger
                       </td>
                     </tr>
                     @if($contract['task_id'] == null)
                         <tr align = "left">
                           <td></td>
-                          <td>Link to a Task <a href="{{ url('/contracts/link_task', $contract['id']) }}" class="fa fa-hand-point-right"  data-target="" data-id = "" onclick = ""></a>
+                          <td onclick = "location.href='/contracts/link_task/' + {{$contract->id}};" >
+                            <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                            Link to a Task
                           </td>
                         </tr>
                     @endif
                     <tr align = "left">
                       <td></td>
-                      <td>Terminate <a href="" class="fa fa-hand-point-right" data-toggle="modal" data-target="#new_comment" data-id = "" onclick = "$('#subtask1_id').val($(this).data('id'));"></a>
+                      <td>
+                        <i class="fa fa-list-alt icon-cog blue" style="color:#2471A3"></i>
+                        Terminate
                       </td>
                     </tr>
                   </table>

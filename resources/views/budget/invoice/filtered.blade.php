@@ -7,16 +7,15 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Contracts</h1>
-          <p>ALL</p>
+          <h1 class="m-0 text-dark">{{$filter2}} Invoices</h1>
+          <p>Contact: {{$filter1}}</p>
         </div>
-
 
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">Contracts</li>
+            <li class="breadcrumb-item active">Pending Invoices</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -25,8 +24,8 @@
 
       <div class="row mb-2">
         <div class="col-sm-1">
-            @can('Create Contracts')
-            <a href = "{{route('contracts.create')}}"><button type="button" class="btn btn-info">New Contract</button></a>
+            @can('Create Invoice')
+            <a href = "{{route('contracts.create')}}"><button type="button" class="btn btn-info">New Invoice</button></a>
             @endcan
         </div>
       </div>
@@ -64,16 +63,15 @@
                 <thead>
                     <tr align = "left">
                       <th>#</th>
-                      <th>Contract Type</th>
-                      <th>Contract No</th>
+                      <th>Invoice Number</th>
                       <th>Contract Name</th>
                       <th>Contractor</th>
-                      <th>Date</th>
-                      <th>Duration | Expiry</th>
+                      <th>Date of Invoice</th>
+                      <th>Received Date</th>
+                      <th>Payable in [Days]</th>
+                      <th>Due Date</th>
                       <th>Currency</th>
-                      <th>Amount</th>
-                      <th>Settled</th>
-                      <th>Balance</th>
+                      <th>Payable Amount</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
@@ -81,43 +79,40 @@
 
                 <tbody>
                   <?php $count = 1; ?>
-                  @foreach($contracts as $contract)
+                  @foreach($invoices as $invoice)
                       <tr>
                         <td>{{$count}}</td>
-                        <td>{{$contract->type['type_name']}}</td>
-                        <td>{{$contract->contract_no}}</td>
-                        <td>{{$contract->name}}</td>
-                        <td>{{$contract->contractor}}</td>
-                        <td>{{date('d-M-Y', strtotime($contract->date))}}</td>
-                        <td>{{$contract->duration}} Days | {{date('d-M-Y',strtotime($contract->date))}}</td>
-                        <td>{{$contract['currency']['code']}}</td>
+                        <td>{{$invoice->invoice_no}}</td>
+                        <td>{{$invoice->contract->name}}</td>
+                        <td>{{$invoice->contract->contractor}}</td>
+                        <td>{{date('d F Y', strtotime($invoice->invoice_date))}}</td>
+                        <td>{{date('d F Y', strtotime($invoice->recieved_date))}}</td>
+                        <td>{{$invoice->terms_days}}</td>
+                        <td>{{date('d F Y', strtotime($invoice->recieved_date . ' +' .$invoice->terms_days. ' days' ))}}</td>
+                        <td>{{$invoice->contract->currencies->code}}</td>
+                        <td>{{number_format($invoice->amount)}}</td>
                         <td>
-                          <?php $contract_value = $contract->amount; ?>
-                          @foreach($contract->variations as $variation)
-                            @if($variation->status == 4)
-                                <?php $contract_value = $contract_value + $variation->variation_amount; ?>
+                            @if($invoice->status == 0)
+                              <?php $status = "Rejected"; $col = "red"; ?>
                             @endif
-                          @endforeach
-                          {{number_format($contract_value)}}
-                        </td>
-                        <td>
-                            <?php $settled = 0; ?>
-                            @foreach($contract->invoices as $invoice)
-                              @if($invoice->status == 5)
-                                  <?php $settled = $settled + $invoice->amount; ?>
-                              @endif
-                            @endforeach
-                            {{number_format($settled)}}
-                        </td>
-                        <td>{{number_format($contract_value - $settled)}}</td>
-                        <td>
-                          @if($contract->status == 1)
-                            <?php $status = "Hanging"; $col = "orange"; ?>
-                          @endif
-                          @if($contract->status == 2)
-                            <?php $status = "Ongoin"; $col = "Green"; ?>
-                          @endif
-                          <font color = "{{$col}}">{{$status}}</font>
+                            @if($invoice->status == 1)
+                              <?php $status = "Vefication Pending"; $col = "orange"; ?>
+                            @endif
+                            @if($invoice->status == 2)
+                              <?php $status = "Approval Pending"; $col = "orange"; ?>
+                            @endif
+                            @if($invoice->status == 3)
+                              <?php $status = "Authorization Pending"; $col = "orange"; ?>
+                            @endif
+                            @if($invoice->status == 4)
+                              <?php $status = "Settlement Pending"; $col = "orange"; ?>
+                            @endif
+                            @if($invoice->status == 5)
+                              <?php $status = "Settled"; $col = "green"; ?>
+                            @endif
+                            <font color = "{{$col}}">
+                                {{$status}}
+                            </font>
                         </td>
                         <td field-key='action'>
                           <div class="btn-group">
@@ -125,29 +120,14 @@
                             <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
 
                               <div class="dropdown-menu" role="menu">
-                                <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + {{$contract->id}};">Timeline</a>
-                                @if($contract->status == 2)
-                                    @can('View Ledger')
-                                      <a class="dropdown-item" href="" onclick ="location.href='/contracts/ledger/' + {{$contract->id}};">Ledger</a>
-                                    @endcan
-                                @endif
-                                @can('Edit Contracts')
+                                <a class="dropdown-item" href="" onclick ="location.href='/invoice/timeline/' + {{$invoice->id}};">Timeline</a>
+                                <a class="dropdown-item" href="" onclick ="location.href='/contracts/timeline/' + {{$invoice->contract->id}};">View Contract</a>
+                                @can('Edit Invoice')
                                   <a class="dropdown-item" href="{{route('contracts.create')}}">Edit</a>
                                 @endcan
-                                <a class="dropdown-item" href="">Terminate</a>
-                                <a class="dropdown-item" href="">Upload Contract</a>
-                                @if($contract->status == 2)
-                                  <a class="dropdown-item" href="">Variations</a>
-                                @endif
-                                @if($contract->status == 1)
-                                  <a class="dropdown-item" href="">Link to a task</a>
-                                @endif
+                                <a class="dropdown-item" href="">Upload Invoice</a>
                                 <div class="dropdown-divider"></div>
-                                @if($contract->status == 2)
-                                  @can('Record Payments')
-                                    <a class="dropdown-item" href="" onclick ="location.href='/invoice/create/' + {{$contract->id}};">Record a payment</a>
-                                  @endcan
-                                @endif
+
                               </div>
                             </button>
                           </div>

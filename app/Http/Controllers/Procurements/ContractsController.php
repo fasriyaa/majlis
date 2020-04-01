@@ -12,6 +12,8 @@ use App\models\gantt\Task;
 use App\models\procurement\Variations;
 use App\models\currency\Currency;
 use App\models\auth\ApprovalMatrix;
+use App\models\budget\Invoice;
+use App\models\budget\PV;
 
 use Illuminate\Http\Request;
 
@@ -41,23 +43,20 @@ class ContractsController extends Controller
         $contracts = contracts::select('id','name','type as type_id','contract_no','task_id','currency as currency_id','amount','contractor','date','duration','status')
             ->with('type:id,name as type_name')
             ->with('currency:id,code')
+            ->with('variations')
+            ->with('invoices')
             ->get();
 
         // return $contracts;
         return view('procurements.contracts',compact('contracts'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
       $permission = "Create Contracts";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
+      if(auth()->user()->can($permission) == false)
       {
+          abort(403);
+      }
         //gertting Contract Types
         $contract_types = ContractTypes::select('id','name')
             ->where('status',1)
@@ -69,17 +68,8 @@ class ContractsController extends Controller
                 ->get();
 
         return view('procurements.create_contract',compact('contract_types','currencies'));
-          }else {
-            return view($err_url);
-      }
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    }
     public function store(Request $request)
     {
 
@@ -131,47 +121,18 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\contracts  $contracts
-     * @return \Illuminate\Http\Response
-     */
     public function show(contracts $contracts)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\contracts  $contracts
-     * @return \Illuminate\Http\Response
-     */
     public function edit(contracts $contracts)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\contracts  $contracts
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, contracts $contracts)
     {
         //
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\contracts  $contracts
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(contracts $contracts)
     {
         //
@@ -180,13 +141,17 @@ class ContractsController extends Controller
     public function timeline($id)
     {
       $permission = "View Contracts";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
+      if(auth()->user()->can($permission) == false)
       {
-        $contract = contracts::select('id','contract_no','name','task_id')
+          abort(403);
+      }
+
+        $contract = contracts::select('id','contract_no','name','task_id','type','id as contract_id')
             ->with('task:id,text,progress')
+            ->with('timebaseplan')
             ->find($id);
 
+        // return $contract;
         //retriving timeline records
         $timelines = Timeline::select('text','task','user as user_id','type','updated_at','record_id')
             ->where('contract_id',$id)
@@ -234,11 +199,8 @@ class ContractsController extends Controller
 
         // return $variations;
         return view('procurements.contract_timeline', compact('contract','timelines','docs','doc_count','contract_count','tasks','variations'));
-          }else {
-            return view($err_url);
-      }
-    }
 
+    }
     public function upload_contracts(Request $request)
     {
       $permission = "Create Contracts";
@@ -278,7 +240,6 @@ class ContractsController extends Controller
               return view($err_url);
       }
     }
-
     public function upload_amendment(Request $request)
     {
       $permission = "Create Contracts";
@@ -319,7 +280,6 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
-
     public function link_task(Request $request)
     {
       $permission = "Link Contract to a Task";
@@ -374,7 +334,6 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
-
     public function link_tasks($id)
     {
       $permission = "Link Contract to a Task";
@@ -422,44 +381,6 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
-
-
-    private function new_timeline($text, $contract_id, $type, $url, $model_id, $record_id)
-    {
-      $user_id = Auth::id();
-
-      $new_timeline = new Timeline;
-
-      $new_timeline->text = $text;
-      $new_timeline->contract_id = $contract_id ?? null;
-      $new_timeline->user = $user_id;
-      $new_timeline->type = $type;
-      $new_timeline->url = $url ?? null;
-      $new_timeline->model_id = $model_id;
-      $new_timeline->record_id = $record_id;
-
-      $new_timeline->save();
-
-      return response()->json($new_timeline);
-    }
-
-    private function new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name)
-    {
-
-      $up_doc = new RequireDoc;
-
-      $up_doc->task_id = $task_id;
-      $up_doc->doc_name = $doc_name;
-      $up_doc->status = $status;
-      $up_doc->req_doc_type = $req_doc_type;
-      $up_doc->doc_date = $doc_date;
-      $up_doc->alias_name = $alias_name;
-
-      $up_doc->save();
-      return $up_doc;
-    }
-
-
     public function task_link_budget(Request $request)
     {
       $permission = "Link Contract to a Task";
@@ -499,7 +420,6 @@ class ContractsController extends Controller
             return view($err_url);
       }
     }
-
     public function new_type(Request $request)
     {
       $check_for_existing = ContractTypes::select('name')
@@ -517,7 +437,6 @@ class ContractsController extends Controller
           return redirect()->route('contracts.create')->with(['message' => "Contract type Create", 'label' => "success"]);
         }
     }
-
     public function new_currency(Request $request)
     {
       $check_for_existing = Currency::select('code')
@@ -537,6 +456,35 @@ class ContractsController extends Controller
           return redirect()->route('contracts.create')->with(['message' => "Currency Saved", 'label' => "success"]);
         }
     }
+    public function ledger($id)
+    {
+      $permission = "View Ledger";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
+        $contract = $this->get_contract_byId($id);
+        //get list of pvs
+        $pv_ids = Invoice::where('contract_id',$id)
+            ->pluck('pv_id');
+
+        $data = $this->pvs_byId($pv_ids);
+        $lable1 = $contract->name;
+
+        $total_variation = 0;
+        foreach ($contract->variations as $variation)
+        {
+            if($variation->status == 4)
+            {
+                $total_variation = $total_variation + $variation->amount;
+            }
+        }
+        $lable2 = $contract->amount + $total_variation;
+        $lable3 = $contract->currency->code;
+        // return $lable3;
+
+        return view('procurements.ledger', compact('data','lable1','lable2','lable3'));
+    }
 
     private function get_matrix($model,$id)
     {
@@ -544,6 +492,56 @@ class ContractsController extends Controller
           ->where('model_id',$id)
           ->first();
 
+    }
+    private function new_timeline($text, $contract_id, $type, $url, $model_id, $record_id)
+    {
+      $user_id = Auth::id();
+
+      $new_timeline = new Timeline;
+
+      $new_timeline->text = $text;
+      $new_timeline->contract_id = $contract_id ?? null;
+      $new_timeline->user = $user_id;
+      $new_timeline->type = $type;
+      $new_timeline->url = $url ?? null;
+      $new_timeline->model_id = $model_id;
+      $new_timeline->record_id = $record_id;
+
+      $new_timeline->save();
+
+      return response()->json($new_timeline);
+    }
+    private function new_doc_record($task_id,$doc_name,$status,$req_doc_type,$doc_date,$alias_name)
+    {
+
+      $up_doc = new RequireDoc;
+
+      $up_doc->task_id = $task_id;
+      $up_doc->doc_name = $doc_name;
+      $up_doc->status = $status;
+      $up_doc->req_doc_type = $req_doc_type;
+      $up_doc->doc_date = $doc_date;
+      $up_doc->alias_name = $alias_name;
+
+      $up_doc->save();
+      return $up_doc;
+    }
+    private function pvs_byId($id)
+    {
+      $data = PV::select('id','pv_no')
+          ->with('invoice.contract.currencies')
+          ->whereIn('id',$id)
+          ->get();
+      return $data;
+    }
+    private function get_contract_byId($id)
+    {
+      return contracts::select('id','contract_no','name', 'currency as currency_id', 'amount', 'contractor','date','duration', 'id as contract_id')
+          ->where('id',$id)
+          ->with('currency:id,code')
+          ->with('variations:id,contract_id,variation_amount,status')
+          ->with('invoices:id,contract_id,amount,advanc_recovery,retention,status')
+          ->first();
     }
 
 

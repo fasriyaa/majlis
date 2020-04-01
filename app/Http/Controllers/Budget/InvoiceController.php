@@ -31,6 +31,11 @@ class InvoiceController extends Controller
      */
     public function index()
     {
+      $permission = "View Invoice";
+      if(auth()->user()->can($permission) == false)
+      {
+          abort(403);
+      }
         $invoices = Invoice::select('id', 'invoice_no','invoice_date','recieved_date','terms_days','contract_id','amount','advanc_recovery','retention','pv_id','status')
             ->with('contract:id,name,contractor,currency', 'contract.currencies:id,code')
             ->get();
@@ -507,6 +512,46 @@ class InvoiceController extends Controller
             'invoice_otp',
             'contract'
           ));
+    }
+    public function invoice_pending($id)
+    {
+      $permission = "View Invoice";
+      if(auth()->user()->can($permission) == false)
+      {
+          abort(403);
+      }
+        $invoices = Invoice::select('id', 'invoice_no','invoice_date','recieved_date','terms_days','contract_id','amount','advanc_recovery','retention','pv_id','status')
+            ->with('contract:id,name,contractor,currency', 'contract.currencies:id,code')
+            ->where('contract_id', $id)
+            ->where('status','>', 0)
+            ->where('status','<', 4)
+            ->get();
+
+        $contract = $this->get_contract_by_id($id);
+        $filter1 = $contract->name;
+        $filter2 = "Pending";
+
+        // return $invoices;
+        return view('budget.invoice.filtered', compact('invoices','filter1','filter2'));
+    }
+    public function invoice_all($id)
+    {
+      $permission = "View Invoice";
+      if(auth()->user()->can($permission) == false)
+      {
+          abort(403);
+      }
+        $invoices = Invoice::select('id', 'invoice_no','invoice_date','recieved_date','terms_days','contract_id','amount','advanc_recovery','retention','pv_id','status')
+            ->with('contract:id,name,contractor,currency', 'contract.currencies:id,code')
+            ->where('contract_id', $id)
+            ->get();
+
+        $contract = $this->get_contract_by_id($id);
+        $filter1 = $contract->name;
+        $filter2 = "All";
+
+        // return $invoices;
+        return view('budget.invoice.filtered', compact('invoices','filter1','filter2'));
     }
 
 
