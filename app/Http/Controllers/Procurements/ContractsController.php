@@ -376,7 +376,7 @@ class ContractsController extends Controller
 
 
 
-        return view('Procurements.link_task', compact('tasks','contract','base_currency'));
+        return view('procurements.link_task', compact('tasks','contract','base_currency'));
           }else {
             return view($err_url);
       }

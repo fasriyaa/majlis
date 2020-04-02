@@ -11,6 +11,7 @@ use App\models\auth\ApprovalComments;
 use App\models\timeline\Timeline;
 use App\models\currency\Currency;
 use App\models\procurement\Variations;
+use App\models\budget\TimeBaseActual;
 
 use Illuminate\Http\Request;
 
@@ -92,7 +93,7 @@ class InvoiceController extends Controller
 
               //timeline record
                   //getting contract name:
-                  $contract_name = contracts::select('id','name')
+                  $contract_name = contracts::select('id','name','time_based')
                       ->where('id',$request->contract_id)
                       ->first();
 
@@ -106,6 +107,29 @@ class InvoiceController extends Controller
               $event_id = null;
               $new_timeline = $this->new_timeline($text, $variation_id, $type, $url, $record_id, $model_id, $contract_id, $event_id);
 
+              if($contract_name->time_based != null)
+              {
+                  if($request->trip_rate != null)
+                  {
+                    $trip_days = 1;
+                  }
+                  if($request->transfer_rate != null)
+                  {
+                    $transfer_days = 1;
+                  }
+                  $new_timebase_actual = new TimeBaseActual;
+                  $new_timebase_actual->invoice_id = $new_invoice->id;
+                  $new_timebase_actual->rem_days = $request->rem_days ?? null;
+                  $new_timebase_actual->perdiem_days = $request->perdiem_days ?? null;
+                  $new_timebase_actual->trip_days = $trip_days ?? null;
+                  $new_timebase_actual->trip_rate = $request->trip_rate ?? null;
+                  $new_timebase_actual->transfer_days = $transfer_days ?? null;
+                  $new_timebase_actual->transfer_rate = $request->transfer_rate ?? null;
+                  $new_timebase_actual->status = 1;
+                  $new_timebase_actual->save();
+              }
+
+              // return $new_timebase_actual;
               return redirect()
                     ->route('invoice_create',$request->contract_id)
                     ->with(['message' => "The invoice recorded", 'label' => "success"]);
@@ -471,7 +495,8 @@ class InvoiceController extends Controller
       }
 
       $contract = $this->get_contract_by_id($id);
-      return view('budget.invoice.create',compact('contract'));
+      $base_currency = $this->base_currency();
+      return view('budget.invoice.create',compact('contract','base_currency'));
     }
     public function timeline($id)
     {
@@ -549,9 +574,10 @@ class InvoiceController extends Controller
         $contract = $this->get_contract_by_id($id);
         $filter1 = $contract->name;
         $filter2 = "All";
+        $contract_id = $id;
 
-        // return $invoices;
-        return view('budget.invoice.filtered', compact('invoices','filter1','filter2'));
+        // return $contract_id;
+        return view('budget.invoice.filtered', compact('invoices','filter1','filter2','contract_id'));
     }
 
 
@@ -630,7 +656,7 @@ class InvoiceController extends Controller
     }
     private function get_contract_by_id($id)
     {
-      return contracts::select('id','contract_no','name', 'currency as currency_id', 'amount', 'contractor','date','duration', 'id as contract_id')
+      return contracts::select('id','contract_no','time_based','name', 'currency as currency_id', 'amount', 'contractor','date','duration', 'id as contract_id')
           ->where('id',$id)
           ->with('currency:id,code')
           ->with('variations:id,contract_id,variation_amount,status')

@@ -25,7 +25,7 @@
       <div class="row mb-2">
         <div class="col-sm-1">
             @can('Create Invoice')
-            <a href = "{{route('contracts.create')}}"><button type="button" class="btn btn-info">New Invoice</button></a>
+            <a href = "{{route('invoice_create',[$contract_id])}}"><button type="button" class="btn btn-info">New Invoice</button></a>
             @endcan
         </div>
       </div>

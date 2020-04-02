@@ -38,61 +38,66 @@
                     <!-- general form elements -->
                     <div class="card card-info">
                       <div class="card-header">
-                        <h3 class="card-title">New Invoice Details</h3>
+                        <h3 class="card-title">New Invoice Details - <font color = "orange">{{$contract['currency']['code']}}</font></h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
                       {!! Form::open(['method' => 'POST', 'route' => ['invoice.store'], 'files' => false,]) !!}
                         <div class="card-body">
                           <input type = "hidden" name="contract_id" value = "{{$contract->id}}">
-                          <div class="form-group">
-                            <label for="name">Invoice Type</label>
-                            <select id = "type" name="invoice_type" class="custom-select">
-                                <option value="1" >Progress</option>
-                                <option value="2" >Advance</option>
-                                <option value="3" >Retention</option>
-                            </select>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Invoice Type<font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <select id = "type" name="invoice_type" class="custom-select">
+                                  <option value="1" >Progress</option>
+                                  <option value="2" >Advance</option>
+                                  <option value="3" >Retention</option>
+                              </select>
+                            </div>
                           </div>
 
-                          <div class="form-group">
-                            <label for="name">Invoice Number</label>
-                            <input type = "text" name = "invoice_number" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Invoice Number<font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <input type = "text" name = "invoice_number" class = "form-control" value = "" required>
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Invoice Date</label>
-                            <input type = "text" id ="datepicker" name = "invoice_date" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Invoice Date<font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <input type = "text" id ="datepicker" name = "invoice_date" class = "form-control" value = "" required>
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Invoice Recieved Date</label>
-                            <input type = "text" id ="datepicker1" name = "invoice_received_date" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Invoice Recieved Date<font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <input type = "text" id ="datepicker1" name = "invoice_received_date" class = "form-control" value = "" required>
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Payable in Days</label>
-                            <input type = "number"  name = "terms_days" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Payable in Days<font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <input type = "number"  name = "terms_days" class = "form-control" value = "" required>
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Payable Amount</label>
-                            <input type = "number" step = ".01"  name = "amount" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Payable Amount - <font color = "orange">{{$contract['currency']['code']}}</font><font color = "red">*</font></label>
+                            <div class="col-sm-7">
+                              <input type = "number" step = ".01"  name = "amount" class = "form-control" value = "" required>
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Advance Recovery</label>
-                            <input type = "number" step = ".01" name = "advance_recovery" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Advance Recovery - <font color = "orange">{{$contract['currency']['code']}}</font></label>
+                            <div class="col-sm-7">
+                              <input type = "number" step = ".01" name = "advance_recovery" class = "form-control" value = "">
+                            </div>
                           </div>
-
-                          <div class="form-group">
-                            <label for="name">Retention</label>
-                            <input type = "number" step = ".01" name = "retention" class = "form-control" value = "" required>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-5 col-form-label">Retention - <font color = "orange">{{$contract['currency']['code']}}</font></label>
+                            <div class="col-sm-7">
+                              <input type = "number" step = ".01" name = "retention" class = "form-control" value = "">
+                            </div>
                           </div>
-
-
-
-
-
                         </div>
                         <!-- /.card-body -->
 
@@ -141,6 +146,48 @@
             </div> -->
           @endcanany
           <!-- /action table -->
+
+          @if($contract->time_based!= null)
+          <!-- Timebase actual  -->
+          <div class="card card-info card-outline">
+            <div class="card-header">
+              <h3 class="card-title">Timebase Details</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+            <div class="form-group row">
+              <label for="designation" class="col-sm-4 col-form-label">Remuneration - Days</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="designation" name = "rem_days" placeholder="" value = "">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="designation" class="col-sm-4 col-form-label">Per Diem - Days</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="designation" name ="perdiem_days" placeholder="" value = "">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="designation" class="col-sm-4 col-form-label">Trip Rate - {{$base_currency->code}}</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="designation" name = "trip_rate" placeholder="" value = "">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="designation" class="col-sm-4 col-form-label">Transfers Amount - {{$base_currency->code}}</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="designation" name = "transfer_rate" placeholder="" value = "">
+              </div>
+            </div>
+          </div>
+              <!-- /.card-body -->
+
+              <div class="card-footer">
+
+              </div>
+          </div>
+          <!-- /.Timebase actual -->
+          @endif
 
           <!-- Contract Details -->
           <div class="card card">
@@ -243,9 +290,15 @@
 
                           </td>
                           <td>
+                            @if($total_variation - $total_paid - $total_pending < 0)
                             <font color ="red">
-                                {{number_format($total_variation - $total_paid + $total_pending)}}
+                                {{number_format($total_variation - $total_paid - $total_pending)}}
                             </font>
+                            @else
+                            <font color ="green">
+                                {{number_format($total_variation - $total_paid - $total_pending)}}
+                            </font>
+                            @endif
                           </td>
                       </tr>
 

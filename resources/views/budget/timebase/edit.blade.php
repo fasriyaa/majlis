@@ -7,14 +7,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">New Timebase Plan</h1>
+          <h1 class="m-0 text-dark">Edit Timebase Plan</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active"><a href = "/contracts">Contracts</a></li>
-            <li class="breadcrumb-item active">New Timebase plan</li>
+            <li class="breadcrumb-item active"><a href = "/contracts">Timebase Plan</a></li>
+            <li class="breadcrumb-item active">Edit</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -42,9 +42,9 @@
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
-                      {!! Form::open(['method' => 'POST', 'route' => ['timebased_planed.store'], 'files' => false,]) !!}
+                      {!! Form::open(['method' => 'PUT', 'route' => ['timebased_planed.update',$timebaseplan->id], 'files' => false,]) !!}
                         <div class="card-body">
-                          <input type = "hidden" name="contract_id" value = "{{$contract->id}}">
+                          <input type = "hidden" name="id" value = "{{$timebaseplan->id}}">
                           <!-- <div class="form-group">
                             <label for="name">Invoice Type</label>
                             <select id = "type" name="invoice_type" class="custom-select">
@@ -53,57 +53,58 @@
                                 <option value="3" >Retention</option>
                             </select>
                           </div> -->
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-3 col-form-label">Remuneration - Days<font color = "red">*</font></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="designation" name = "rem_days" placeholder="" value = "" required>
-                              </div>
-                            </div>
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Remuneration - Rate <font color = "red">*</font></label>
-                              <div class="col-sm-8">
-                                <input type="number" step = ".01" class="form-control" id="designation" name = "rem_rate" placeholder="" value = "" required>
-                              </div>
-                            </div>
 
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Per Diem - Days</label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="designation" name ="perdiem_days" placeholder="" value = "">
-                              </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Remuneration - Days<font color = "red">*</font></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="designation" name = "rem_days" placeholder="" value = "{{$timebaseplan->rem_days}}" required>
                             </div>
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Per Diem - Rate</label>
-                              <div class="col-sm-8">
-                                <input type="number" step = ".01" class="form-control" id="designation" name = "perdiem_rate" placeholder="" value = "">
-                              </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Remuneration - Rate <font color = "red">*</font></label>
+                            <div class="col-sm-8">
+                              <input type="number" step = ".01" class="form-control" id="designation" name = "rem_rate" placeholder="" value = "{{$timebaseplan->rem_rate}}" required>
                             </div>
+                          </div>
 
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Number of Trips</label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="designation" name = "trip_days" placeholder="" value = "">
-                              </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Per Diem - Days</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="designation" name ="perdiem_days" placeholder="" value = "{{$timebaseplan->perdiem_days}}">
                             </div>
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Rate Per Trip</label>
-                              <div class="col-sm-8">
-                                <input type="number" step = ".01" class="form-control" id="designation" name = "trip_rate" placeholder="" value = "">
-                              </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Per Diem - Rate</label>
+                            <div class="col-sm-8">
+                              <input type="number" step = ".01" class="form-control" id="designation" name = "perdiem_rate" placeholder="" value = "{{$timebaseplan->perdiem_rate}}">
                             </div>
+                          </div>
 
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Number of Transfers</label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="designation" name = "transfer_days" placeholder="" value = "">
-                              </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Number of Trips</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="designation" name = "trip_days" placeholder="" value = "{{$timebaseplan->trip_days}}">
                             </div>
-                            <div class="form-group row">
-                              <label for="designation" class="col-sm-4 col-form-label">Rate Per Transfer</label>
-                              <div class="col-sm-8">
-                                <input type="number" step = ".01" class="form-control" id="designation" name = "transfer_rate" placeholder="" value = "" required>
-                              </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Rate Per Trip</label>
+                            <div class="col-sm-8">
+                              <input type="number" step = ".01" class="form-control" id="designation" name = "trip_rate" placeholder="" value = "{{$timebaseplan->trip_rate}}">
                             </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Number of Transfers</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="designation" name = "transfer_days" placeholder="" value = "{{$timebaseplan->transfer_days}}">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">Rate Per Transfer</label>
+                            <div class="col-sm-8">
+                              <input type="number" step = ".01" class="form-control" id="designation" name = "transfer_rate" placeholder="" value = "{{$timebaseplan->transfer_rate}}" required>
+                            </div>
+                          </div>
 
 
                         </div>
