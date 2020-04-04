@@ -16,126 +16,11 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => ['role:Admin'], 'middleware' => 'auth'], function () {
-    Route::resource('main_modules', '\App\Http\Controllers\Modules\MainModulesController');
-    Route::resource('roles', '\App\Http\Controllers\Permissions\RolesController');
-    Route::get('/roles/attach_permission/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_permission')->name('roles.attach_permission');
-    Route::post('/roles/attach_permission)', '\App\Http\Controllers\Permissions\RolesController@attach_permission_store')->name('roles.attach_permission_store');
-    Route::get('/roles/user/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_user')->name('roles.attach_user');
-    Route::post('/roles/user', '\App\Http\Controllers\Permissions\RolesController@attach_user_store')->name('roles.attach_user_store');
-    Route::resource('permissions', '\App\Http\Controllers\Permissions\PermissionsController');
-    Route::get('/permissions/attach_role/{id}', '\App\Http\Controllers\Permissions\PermissionsController@attach_role') -> name('permissions.attach_role');
-    Route::post('/permissions/attach_role', '\App\Http\Controllers\Permissions\PermissionsController@attach_role_store') -> name('permissions.attach_role_store');
-    Route::get('assign_permission/{role}/{permission}','\App\Http\Controllers\Permissions\PermissionsController@assign_permission')->name('assing_permission');
-    Route::get('assign_role/{user}/{role}','\App\Http\Controllers\Permissions\PermissionsController@assign_role')->name('assing_role');
 
-    Route::get('/users', 'HomeController@users')->name('users');
 
 });
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::resource('allocations', '\App\Http\Controllers\Budget\AllocationController');
-    Route::resource('budget', '\App\Http\Controllers\Budget\BudgetController');
-
-    Route::get('/sc_list', '\App\Http\Controllers\Discussions\DiscussionsController@sc_list')->name('sc.list');
-    Route::post('/sc_list', '\App\Http\Controllers\Discussions\DiscussionsController@sc_list_store')->name('sc_list.store');
-    Route::get('/sc/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@sc_view')->name('sc.view');
-    Route::resource('agenda', '\App\Http\Controllers\Discussions\DiscussionAgendaController');
-
-    Route::resource('pmu_daily_list', '\App\Http\Controllers\Discussions\DiscussionsController');
-    Route::get('/pmu_daily_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@pmu_daily_meeting') -> name('pmu.daily.meeting');
-    Route::post('/review', '\App\Http\Controllers\Discussions\DiscussionsController@review') -> name('pmu.review');
-    Route::post('/new_comment', '\App\Http\Controllers\Discussions\DiscussionsController@new_comment') -> name('new.comment');
-    Route::post('/add_participants', '\App\Http\Controllers\Discussions\DiscussionsController@add_participants') -> name('add.participants');
-    Route::post('/close_discussion', '\App\Http\Controllers\Discussions\DiscussionsController@close_discussion') -> name('close.discussion');
-
-    Route::resource('piu', '\App\Http\Controllers\PIU\PiuController');
-    Route::get('/assign_piu/{task_id}/{piu_id}', '\App\Http\Controllers\PIU\PiuController@assign_piu') -> name('piu.assign_piu');
-    Route::get('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list')->name('piu.review_list');
-    Route::post('/piu_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_list_store')->name('piu_review_list.store');
-    Route::get('/piu_review_meeting/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@piu_review_meeting') -> name('pmu.review.meeting');
-
-    Route::get('/exco/{id}', '\App\Http\Controllers\Discussions\DiscussionsController@exco_view')->name('exco.view');
-    Route::get('/exco_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_list')->name('exco.list');
-    Route::post('/exco_review_list', '\App\Http\Controllers\Discussions\DiscussionsController@exco_review_list_store')->name('exco_review_list.store');
-
-    Route::get('/tasks', '\App\Http\Controllers\PMU\PmuController@tasks') -> name('pmu.tasks');
-    Route::get('/add_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@add_subtask') -> name('gantt.addSubtask');
-    Route::get('/edit_subtask/{id}', '\App\Http\Controllers\Gantt\TaskController@edit_subtask') -> name('gantt.editSubtask');
-    Route::post('/subitem', '\App\Http\Controllers\Gantt\TaskController@subitem_store') -> name('subitem.store');
-    Route::post('/subitem_edit', '\App\Http\Controllers\Gantt\TaskController@subitem_edit') -> name('subitem.edit');
-    Route::get('/reorder_task/{id}', '\App\Http\Controllers\Gantt\TaskController@reorder_task') -> name('gantt.reorder');
-    Route::post('/sortorder/{id}/{index}', '\App\Http\Controllers\Gantt\TaskController@sortorder') -> name('gantt.sortorder');
-
-    Route::get('/components', '\App\Http\Controllers\PMU\PmuController@components') -> name('pmu.components');
-    Route::get('/subcomponent/{id}', '\App\Http\Controllers\PMU\PmuController@subcomponent') -> name('pmu.subcomponent');
-    Route::get('/activity/{id}', '\App\Http\Controllers\PMU\PmuController@activity') -> name('pmu.activity');
-    Route::get('/subactivity/{id}', '\App\Http\Controllers\PMU\PmuController@subactivity') -> name('pmu.subactivity');
-    Route::get('/task/{id}', '\App\Http\Controllers\PMU\PmuController@task') -> name('pmu.task');
-    Route::get('/subtask/{id}', '\App\Http\Controllers\PMU\PmuController@subtask') -> name('pmu.subtask');
-    Route::get('/subcomponents', '\App\Http\Controllers\PMU\PmuController@subcomponents') -> name('pmu.subcomponents');
-    Route::get('/activities', '\App\Http\Controllers\PMU\PmuController@activities') -> name('pmu.activities');
-    Route::get('/subactivities', '\App\Http\Controllers\PMU\PmuController@subactivities') -> name('pmu.subactivities');
-    Route::get('/assign_staff/{subtask_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_staff') -> name('pmu.assign_staff');
-    Route::get('/to_task_timelie/{id}', '\App\Http\Controllers\PMU\PmuController@toTaskTimeline') -> name('pmu.toTaskTimeline');
-    Route::get('/update_progress/{subtask_id}/{progress}', '\App\Http\Controllers\PMU\PmuController@update_progress') -> name('pmu.update_progress');
-    Route::get('/my_tasks', '\App\Http\Controllers\PMU\PmuController@my_tasks') -> name('pmu.my_tasks');
-    Route::get('/task_timeline/{id}', '\App\Http\Controllers\PMU\PmuController@task_timeline') -> name('pmu.task_timeline');
-    Route::get('/assign_approval_staff/{task_id}/{staff_id}', '\App\Http\Controllers\PMU\PmuController@assign_approval_staff') -> name('pmu.assign_approval_staff');
-    Route::get('/cancel_approval/{id}', '\App\Http\Controllers\PMU\PmuController@cancel_approval') -> name('pmu.cancel_approval');
-    Route::get('/approve/{id}/{comment}', '\App\Http\Controllers\PMU\PmuController@approve') -> name('pmu.approve');
-    Route::get('/require_doc/{id}', '\App\Http\Controllers\PMU\PmuController@require_doc') -> name('pmu.require_doc');
-    Route::get('/cancel_doc/{id}', '\App\Http\Controllers\PMU\PmuController@cancel_doc') -> name('pmu.cancel_doc');
-    Route::post('/upload_doc', '\App\Http\Controllers\PMU\PmuController@upload_doc') -> name('pmu.upload_doc');
-
-    Route::resource('contracts', '\App\Http\Controllers\Procurements\ContractsController');
-    Route::get('/contracts/timeline/{id}', '\App\Http\Controllers\Procurements\ContractsController@timeline')->name('contracts.timeline');
-    Route::get('/contracts/link_task/{id}', '\App\Http\Controllers\Procurements\ContractsController@link_tasks')->name('contracts.link_tasks');
-    Route::post('/contracts/upload_contract', '\App\Http\Controllers\Procurements\ContractsController@upload_contracts')->name('contracts.upload');
-    Route::post('/contracts/upload_amendment', '\App\Http\Controllers\Procurements\ContractsController@upload_amendment')->name('amendment.upload');
-    Route::post('/contracts/link_task', '\App\Http\Controllers\Procurements\ContractsController@link_task')->name('contracts.link_task');
-    Route::post('/contracts/new_type', '\App\Http\Controllers\Procurements\ContractsController@new_type')->name('contracts.new_type');
-    Route::post('/contracts/new_currency', '\App\Http\Controllers\Procurements\ContractsController@new_currency')->name('contracts.new_currency');
-    Route::get('/contracts/ledger/{id}', 'Procurements\ContractsController@ledger')->name('contracts.ledger');
-
-    Route::get('/procurement/ongoing', '\App\Http\Controllers\Procurements\ProcurementController@ongoing_procurements')->name('procurements.ongoing');
-    Route::get('/procurement/awarded', function () {return view('procurements.awarded');});
-    Route::resource('procurement', '\App\Http\Controllers\Progress\ProgressController');
-
-    Route::resource('variations', '\App\Http\Controllers\Procurements\VariationsController');
-    Route::get('/variations/timeline/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_timeline')->name('variation.timeline');
-    Route::get('/variations/create/{id}', '\App\Http\Controllers\Procurements\VariationsController@variation_create')->name('variation.create');
-    Route::get('/selected/{id}', '\App\Http\Controllers\Procurements\ContractsController@selected');
-    Route::post('/variation/reject', '\App\Http\Controllers\Procurements\VariationsController@reject')->name('variation.reject');
-    Route::post('/variation/verify', '\App\Http\Controllers\Procurements\VariationsController@verify')->name('variation.verify');
-    Route::post('/variation/approve', '\App\Http\Controllers\Procurements\VariationsController@approve')->name('variation.approve');
-    Route::post('/variation/approve/otp', '\App\Http\Controllers\Procurements\VariationsController@approve_otp')->name('variation.approve_otp');
-    Route::post('/variation/authorize_variation', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation')->name('variation.authorize_variation');
-    Route::post('/variation/authorize_variation/otp', '\App\Http\Controllers\Procurements\VariationsController@authorize_variation_otp')->name('variation.authorize_variation_otp');
-    Route::post("task_link_budget", '\App\Http\Controllers\Procurements\ContractsController@task_link_budget');
-
-    Route::resource('invoice', 'Budget\InvoiceController');
-    Route::get('invoice/create/{id}', 'Budget\InvoiceController@create_invoice')->name('invoice_create');
-    Route::get('invoice/timeline/{id}', 'Budget\InvoiceController@timeline')->name('invoice.timeline');
-    Route::post('/invoice/reject', '\App\Http\Controllers\Budget\InvoiceController@reject')->name('invoice.reject');
-    Route::post('/invoice/verify', '\App\Http\Controllers\Budget\InvoiceController@verify')->name('invoice.verify');
-    Route::post('/invoice/approve', '\App\Http\Controllers\Budget\InvoiceController@approve')->name('invoice.approve');
-    Route::post('/invoice/approve/otp', '\App\Http\Controllers\Budget\InvoiceController@approve_otp')->name('invoice.approve_otp');
-    Route::post('/invoice/authorize_invoice', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice')->name('invoice.authorize_invoice');
-    Route::post('/invoice/authorize_invoice/otp', '\App\Http\Controllers\Budget\InvoiceController@authorize_invoice_otp')->name('invoice.authorize_invoice_otp');
-    Route::get('invoice/pending/{id}', 'Budget\InvoiceController@invoice_pending')->name('invoice_pending');
-    Route::get('invoice/all/{id}', 'Budget\InvoiceController@invoice_all')->name('invoice_all');
-
-    Route::resource('progress', '\App\Http\Controllers\Progress\ProgressController');
-    Route::get('live_progress', '\App\Http\Controllers\Progress\ProgressController@live_progress')->name('live.progress');
-
-    Route::resource('pv', 'Budget\PVController');
-    Route::get('/reports', 'Reports\ReportsController@index')->name('reports.index');
-    Route::get('/reports/{id}', 'Reports\ReportsController@reports')->name('reports.reports');
-
-    Route::resource('timebased_planed', 'Budget\TimeBasedPlanedController');
-    Route::get('timebased_planed/new_timebaseplaned/{id}', 'Budget\TimeBasedPlanedController@new_timebased_planed')->name('timebaseplaned.new');
-    Route::get('timebased/sheet/{id}', 'Budget\TimeBasedPlanedController@sheet')->name('timebaseplaned.sheet');
-
 
 
 
@@ -167,6 +52,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard/v2', 'DashboardController@versiontwo')->name('v2');
     Route::get('/dashboard/v3', 'DashboardController@versionthree')->name('v3');
     Route::get('/critical', 'DashboardController@critical')->name('critical');
+
+    Route::resource('main_modules', '\App\Http\Controllers\Modules\MainModulesController');
+    Route::resource('roles', '\App\Http\Controllers\Permissions\RolesController');
+    Route::get('/roles/attach_permission/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_permission')->name('roles.attach_permission');
+    Route::post('/roles/attach_permission)', '\App\Http\Controllers\Permissions\RolesController@attach_permission_store')->name('roles.attach_permission_store');
+    Route::get('/roles/user/{id}', '\App\Http\Controllers\Permissions\RolesController@attach_user')->name('roles.attach_user');
+    Route::post('/roles/user', '\App\Http\Controllers\Permissions\RolesController@attach_user_store')->name('roles.attach_user_store');
+    Route::resource('permissions', '\App\Http\Controllers\Permissions\PermissionsController');
+    Route::get('/permissions/attach_role/{id}', '\App\Http\Controllers\Permissions\PermissionsController@attach_role') -> name('permissions.attach_role');
+    Route::post('/permissions/attach_role', '\App\Http\Controllers\Permissions\PermissionsController@attach_role_store') -> name('permissions.attach_role_store');
+    Route::get('assign_permission/{role}/{permission}','\App\Http\Controllers\Permissions\PermissionsController@assign_permission')->name('assing_permission');
+    Route::get('assign_role/{user}/{role}','\App\Http\Controllers\Permissions\PermissionsController@assign_role')->name('assing_role');
+
+    Route::get('/users', 'HomeController@users')->name('users');
 
 
 

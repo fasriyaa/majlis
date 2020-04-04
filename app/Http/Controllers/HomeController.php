@@ -34,17 +34,14 @@ class HomeController extends Controller
 
     public function users()
     {
-      $permission = "View Users";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
-            $users = User::with('roles')->get();
+          // $permission = "View Users";
+          // if(auth()->user()->can($permission) == false)
+          // {
+          //   abort(403);
+          // }
+                $users = User::with('roles')->get();
 
-            return view('auth.users', compact('users'));
-            }else {
-              return view($err_url);
-      }
-
+                return view('auth.users', compact('users'));
     }
 
     public function welcome()

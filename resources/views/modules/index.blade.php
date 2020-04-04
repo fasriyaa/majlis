@@ -19,9 +19,9 @@
         <!-- /.col -->
       </div>
       <!-- /.row -->
-      @can('Create Main Module')
+      <!-- can('Create Main Module') -->
         <a href = "{{route('main_modules.create')}}"><button type="button" class="btn btn-info">New Module</button></a>
-      @endcan
+      <!-- endcan -->
     </div>
     <!-- /.container-fluid -->
   </div>

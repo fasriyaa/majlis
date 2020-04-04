@@ -17,6 +17,7 @@ class CreateCurrenciesTable extends Migration
             $table->bigIncrements('id');
             $table->string('code');
             $table->string('name');
+            $table->double('xrate')->nullable();
             $table->string('status');
             $table->timestamps();
         });

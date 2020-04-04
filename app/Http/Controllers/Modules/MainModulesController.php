@@ -19,16 +19,15 @@ class MainModulesController extends Controller
      */
     public function index()
     {
-      $permission = "View Modules";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
+      // $permission = "View Modules";
+      // if(auth()->user()->can($permission) == false)
+      // {
+      //   abort(403);
+      // }
         // Getting the full list of main modules list
         $main_modules = MainModules::get();
         return view('modules.index', compact('main_modules'));
-          }else {
-            return view($err_url);
-      }
+
     }
 
     /**
@@ -38,14 +37,13 @@ class MainModulesController extends Controller
      */
     public function create()
     {
-      $permission = "Create Modules";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
+      // $permission = "Create Modules";
+      // if(auth()->user()->can($permission) == true)
+      // {
+      //   abort(403);
+      // }
           return view('modules.create');
-          }else {
-            return view($err_url);
-      }
+
     }
 
     /**
@@ -56,16 +54,15 @@ class MainModulesController extends Controller
      */
     public function store(StoreMainModulesRequest $request)
     {
-      $permission = "Create Modules";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
+      // $permission = "Create Modules";
+      // if(auth()->user()->can($permission) == false)
+      // {
+      //   abort(403);
+      // }
         $main_modules = MainModules::create($request->all() + ['status' => 1]);
         return redirect()->route('main_modules.index');
         // return route('modules.index');
-          }else {
-            return view($err_url);
-      }
+
     }
 
     /**

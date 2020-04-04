@@ -11,9 +11,6 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-      DB::table('permissions')->insert([
-          ['name'=>'Create Variation','module' => 'Variations','guard_name'=>'web'],
-          ['name'=>'Create Role','guard_name'=>'web']
-      ]);
+      
     }
 }
