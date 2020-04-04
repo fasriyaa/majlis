@@ -89,7 +89,7 @@
                         <td>{{$contract->name}}</td>
                         <td>{{$contract->contractor}}</td>
                         <td>{{date('d-M-Y', strtotime($contract->date))}}</td>
-                        <td>{{$contract->duration}} Days | {{date('d-M-Y',strtotime($contract->date))}}</td>
+                        <td>{{$contract->duration}} Days | {{date('d-M-Y',strtotime($contract->date . '+'. $contract->duration . ' days'))}}</td>
                         <td>{{$contract['currency']['code']}}</td>
                         <td>
                           <?php $contract_value = $contract->amount; ?>

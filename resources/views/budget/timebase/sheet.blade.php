@@ -162,7 +162,7 @@
                             $trip_total = $trip_total + $actual->trip_days*$actual->trip_rate;
                             $transfer_total = $transfer_total + $actual->transfer_days*$actual->transfer_rate;
                           ?>
-                        <td>{{number_format($rem_total + $perdiem_total + $trip_total + $transfer_total )}} </th>
+                        <td>{{number_format($actual->rem_days * $timebaseplan->rem_rate + $actual->perdiem_days * $timebaseplan->perdiem_rate + $actual->trip_days*$actual->trip_rate + $actual->transfer_days*$actual->transfer_rate)}} </th>
                       </tr>
                     <?php $count++; ?>
                   @endforeach
@@ -170,23 +170,23 @@
                     <td>{{$count}}</td>
                     <td>Grand </td>
                     <td>Total </td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format($timebaseplan->rem_days)}}</td>
-                    <td> {{number_format($timebaseplan->rem_rate)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format($timebaseplan->perdiem_days)}}</td>
-                    <td>{{number_format($timebaseplan->perdiem_rate)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format($timebaseplan->trip_days)}}</td>
-                    <td>{{number_format($timebaseplan->trip_rate)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format($timebaseplan->transfer_days)}}</td>
-                    <td>{{number_format($timebaseplan->transfer_rate)}}</td>
-                    <td>{{number_format(0)}}</td>
-                    <td>{{number_format(0)}} </th>
+                    <td>{{number_format($timebaseplan->rem_days-$rem_bal)}}</td>
+                    <td>{{number_format($rem_bal)}}</td>
+                    <td> - </td>
+                    <td>{{number_format($rem_total)}}</td>
+                    <td>{{number_format($timebaseplan->perdiem_days-$perdiem_bal)}}</td>
+                    <td>{{number_format($perdiem_bal)}}</td>
+                    <td> - </td>
+                    <td>{{number_format($perdiem_total)}}</td>
+                    <td>{{number_format($timebaseplan->trip_days-$trip_bal)}}</td>
+                    <td>{{number_format($trip_bal)}}</td>
+                    <td> - </td>
+                    <td>{{number_format($trip_total)}}</td>
+                    <td>{{number_format($timebaseplan->transfer_days-$transfer_bal)}}</td>
+                    <td>{{number_format($transfer_bal)}}</td>
+                    <td> - </td>
+                    <td>{{number_format($transfer_total)}}</td>
+                    <td>{{number_format($rem_total + $perdiem_total + $trip_total + $transfer_total )}} </th>
                   </tr>
 
             </tbody>
