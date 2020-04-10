@@ -85,7 +85,7 @@
                       <div class="form-group row">
                         <label for="organization" class="col-sm-2 col-form-label">Department</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="department" placeholder="" value = "{{$user['piu']['short_name']}}" disabled>
+                          <input type="text" class="form-control" id="department" placeholder="" value = "" disabled>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -112,11 +112,7 @@
                       <div class="form-group row">
                         <label for="organization" class="col-sm-2 col-form-label">Department</label>
                         <div class="col-sm-10">
-                          <select id = "department" name="department" class="custom-select">
-                            @foreach($pius as $piu)
-                              <option value="{{$piu->id}}" <?php if($user['piu']['short_name']== $piu->short_name){echo "selected";} ?> >{{$piu->short_name}}</option>
-                            @endforeach
-                          </select>
+                          
                         </div>
                       </div>
 

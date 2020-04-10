@@ -10,7 +10,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
-use App\models\piu\piu;
 
 use App\User;
 use Auth;
@@ -28,14 +27,12 @@ class ProfileController extends Controller
         $user_id = Auth::id();
         $user = User::select('id','name','email','profile_pic','designation','organization','department as piu_id')
             ->where('id',$user_id)
-            ->with('piu:id,short_name')
             ->first();
 
-        $pius = piu::select('id','short_name')
-            ->get();
+
 
         // return $pius;
-        return view('auth.profile',compact('user','pius'));
+        return view('auth.profile',compact('user'));
 
     }
 

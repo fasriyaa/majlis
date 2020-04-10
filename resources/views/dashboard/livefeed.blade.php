@@ -143,7 +143,7 @@ function time_difference($updated_at)
                     </div>
                 </div>
                 <div class = "row">
-                    <p>{{$feed->text}} #Meeting: <a href = ""></a></p>
+                    <p>{{$feed->text}} #Meeting: <a href = "{{$feed->url}}">Link</a></p>
                 </div>
 
 

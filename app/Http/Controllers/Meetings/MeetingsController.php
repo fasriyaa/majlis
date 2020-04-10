@@ -7,7 +7,10 @@ use App\Http\Controllers\Controller;
 use App\models\meetings\Meetings;
 use App\models\members\Members;
 use App\models\meetings\Participants;
+use App\models\timeline\Timeline;
 use Illuminate\Http\Request;
+
+use Auth;
 
 class MeetingsController extends Controller
 {
@@ -33,6 +36,7 @@ class MeetingsController extends Controller
     }
     public function create()
     {
+          $model_id = 2;
           $permission = "Create Meeting";
           if(auth()->user()->can($permission) == false)
           {
@@ -44,6 +48,7 @@ class MeetingsController extends Controller
     }
     public function store(Request $request)
     {
+          $model_id = 1;
           $permission = "Create Meeting";
           if(auth()->user()->can($permission) == false)
           {
@@ -66,6 +71,13 @@ class MeetingsController extends Controller
           $meeting->duration = $request->duration;
           $meeting->status = 1;
           $meeting->save();
+
+          $member_name = Members::find($request->member_id);
+
+          //timeline record
+          $text = "New meeting enetered for member: " . $member_name->name;
+          $url = "/meetings/" . $meeting->id;
+          $new_timeline = $this->new_timeline($model_id, $meeting->id, 1, $text, $url, 1);
 
           return redirect()->route('meetings.index');
     }
@@ -173,5 +185,19 @@ class MeetingsController extends Controller
         $participant = Participants::find($id);
         $participant->delete();
         return back()->with(['message' => "Participant Removed", 'label' => "success"]);
+    }
+
+    private function new_timeline($model_id, $record_id, $type, $text, $url, $show)
+    {
+      $new_timeline = new Timeline;
+      $new_timeline->table_id = $model_id;
+      $new_timeline->record_id = $record_id;
+      $new_timeline->type = $type;
+      $new_timeline->user_id = Auth::id();
+      $new_timeline->text = $text;
+      $new_timeline->url = $url;
+      $new_timeline->show = 1;
+      $new_timeline->save();
+      return $new_timeline;
     }
 }

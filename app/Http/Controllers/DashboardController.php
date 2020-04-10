@@ -22,69 +22,6 @@ class DashboardController extends Controller
   }
     public function versionone()
     {
-      $permission = "View Dashboards";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
-        // Getting subactivies as milestones
-        // Getting Main component ID
-            $main_id = Task::where('parent', '=', 1)
-                ->pluck('id');
-
-            $sub_id = Task::whereIn('parent', $main_id)
-                ->pluck('id');
-
-            $act_id = Task::whereIn('parent', $sub_id)
-                ->pluck('id');
-
-            $subact_id = Task::whereIn('parent', $act_id)
-                ->pluck('id');
-
-
-            $subactivities = Task::select('id', 'text', 'progress')
-                ->whereIn('parent', $act_id)
-                ->get();
-
-            $tasks = Task::select('id', 'text', 'progress')
-                ->whereIn('parent', $subact_id)
-                ->get();
-
-            $overall_progress = Task::select('progress')
-                ->where('parent',0)
-                ->first();
-
-            //get list of activities due but not completed
-            $task_id = Task::whereIn('parent', $subact_id)
-                ->pluck('id');
-
-
-
-            $dues = Task::select('id','start_date','duration','parent')
-                  ->whereIn('parent',$task_id)
-                  ->where('progress', '<', 1)
-                  ->get();
-
-            // $due_count = 0;
-            foreach($dues as $due)
-            {
-              if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
-              {
-                $due_parent [] = $due->parent;
-                // $due_count++;
-              }
-            }
-
-
-            $milestone = count($subactivities);
-            $activities = count($tasks);
-            $due_count = count(array_unique($due_parent));
-
-
-          // return $due_count;
-          return view('dashboard.v1', compact('milestone', 'activities','overall_progress','due_count'));
-          }else {
-            return view($err_url);
-      }
 
 
     }
@@ -100,120 +37,28 @@ class DashboardController extends Controller
 
     public function livefeed()
     {
-      $permission = "View Dashboards";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
+      $permission = "View Livefeed";
+      if(auth()->user()->can($permission) == false)
       {
+        abort(403);
+      }
         //Getting feed from timeline
-
-        $feeds = Timeline::select('text','task as task_id','updated_at','user as user_id','type','url')
+        $feeds = Timeline::select('text','updated_at','user_id','type','url')
             ->with('user:id,name,profile_pic')
-            ->with('task:id,text')
             ->orderby('updated_at','DESC')
             ->limit(20)
             ->get();
 
 
-            //getting mypending list
-                  $user_id = Auth::id();
 
-                  // Getting users
-                  $users = User::select('id', 'name')
-                      ->get();
-
-                  $user_name = User::select('name')
-                        ->where('id','=',$user_id)
-                        ->first();
-
-
-                  $subtasks = Task::select('id', 'text', 'progress', 'start_date', 'duration', 'staff', 'parent')
-                      ->with('user:id,name,profile_pic')
-                      ->where('staff', '=', $user_id)
-                      ->where('progress', '<', 1)
-                      ->orderby('sortorder', 'ASC')
-                      ->get();
-
-                  $parent_id = Task::where('staff', '=', $user_id)
-                      ->where('progress', '<', 1)
-                      ->pluck('parent');
-
-                  $tasks = Task::select('id', 'text')
-                      ->whereIn('id', $parent_id)
-                      ->get();
-
-                  //getting pending approvals for the staff
-                  $pending_approvals = TaskApproval::select('task_id')
-                      ->where('staff_id','=',$user_id)
-                      ->where('approval_status','=',0)
-                      ->where('status','=',1)
-                      ->with('task:id,text,start_date,duration,progress')
-                      ->get();
-
-
-                  $pending_docs_id = RequireDoc::where('status','=',1)
-                      ->pluck('task_id');
-
-                  $pending_docs = Task::select('id','start_date','text','progress','duration')
-                      ->whereIn('id',$pending_docs_id)
-                      ->where('staff', '=', $user_id)
-                      ->get();
         // return $feeds;
-        return view('dashboard.livefeed',compact('feeds','subtasks', 'users', 'tasks','pending_approvals','user_name','pending_docs'));
-          }else {
-            return view($err_url);
-      }
+        return view('dashboard.livefeed',compact('feeds'));
+
     }
 
     public function critical()
     {
-      $permission = "View Critial Task";
-      $err_url = "layouts.exceptions.403";
-      if(auth()->user()->can($permission) == true)
-      {
-        // Getting Main component ID
-            $main_id = Task::where('parent', '=', 1)
-                ->pluck('id');
 
-            $sub_id = Task::whereIn('parent', $main_id)
-                ->pluck('id');
-
-            $act_id = Task::whereIn('parent', $sub_id)
-                ->pluck('id');
-
-            $subact_id = Task::whereIn('parent', $act_id)
-                ->pluck('id');
-
-            $task_id = Task::whereIn('parent', $subact_id)
-                ->pluck('id');
-
-
-
-            $dues = Task::select('id','start_date','duration','parent')
-                  ->whereIn('parent',$task_id)
-                  ->where('progress', '<', 1)
-                  ->get();
-
-            // $due_count = 0;
-            foreach($dues as $due)
-            {
-              if(date('Y-m-d') > date('Y-m-d', strtotime($due->start_date)))
-              {
-                $due_parent [] = $due->parent;
-                // $due_count++;
-              }
-            }
-
-            $tasks = Task::select('id', 'text', 'progress','piu_id')
-                ->whereIn('id', $due_parent)
-                ->with('piu:id,short_name')
-                ->get();
-
-            $pius = piu::all();
-
-            return view('pmu.critical', compact('tasks','pius'));
-          }else {
-            return view($err_url);
-      }
 
     }
 }
