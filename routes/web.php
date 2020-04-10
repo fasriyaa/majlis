@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('/dashboard/livefeed');
+    return redirect('/dashboard/livefeed')->name('livefeed');
 });
 
 Route::group(['middleware' => ['role:Admin'], 'middleware' => 'auth'], function () {

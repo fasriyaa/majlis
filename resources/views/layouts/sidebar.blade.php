@@ -33,7 +33,7 @@
               </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                          <a href="{{ route('home') }}" class="nav-link {!! classActiveSegment(2, 'home') !!}">
+                          <a href="{{ route('livefeed') }}" class="nav-link {!! classActiveSegment(2, 'livefeed') !!}">
                             <i class="fas fa-circle"></i>
                             <p>Live Feed</p>
                           </a>
@@ -57,7 +57,7 @@
                 <!-- Members -->
                 <li class="nav-item has-treeview {!! classActivePath(1,'members') !!}">
                     <a href="{!! route('members.index') !!}" class="nav-link {!! classActiveSegment(1, 'members') !!}">
-                <i class="nav-icon fas fa-money-check"></i>
+                <i class="nav-icon fas fa-address-card"></i>
                 <p>
                   Members
                   <i class="right fa fa-angle-left"></i>
@@ -77,7 +77,7 @@
               <!-- Members -->
               <li class="nav-item has-treeview {!! classActivePath(1,'meetings') !!}">
                   <a href="{!! route('meetings.index') !!}" class="nav-link {!! classActiveSegment(1, 'meetings') !!}">
-              <i class="nav-icon fas fa-money-check"></i>
+              <i class="nav-icon fas fa-handshake"></i>
               <p>
                 Meetings
                 <i class="right fa fa-angle-left"></i>
@@ -97,7 +97,7 @@
             <!-- Reports -->
             <li class="nav-item has-treeview {!! classActivePath(1,'reports') !!}">
                 <a href="" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
-            <i class="nav-icon fas fa-money-check"></i>
+            <i class="nav-icon fas fa-file"></i>
             <p>
               Reports
               <i class="right fa fa-angle-left"></i>
