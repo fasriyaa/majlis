@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\models\meetings\Meetings;
 use App\models\members\Members;
+use App\models\meetings\Participants;
 use Illuminate\Http\Request;
 
 class MeetingsController extends Controller
@@ -24,6 +25,7 @@ class MeetingsController extends Controller
           }
 
           $meetings = Meetings::with('member')
+              ->with('participants')
               ->get();
 
               // return $meetings;
@@ -82,5 +84,94 @@ class MeetingsController extends Controller
     public function destroy(Meetings $meetings)
     {
         //
+    }
+
+    public function close($id)
+    {
+          $permission = "Close Meeting";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+          $meeting = Meetings::find($id);
+          if($meeting->status != 1)
+          {
+            abort(411);
+          }
+
+          $meeting->status = 2;
+          $meeting->save();
+
+          return back();
+    }
+    public function open($id)
+    {
+          $permission = "Open Meeting";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+          $meeting = Meetings::find($id);
+          if($meeting->status != 2)
+          {
+            abort(411);
+          }
+
+          $meeting->status = 1;
+          $meeting->save();
+
+          return back();
+    }
+    public function add_participants($id)
+    {
+          $permission = "Add Participants";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+          $meeting = Meetings::with('member')
+              ->with('participants')
+              ->find($id);
+
+      // return $meeting;
+      return view('meetings.add_participants', compact('meeting'));
+    }
+    public function store_participants(Request $request)
+    {
+
+          $permission = "Add Participants";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+          $xrecord = Participants::where('id_no', $request->id_no)
+              ->first();
+            if($xrecord)
+            {
+              return back()->with(['message' => "Participant already exist", 'label' => "danger"]);
+            }
+
+        $participant = new Participants;
+        $participant->meeting_id = $request->meeting_id;
+        $participant->name = $request->name;
+        $participant->id_no = $request->id_no;
+        $participant->contact = $request->contact;
+        $participant->save();
+
+      return back()->with(['message' => "Participant saved", 'label' => "success"]);
+    }
+    public function remove_participants($id)
+    {
+          $permission = "Remove Participants";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+        $participant = Participants::find($id);
+        $participant->delete();
+        return back()->with(['message' => "Participant Removed", 'label' => "success"]);
     }
 }

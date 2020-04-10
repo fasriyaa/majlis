@@ -9,7 +9,7 @@
 
 <div class="login-box">
     <div class="login-logo">
-        Security | People's Majlis
+        MP's Private Meetings | People's Majlis
     </div>
     <div class="card">
         <div class="card-body login-card-body">

@@ -69,6 +69,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('/members', 'Members\MembersController');
     Route::resource('/meetings', 'Meetings\MeetingsController');
+    Route::get('/meetings/close/{id}', 'Meetings\MeetingsController@close')->name('meetings.close');
+    Route::get('/meetings/open/{id}', 'Meetings\MeetingsController@open')->name('meetings.open');
+    Route::get('/meetings/add_participants/{id}', 'Meetings\MeetingsController@add_participants')->name('meetings.add_participants');
+    Route::post('/meetings/add_participants', 'Meetings\MeetingsController@store_participants')->name('meetings.store_participants');
+    Route::get('/meetings/remove/{id}', 'Meetings\MeetingsController@remove_participants')->name('meetings.remove_participants');
 
 
 

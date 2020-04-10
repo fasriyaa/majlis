@@ -10,4 +10,9 @@ class Meetings extends Model
     {
       return $this->belongsTo('App\models\members\Members', 'member_id', 'id');
     }
+
+    public function participants()
+    {
+      return $this->hasMany('App\models\meetings\Participants', 'meeting_id', 'id');
+    }
 }

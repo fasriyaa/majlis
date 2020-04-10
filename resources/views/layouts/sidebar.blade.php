@@ -35,7 +35,7 @@
                         <li class="nav-item">
                           <a href="{{ route('home') }}" class="nav-link {!! classActiveSegment(2, 'home') !!}">
                             <i class="fas fa-circle"></i>
-                            <p>Dashboard v1</p>
+                            <p>Live Feed</p>
                           </a>
                         </li>
                         <!-- <li class="nav-item">
@@ -53,6 +53,66 @@
                     </ul>
                 </li>
                 <!-- End |Dashboard Menue -->
+
+                <!-- Members -->
+                <li class="nav-item has-treeview {!! classActivePath(1,'members') !!}">
+                    <a href="{!! route('members.index') !!}" class="nav-link {!! classActiveSegment(1, 'members') !!}">
+                <i class="nav-icon fas fa-money-check"></i>
+                <p>
+                  Members
+                  <i class="right fa fa-angle-left"></i>
+                </p>
+              </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                          <a href="{{ route('members.index') }}" class="nav-link {!! classActiveSegment(1, 'members') !!}">
+                            <i class="fas fa-circle"></i>
+                            <p>List</p>
+                          </a>
+                        </li>
+                    </ul>
+                </li>
+              <!-- /.memberes -->
+
+              <!-- Members -->
+              <li class="nav-item has-treeview {!! classActivePath(1,'meetings') !!}">
+                  <a href="{!! route('meetings.index') !!}" class="nav-link {!! classActiveSegment(1, 'meetings') !!}">
+              <i class="nav-icon fas fa-money-check"></i>
+              <p>
+                Meetings
+                <i class="right fa fa-angle-left"></i>
+              </p>
+            </a>
+                  <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="{{ route('meetings.index') }}" class="nav-link {!! classActiveSegment(1, 'meetings') !!}">
+                          <i class="fas fa-circle"></i>
+                          <p>List</p>
+                        </a>
+                      </li>
+                  </ul>
+              </li>
+            <!-- /.memberes -->
+
+            <!-- Reports -->
+            <li class="nav-item has-treeview {!! classActivePath(1,'reports') !!}">
+                <a href="" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
+            <i class="nav-icon fas fa-money-check"></i>
+            <p>
+              Reports
+              <i class="right fa fa-angle-left"></i>
+            </p>
+          </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
+                        <i class="fas fa-circle"></i>
+                        <p>Dialy Report</p>
+                      </a>
+                    </li>
+                </ul>
+            </li>
+          <!-- /.memberes -->
 
 
 

@@ -69,20 +69,48 @@
                       <td>{{$meeting->member->constituency}}</td>
                       <td>{{date('d F Y', strtotime($meeting->date))}}</td>
                       <td>{{date('H:i', strtotime($meeting->meeting_time))}}</td>
-                      <td>Participants</td>
-                      <td>Status</td>
+                      <td>
+                        @foreach($meeting->participants as $participant)
+                          <p>{{$participant->name}} (ID: {{$participant->id_no}}) </p>
+                        @endforeach
+                      </td>
+                      @if($meeting->status == 1)
+                        <?php $status= "Open"; $col = "green"; ?>
+                      @endif
+                      @if($meeting->status == 2)
+                        <?php $status= "Closed"; $col = "red"; ?>
+                      @endif
+                      <td>
+                        <font color = "{{$col}}">
+                          {{$status}}
+                        </font>
+                      </td>
                       <td field-key='action'>
                         <div class="btn-group">
                           <button type="button" class="btn btn-info">Action</button>
                           <button type="button" class="btn btn-info dropdown-toggle dropdown-icon" data-toggle="dropdown">
 
                             <div class="dropdown-menu" role="menu">
-                              @can('Edit Members')
-                                <a class="dropdown-item" href="" onclick ="location.href='/members/' +'/edit';">Edit</a>
+                              @can('Edit Meeting')
+                                @if($meeting->status == 1)
+                                  <a class="dropdown-item" href="" onclick ="location.href='/members/' +'/edit';">Edit</a>
+                                @endif
                               @endcan
                               <div class="dropdown-divider"></div>
-                                @can('Create Meeting')
-                                  <!-- <a class="dropdown-item" href="kjk" onclick ="">New Meeting</a> -->
+                                @can('Add Participants')
+                                  @if($meeting->status == 1)
+                                    <a class="dropdown-item" href="" onclick ="location.href='/meetings/add_participants/' + {{$meeting->id}};">Add Participants</a>
+                                  @endif
+                                @endcan
+                                @can('Edit Meeting')
+                                  @if($meeting->status == 1)
+                                    <a class="dropdown-item" href="" onclick ="location.href='/meetings/close/' + {{$meeting->id}};">Close</a>
+                                  @endif
+                                @endcan
+                                @can('Open Meeting')
+                                  @if($meeting->status == 2)
+                                    <a class="dropdown-item" href="" onclick ="location.href='/meetings/open/' + {{$meeting->id}};">Open</a>
+                                  @endif
                                 @endcan
                             </div>
                           </button>
@@ -114,6 +142,8 @@
 </div>
 <!-- /.content-wrapper -->
 @endsection
+
+
 
 @section('javascript')
 <!-- jQuery -->

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Majlis Security Portal'),
+    'name' => env('APP_NAME', 'MPs Private Meetings'),
 
     /*
     |--------------------------------------------------------------------------
