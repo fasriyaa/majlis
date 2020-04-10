@@ -9,7 +9,7 @@
 
 <div class="login-box">
     <div class="login-logo">
-        PFM | Ministry of Finance
+        Security | People's Majlis
     </div>
     <div class="card">
         <div class="card-body login-card-body">

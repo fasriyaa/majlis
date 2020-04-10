@@ -21,11 +21,11 @@ class PermissionsController extends Controller
      */
     public function index()
     {
-      // $permission = "View Permission";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "View Permission";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
 
             // return 1;
 
@@ -38,11 +38,11 @@ class PermissionsController extends Controller
     }
     public function create()
     {
-      // $permission = "Create Permission";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Create Permission";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
             //geting modules
             $modules = MainModules::select('id','name')
                 ->get();
@@ -51,11 +51,11 @@ class PermissionsController extends Controller
     }
     public function store(Request $request)
     {
-      // $permission = "Create Permission";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Create Permission";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
             $existing_record_check = Permission::select('id')
               ->where('name',$request->name)
               ->first();
@@ -77,11 +77,11 @@ class PermissionsController extends Controller
     }
     public function edit($id)
     {
-        // $permission = "Edit Permission";
-        // if(auth()->user()->can($permission) == false)
-        // {
-        //   abort(403);
-        // }
+        $permission = "Edit Permission";
+        if(auth()->user()->can($permission) == false)
+        {
+          abort(403);
+        }
             $permissions = Permission::select('id','name','module_id')
                 ->find($id);
 
@@ -94,11 +94,11 @@ class PermissionsController extends Controller
     }
     public function update(Request $request, $id)
     {
-          // $permission = "Edit Permission";
-          // if(auth()->user()->can($permission) == false)
-          // {
-          //   abort(403);
-          // }
+          $permission = "Edit Permission";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
               //getting the role
               $permissions = Permission::find($id);
 
@@ -120,11 +120,11 @@ class PermissionsController extends Controller
 
     public function assign_permission($role_id,$permission_id)
     {
-      // $permission = "Assign Permission";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Assign Permission";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
             $role = Role::FindById($role_id);
             $permission = Permission::Find($permission_id);
             $role->givePermissionTo($permission);
@@ -134,11 +134,11 @@ class PermissionsController extends Controller
     }
     public function assign_role($user_id,$role_id)
     {
-      // $permission = "Assign Role";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Assign Role";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
             $role = Role::FindById($role_id);
             $user = User::FindOrFail($user_id);
             $user->assignRole($role->name);
@@ -148,11 +148,11 @@ class PermissionsController extends Controller
     }
     public function attach_role($id)
     {
-      // $permission = "Assign Role to Permission";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign Role to Permission";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
               $permissions = Permission::with('roles')
                   ->with('module:id,name')
                   ->find($id);
@@ -163,11 +163,11 @@ class PermissionsController extends Controller
     }
     public function attach_role_store(Request $request)
     {
-      // $permission = "Assign Role to Permission";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign Role to Permission";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
                 //removing existing roles from the permissoin
                 $permissions = Permission::with('roles:id,name')
                     ->find($request->permission_id);

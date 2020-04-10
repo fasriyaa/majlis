@@ -34,11 +34,11 @@ class HomeController extends Controller
 
     public function users()
     {
-          // $permission = "View Users";
-          // if(auth()->user()->can($permission) == false)
-          // {
-          //   abort(403);
-          // }
+          $permission = "View Users";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
                 $users = User::with('roles')->get();
 
                 return view('auth.users', compact('users'));

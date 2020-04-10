@@ -67,6 +67,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/users', 'HomeController@users')->name('users');
 
+    Route::resource('/members', 'Members\MembersController');
+    Route::resource('/meetings', 'Meetings\MeetingsController');
+
 
 
 });

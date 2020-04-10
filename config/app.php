@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'PFM Portal'),
+    'name' => env('APP_NAME', 'Majlis Security Portal'),
 
     /*
     |--------------------------------------------------------------------------

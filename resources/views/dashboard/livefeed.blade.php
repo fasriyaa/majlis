@@ -143,42 +143,7 @@ function time_difference($updated_at)
                     </div>
                 </div>
                 <div class = "row">
-                  @if($feed->type == 1)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 2)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 3)
-                    <p>{{$feed->text}} #Task: {{$feed->task['text']}}</p>
-                  @endif
-                  @if($feed->type == 4)
-                    <p>{{$feed->text}} : <a href = "{{$feed->url}}">link</a> </p>
-                  @endif
-                  @if($feed->type == 5)
-                    <p>{{$feed->text}} #Task: <a href = "{{$feed->url}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 6)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 7)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 8)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
-                  @endif
-                  @if($feed->type == 9)
-                    <p>{{$feed->text}} #Task: {{$feed->task['text']}}</p>
-                  @endif
-                  @if($feed->type > 9)
-                    <p>{{$feed->text}}<a href = "{{$feed->url}}"> link</a></p>
-                  @endif
-                  
-                  @if($feed->type == null)
-                    <p>{{$feed->text}} #Task: <a href = "/to_task_timelie/{{$feed->task_id}}}">{{$feed->task['text']}}</a></p>
-                  @endif
-
-
+                    <p>{{$feed->text}} #Meeting: <a href = ""></a></p>
                 </div>
 
 
@@ -210,93 +175,17 @@ function time_difference($updated_at)
 
               <div class="card-tools">
                 <ul class="pagination pagination-sm">
-                  <li class="page-item"><a href="#" class="page-link">&laquo;</a></li>
+                  <!-- <li class="page-item"><a href="#" class="page-link">&laquo;</a></li>
                   <li class="page-item"><a href="#" class="page-link">1</a></li>
                   <li class="page-item"><a href="#" class="page-link">2</a></li>
                   <li class="page-item"><a href="#" class="page-link">3</a></li>
-                  <li class="page-item"><a href="#" class="page-link">&raquo;</a></li>
+                  <li class="page-item"><a href="#" class="page-link">&raquo;</a></li> -->
                 </ul>
               </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
               <ul class="todo-list">
-
-                <!-- generating pending list -->
-                @foreach($subtasks as $subtask)
-
-                    @foreach($tasks as $task)
-                      @if($task->id == $subtask->parent)
-                        <?php $parent = $task->text; ?>
-                      @endif
-                    @endforeach
-                      <li>
-                        <!-- drag handle -->
-                        <span class="handle">
-                          <i class="fa fa-ellipsis-v"></i>
-                          <i class="fa fa-ellipsis-v"></i>
-                        </span>
-                        <!-- checkbox -->
-                        <input type="checkbox" value="" name="" id="{{$subtask->id}}" onclick="update_progress(this);">
-                        <!-- todo text -->
-                        <span class="text">{{$subtask->text}} | {{$parent}}</span>
-                        <!-- Emphasis label -->
-
-                        <!-- General tools such as edit or delete-->
-                        <div class="tools">
-                          <i class="fa fa-edit"></i>
-                          <i class="fa fa-trash-o"></i>
-                        </div>
-                      </li>
-                @endforeach
-
-                @foreach($pending_approvals as $pending_approval)
-                    <li>
-                      <!-- drag handle -->
-                      <span class="handle">
-                        <i class="fa fa-ellipsis-v"></i>
-                        <i class="fa fa-ellipsis-v"></i>
-                      </span>
-                      <!-- checkbox -->
-                      <input type="checkbox" value="" name="" id="{{$pending_approval->task_id}}" onclick="update_progress(this);">
-                      <!-- todo text -->
-                      <span class="text">Pending Approval for: {{$pending_approval->task['text']}}</span>
-                      <!-- Emphasis label -->
-
-                      <!-- General tools such as edit or delete-->
-                      <div class="tools">
-                        <i class="fa fa-edit"></i>
-                        <i class="fa fa-trash-o"></i>
-                      </div>
-                    </li>
-                @endforeach
-
-                @foreach($pending_docs as $pending_doc)
-                    <li>
-                      <!-- drag handle -->
-                      <span class="handle">
-                        <i class="fa fa-ellipsis-v"></i>
-                        <i class="fa fa-ellipsis-v"></i>
-                      </span>
-                      <!-- checkbox -->
-                      <input type="checkbox" value="" name="" id="{{{$pending_doc->id}}}}" onclick="update_progress(this);">
-                      <!-- todo text -->
-                      <span class="text">Pending Document for: {{$pending_doc->text}}</span>
-                      <!-- Emphasis label -->
-
-                      <!-- General tools such as edit or delete-->
-                      <div class="tools">
-                        <i class="fa fa-edit"></i>
-                        <i class="fa fa-trash-o"></i>
-                      </div>
-                    </li>
-                @endforeach
-                <!-- /.pending list -->
-
-
-
-
-
               </ul>
             </div>
             <!-- /.card-body -->
@@ -322,34 +211,6 @@ function time_difference($updated_at)
 @section('javascript')
 
 <script type="text/javascript">
-
-function update_progress(object)
-{
-  if(object.checked)
-    {
-      var progress = 1;
-    }else {
-        var progress = 0;
-    }
-    var subtask_id = object.id;
-
-    if(subtask_id){
-          $.ajax({
-             type:"get",
-             url:"{{url('/update_progress')}}/"+subtask_id+"/"+progress,
-             success:function(res)
-             {
-                  if(res)
-                  {
-                    location.reload();
-                  }
-             }
-
-          });
-    }
-}
-
-
 
 </script>
 

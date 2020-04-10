@@ -24,30 +24,30 @@ class RolesController extends Controller
     public function index()
     {
 
-      // $permission = "View Roles";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "View Roles";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
             $roles = Role::with('permissions')->get();
             return view('roles.index', compact('roles'));
     }
     public function create()
     {
-      // $permission = "Create Roles";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Create Roles";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
           return view('roles.create');
     }
     public function store(Request $request)
     {
-      // $permission = "Create Roles";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Create Roles";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
         $existing_record_check = Role::select('id')
           ->where('name',$request->name)
           ->first();
@@ -69,11 +69,11 @@ class RolesController extends Controller
     public function edit($roles)
     {
 
-      // $permission = "Edit Roles";
-      // if(auth()->user()->can($permission) == false)
-      // {
-      //   abort(403);
-      // }
+      $permission = "Edit Roles";
+      if(auth()->user()->can($permission) == false)
+      {
+        abort(403);
+      }
           $role = Role::select('id','name')
               ->find($roles);
 
@@ -83,11 +83,11 @@ class RolesController extends Controller
     }
     public function update(Request $request, $role_id)
     {
-        // $permission = "Edit Roles";
-        // if(auth()->user()->can($permission) == false)
-        // {
-        //   abort(403);
-        // }
+        $permission = "Edit Roles";
+        if(auth()->user()->can($permission) == false)
+        {
+          abort(403);
+        }
             //getting the role
             $role = Role::find($role_id);
 
@@ -110,11 +110,11 @@ class RolesController extends Controller
 
     public function attach_permission($id)
     {
-      // $permission = "Assign Permission";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign Permission";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
               $role = Role::with('permissions')
                   // ->with('module:id,name')
                   ->find($id);
@@ -125,11 +125,11 @@ class RolesController extends Controller
     }
     public function attach_permission_store(Request $request)
     {
-      // $permission = "Assign Permission";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign Permission";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
                 //removing existing permission from the role
                 $role = Role::with('permissions:id,name')
                     ->find($request->role_id);
@@ -153,11 +153,11 @@ class RolesController extends Controller
     }
     public function attach_user($id)
     {
-      // $permission = "Assign a Role to User";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign a Role to User";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
               $user = User::where('id',$id)
                   ->with('roles')->first();
 
@@ -166,11 +166,11 @@ class RolesController extends Controller
     }
     public function attach_user_store(Request $request)
     {
-      // $permission = "Assign a Role to User";
-      // if(auth()->user()->can($permission) == false)
-      //     {
-      //       abort(403);
-      //     }
+      $permission = "Assign a Role to User";
+      if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
 
                 $user = User::find($request->user_id);
                 $user->syncRoles($request->roles_id);
