@@ -23,7 +23,7 @@
       <div class="row mb-2">
         <div class="col-sm-1">
             @can('Create Meeting')
-            <a href = "{{route('members.create')}}"><button type="button" class="btn btn-info">New Meeting</button></a>
+            <a href = "{{route('meetings.create')}}"><button type="button" class="btn btn-info">New Meeting</button></a>
             @endcan
         </div>
       </div>
@@ -52,6 +52,8 @@
                       <th>#</th>
                       <th>Member Name</th>
                       <th>Constituency</th>
+                      <th>Date</th>
+                      <th>Time & Duration</th>
                       <th>Participants</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -62,8 +64,11 @@
                 <?php $count = 1; ?>
                 @foreach($meetings as $meeting)
                     <tr onclick = "">
-                      <td>Member Name</td>
-                      <td>Constituency</td>
+                      <td>{{$count}}</td>
+                      <td>{{$meeting->member->name}}</td>
+                      <td>{{$meeting->member->constituency}}</td>
+                      <td>{{date('d F Y', strtotime($meeting->date))}}</td>
+                      <td>{{date('H:i', strtotime($meeting->meeting_time))}}</td>
                       <td>Participants</td>
                       <td>Status</td>
                       <td field-key='action'>

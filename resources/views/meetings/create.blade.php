@@ -55,6 +55,18 @@
                               </select>
                             </div>
                           </div>
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Select Date<font color = "red">*</font></label>
+                            <div class="col-sm-8">
+                              <input type = "text" id = "datepicker" name = "date" class = "form-control" value = "" required>
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Duration (Miniutes)<font color = "red">*</font></label>
+                            <div class="col-sm-8">
+                              <input type = "number" step = "30" id = "duration" name = "duration" class = "form-control" value = "" required>
+                            </div>
+                          </div>
 
 
 
@@ -131,8 +143,13 @@
   $.widget.bridge('uibutton', $.ui.button)
 
   $(document).ready(function () {
-      $('#datepicker').datepicker({
-        uiLibrary: 'bootstrap'
+      $('#datepicker').daterangepicker({
+        uiLibrary: 'bootstrap',
+        format: "MM/DD/YYYY h:mm",
+        autoclose: true,
+        todayBtn: true,
+        timePicker: true,
+        singleDatePicker: true
       });
   });
 

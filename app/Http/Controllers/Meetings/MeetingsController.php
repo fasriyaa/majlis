@@ -23,7 +23,10 @@ class MeetingsController extends Controller
             abort(403);
           }
 
-          $meetings = Meetings::all();
+          $meetings = Meetings::with('member')
+              ->get();
+
+              // return $meetings;
           return view('meetings.index',compact('meetings'));
     }
     public function create()
@@ -39,7 +42,30 @@ class MeetingsController extends Controller
     }
     public function store(Request $request)
     {
-        //
+          $permission = "Create Meeting";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+          $xrecord = Meetings::where('member_id', $request->member_id)
+              ->where('meeting_time', date('Y-m-d H:i', strtotime($request->date)))
+              ->first();
+
+            if($xrecord)
+            {
+              abort(400);
+            }
+
+          $meeting = new Meetings;
+          $meeting->member_id = $request->member_id;
+          $meeting->date = date('Y-m-d', strtotime($request->date));
+          $meeting->meeting_time = date('Y-m-d H:i', strtotime($request->date));
+          $meeting->duration = $request->duration;
+          $meeting->status = 1;
+          $meeting->save();
+
+          return redirect()->route('meetings.index');
     }
     public function show(Meetings $meetings)
     {

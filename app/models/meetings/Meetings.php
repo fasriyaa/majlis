@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Meetings extends Model
 {
-    //
+    public function member()
+    {
+      return $this->belongsTo('App\models\members\Members', 'member_id', 'id');
+    }
 }
