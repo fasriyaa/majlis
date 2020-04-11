@@ -67,11 +67,14 @@
                       <td>{{$count}}</td>
                       <td>{{$meeting->member->name}}</td>
                       <td>{{$meeting->member->constituency}}</td>
-                      <td>{{date('d F Y', strtotime($meeting->date))}}</td>
+                      <td>{{date('d M Y', strtotime($meeting->date))}}</td>
                       <td>{{date('H:i', strtotime($meeting->meeting_time))}}</td>
                       <td>
+                        <?php $count2 = 1; ?>
                         @foreach($meeting->participants as $participant)
-                          <p>{{$participant->name}} (ID: {{$participant->id_no}}) </p>
+                          <p>{{$count2}}. {{$participant->name}} </p>
+                          <p>&nbsp &nbspID: {{$participant->id_no}} </p>
+                          <?php $count++; ?>
                         @endforeach
                       </td>
                       @if($meeting->status == 1)
@@ -93,7 +96,7 @@
                             <div class="dropdown-menu" role="menu">
                               @can('Edit Meeting')
                                 @if($meeting->status == 1)
-                                  <a class="dropdown-item" href="" onclick ="location.href='/members/' +'/edit';">Edit</a>
+                                  <a class="dropdown-item" href="" onclick ="location.href='/meetings/'+{{$meeting->id}} +'/edit';">Edit</a>
                                 @endif
                               @endcan
                               <div class="dropdown-divider"></div>

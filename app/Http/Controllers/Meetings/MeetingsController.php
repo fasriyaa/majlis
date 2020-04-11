@@ -85,13 +85,34 @@ class MeetingsController extends Controller
     {
         //
     }
-    public function edit(Meetings $meetings)
+    public function edit($id)
     {
-        //
+          $model_id = 1;
+          $permission = "Edit Meeting";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+          $meeting = Meetings::find($id);
+          $members = Members::all();
+          return view('meetings.edit', compact('meeting','members'));
     }
-    public function update(Request $request, Meetings $meetings)
+    public function update(Request $request, $id)
     {
-        //
+          $model_id = 1;
+          $permission = "Edit Meeting";
+          if(auth()->user()->can($permission) == false)
+          {
+            abort(403);
+          }
+
+          $meeting = Meetings::find($id);
+          $meeting->member_id = $request->member_id;
+          $meeting->date = date('Y-m-d', strtotime($request->date));
+          $meeting->meeting_time = date('Y-m-d H:i', strtotime($request->date));
+          $meeting->save();
+          return redirect()->route('meetings.index');
     }
     public function destroy(Meetings $meetings)
     {
