@@ -74,7 +74,7 @@
                         @foreach($meeting->participants as $participant)
                           <p>{{$count2}}. {{$participant->name}} </p>
                           <p>&nbsp &nbspID: {{$participant->id_no}} </p>
-                          <?php $count++; ?>
+                          <?php $count2++; ?>
                         @endforeach
                       </td>
                       @if($meeting->status == 1)
