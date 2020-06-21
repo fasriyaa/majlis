@@ -137,10 +137,12 @@
   $(document).ready(function () {
       $('#datepicker').daterangepicker({
         uiLibrary: 'bootstrap',
-        format: "MM/DD/YYYY h:mm",
+        format: "MM/DD/YYYY H:m",
+        timePicker24Hour: true,
         autoclose: true,
         todayBtn: true,
         timePicker: true,
+        timePickerIncrement: 15,
         singleDatePicker: true
       });
   });
