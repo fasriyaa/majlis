@@ -75,7 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/meetings/add_participants', 'Meetings\MeetingsController@store_participants')->name('meetings.store_participants');
     Route::get('/meetings/remove/{id}', 'Meetings\MeetingsController@remove_participants')->name('meetings.remove_participants');
 
-
+    Route::get('/reports_1', 'Reports\ReportsController@reports_1')->name('reports_1');
 
 });
 

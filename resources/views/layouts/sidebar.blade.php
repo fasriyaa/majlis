@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-    <img src="/img/logo.png" alt="Laravel Starter" class="brand-image img-circle elevation-3"
+    <img src="/img/logo.jpg" alt="Laravel Starter" class="brand-image elevation-3"
    style="opacity: .8">
 <span class="brand-text font-weight-light">{{env('APP_LONG_NAME')}}</span>
 </a>
@@ -108,6 +108,12 @@
                       <a href="" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
                         <i class="fas fa-circle"></i>
                         <p>Dialy Report</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{{route('reports_1')}}" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
+                        <i class="fas fa-circle"></i>
+                        <p>Report 1</p>
                       </a>
                     </li>
                 </ul>

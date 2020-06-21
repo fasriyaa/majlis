@@ -64,7 +64,7 @@
                           <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Duration (Miniutes)<font color = "red">*</font></label>
                             <div class="col-sm-8">
-                              <input type = "number" step = "30" id = "duration" name = "duration" class = "form-control" value = "" required>
+                              <input type = "number" step = "15" id = "duration" name = "duration" class = "form-control" value = "" required>
                             </div>
                           </div>
 
@@ -145,10 +145,12 @@
   $(document).ready(function () {
       $('#datepicker').daterangepicker({
         uiLibrary: 'bootstrap',
-        format: "MM/DD/YYYY h:mm",
+        format: "MM/DD/YYYY H:m",
+        timePicker24Hour: true,
         autoclose: true,
         todayBtn: true,
         timePicker: true,
+        timePickerIncrement: 15,
         singleDatePicker: true
       });
   });

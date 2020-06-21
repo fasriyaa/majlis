@@ -28,7 +28,7 @@ class MeetingsController extends Controller
           }
 
           $meetings = Meetings::with('member')
-              ->with('participants')
+              ->with('participants')->orderBy('created_at', 'DESC')
               ->get();
 
               // return $meetings;
@@ -48,6 +48,7 @@ class MeetingsController extends Controller
     }
     public function store(Request $request)
     {
+      
           $model_id = 1;
           $permission = "Create Meeting";
           if(auth()->user()->can($permission) == false)
