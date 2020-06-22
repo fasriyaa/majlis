@@ -48,7 +48,7 @@ class MeetingsController extends Controller
     }
     public function store(Request $request)
     {
-      
+
           $model_id = 1;
           $permission = "Create Meeting";
           if(auth()->user()->can($permission) == false)
@@ -180,12 +180,15 @@ class MeetingsController extends Controller
           {
             abort(403);
           }
-          $xrecord = Participants::where('id_no', $request->id_no)
-              ->first();
-            if($xrecord)
-            {
-              return back()->with(['message' => "Participant already exist", 'label' => "danger"]);
-            }
+          if($request->id_no != "NA"){
+            $xrecord = Participants::where('id_no', $request->id_no)
+                ->first();
+              if($xrecord)
+              {
+                return back()->with(['message' => "Participant already exist", 'label' => "danger"]);
+              }
+          }
+
 
         $participant = new Participants;
         $participant->meeting_id = $request->meeting_id;

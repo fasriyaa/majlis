@@ -54,19 +54,19 @@
                           <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Participant Name<font color = "red">*</font></label>
                             <div class="col-sm-8">
-                              <input type = "text" id = "" name = "name" class = "form-control" value = "" required>
+                              <input type = "text" id = "" name = "name" class = "form-control" value = "" required autocomplete="off">
                             </div>
                           </div>
                           <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Participant ID<font color = "red">*</font></label>
                             <div class="col-sm-8">
-                              <input type = "text"  id = "" name = "id_no" class = "form-control" value = "" required>
+                              <input type = "text"  id = "" name = "id_no" class = "form-control" value = "" required autocomplete="off">
                             </div>
                           </div>
                           <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Participant Mobile</label>
                             <div class="col-sm-8">
-                              <input type = "text"  id = "" name = "contact" class = "form-control" value = "">
+                              <input type = "text"  id = "" name = "contact" class = "form-control" value = "" autocomplete="off">
                             </div>
                           </div>
 
