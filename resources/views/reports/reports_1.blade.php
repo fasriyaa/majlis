@@ -44,13 +44,13 @@
             <div class="card-body table-responsive">
               <table id = "vendor_table" class="table table-hover datatable">
                 <thead>
-                    <tr>
+                    <tr align = "left">
                       <th>#</th>
-                      <th>Member Name</th>
-                      <th>Constituency</th>
-                      <th>Date</th>
-                      <th>Time & Duration</th>
-                      <th>Participants</th>
+                      <th align = "left">Member Name</th>
+                      <th align = "left">Constituency</th>
+                      <th align = "left">Date</th>
+                      <th align = "left">Time & Duration</th>
+                      <th align = "right">Participants</th>
                     </tr>
               </thead>
 
@@ -174,9 +174,12 @@
 $(document).ready(function() {
     $('#vendor_table').DataTable( {
         dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
+        buttons: [{
+            extend: 'pdfHtml5',
+            customize: function(doc) {
+             doc.styles.tableHeader.alignment = 'left';
+           }
+        }]
     } );
 } );
 
