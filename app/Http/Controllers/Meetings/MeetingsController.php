@@ -48,7 +48,6 @@ class MeetingsController extends Controller
     }
     public function store(Request $request)
     {
-
           $model_id = 1;
           $permission = "Create Meeting";
           if(auth()->user()->can($permission) == false)
@@ -174,14 +173,15 @@ class MeetingsController extends Controller
     }
     public function store_participants(Request $request)
     {
-
+        
           $permission = "Add Participants";
           if(auth()->user()->can($permission) == false)
           {
             abort(403);
           }
           if($request->id_no != "NA"){
-            $xrecord = Participants::where('id_no', $request->id_no)
+            $xrecord = Participants::where('meeting_id', $request->meeting_id)
+                ->where('id_no', $request->id_no)
                 ->first();
               if($xrecord)
               {
