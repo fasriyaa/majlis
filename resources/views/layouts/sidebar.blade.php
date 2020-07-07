@@ -105,7 +105,7 @@
           </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                      <a href="" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
+                      <a href="/reports_2/{{date("Y-m-d")}}" class="nav-link {!! classActiveSegment(1, 'reports') !!}">
                         <i class="fas fa-circle"></i>
                         <p>Dialy Report</p>
                       </a>

@@ -28,4 +28,27 @@ class ReportsController extends Controller
           // return $meetings;
       return view('reports.reports_1',compact('meetings'));
     }
+
+    public function reports_2($date){
+      $permission = "View Meeting";
+      if(auth()->user()->can($permission) == false){abort(403);}
+
+      $meetings = Meetings::with('member')
+          ->with('participants')->where('date', date("Y-m-d",strtotime($date)))->orderBy('created_at', 'DESC')
+          ->get();
+          // return $meetings;
+      return view('reports.reports_2',compact('meetings'));
+    }
+
+    public function _reports_2(Request $request){
+      $permission = "View Meeting";
+      if(auth()->user()->can($permission) == false){abort(403);}
+
+      $date = date("Y-m-d",strtotime($request->date));
+      $meetings = Meetings::with('member')
+          ->with('participants')->where('date', date("Y-m-d",strtotime($request->date)))->orderBy('created_at', 'DESC')
+          ->get();
+          // return $meetings;
+      return view('reports.reports_2',compact('meetings','date'));
+    }
 }

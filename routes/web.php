@@ -76,6 +76,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/meetings/remove/{id}', 'Meetings\MeetingsController@remove_participants')->name('meetings.remove_participants');
 
     Route::get('/reports_1', 'Reports\ReportsController@reports_1')->name('reports_1');
+    Route::get('/reports_2/{date}', 'Reports\ReportsController@reports_2')->name('reports_2');
+    Route::post('/reports_2', 'Reports\ReportsController@_reports_2')->name('_reports_2');
 
 });
 
