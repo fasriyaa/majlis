@@ -34,7 +34,7 @@ class ReportsController extends Controller
       if(auth()->user()->can($permission) == false){abort(403);}
 
       $meetings = Meetings::with('member')
-          ->with('participants')->where('date', date("Y-m-d",strtotime($date)))->orderBy('created_at', 'DESC')
+          ->with('participants')->where('date', date("Y-m-d",strtotime($date)))->orderBy('meeting_time','ASC')
           ->get();
           // return $meetings;
       return view('reports.reports_2',compact('meetings'));
@@ -46,7 +46,7 @@ class ReportsController extends Controller
 
       $date = date("Y-m-d",strtotime($request->date));
       $meetings = Meetings::with('member')
-          ->with('participants')->where('date', date("Y-m-d",strtotime($request->date)))->orderBy('created_at', 'DESC')
+          ->with('participants')->where('date', date("Y-m-d",strtotime($request->date)))->orderBy('meeting_time', 'ASC')
           ->get();
           // return $meetings;
       return view('reports.reports_2',compact('meetings','date'));
